@@ -6,7 +6,7 @@ import {
 } from "../helpers/apiEndpoints";
 import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-const api = apiEndpointLocal;
+const api = apiEndpointStaging;
 export const getWeatherForecast = createAsyncThunk(
   "list/getWeatherForecast",
   async () => {
