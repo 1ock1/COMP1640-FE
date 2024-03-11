@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { backgroundColor } from "../helpers/constantColor";
 import React from "react";
 import {
   AppBar,
@@ -18,9 +19,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
 import SamplePage from "./Sample/SamplePage";
+import SignIn from "./Authen/SignIn";
+import { useMediaQuery } from "@mui/material";
 const MainPage = () => {
   const [open, setOpen] = React.useState(false);
-
+  const matches = useMediaQuery("(min-width:600px)");
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -28,7 +31,11 @@ const MainPage = () => {
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
       <List>
         <ListItem key={"hehe"} disablePadding style={{ display: "block" }}>
-          <Link to="/sample" className="nav_header-link">
+          <Link
+            to="/sample"
+            className="nav_header-link"
+            style={{ textDecoration: "none" }}
+          >
             <ListItemButton>
               <ListItemIcon>
                 <InboxIcon />
@@ -38,7 +45,11 @@ const MainPage = () => {
           </Link>
         </ListItem>
         <ListItem key={"hehe"} disablePadding style={{ display: "block" }}>
-          <Link to="/hehe" className="nav_header-link">
+          <Link
+            to="/hehe"
+            className="nav_header-link"
+            style={{ textDecoration: "none" }}
+          >
             <ListItemButton>
               <ListItemIcon>
                 <MailIcon />
@@ -54,7 +65,10 @@ const MainPage = () => {
     <>
       <BrowserRouter>
         <Box sx={{ flexGrow: 1 }}>
-          <AppBar position="static">
+          <AppBar
+            position="static"
+            style={{ backgroundColor: backgroundColor }}
+          >
             <Toolbar>
               <IconButton
                 size="large"
@@ -67,14 +81,48 @@ const MainPage = () => {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                <Link to="/sample" className="nav_header-link">
-                  Shop
-                </Link>
-                <Link to="/hehe" className="nav_header-link">
-                  Hehe
-                </Link>
+                {matches ? (
+                  <>
+                    <Link
+                      to="/sample"
+                      className="nav_header-link"
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        padding: 10,
+                      }}
+                    >
+                      Shop
+                    </Link>
+                    <Link
+                      to="/hehe"
+                      className="nav_header-link"
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        padding: 10,
+                      }}
+                    >
+                      Hehe
+                    </Link>
+                  </>
+                ) : (
+                  ""
+                )}
               </Typography>
-              <Button color="inherit">Login</Button>
+              <Button style={{ backgroundColor: "#2cc302" }}>
+                {" "}
+                <Link
+                  to="/signin"
+                  className="nav_header-link"
+                  style={{
+                    textDecoration: "none",
+                    color: "white",
+                  }}
+                >
+                  Sign In
+                </Link>
+              </Button>
             </Toolbar>
           </AppBar>
         </Box>
@@ -86,6 +134,9 @@ const MainPage = () => {
         </Routes>
         <Routes>
           <Route path="/hehe" element={<>hehe</>} />
+        </Routes>
+        <Routes>
+          <Route path="/signin" element={<SignIn />} />
         </Routes>
       </BrowserRouter>
     </>
