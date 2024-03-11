@@ -34,7 +34,7 @@ const MainPage = () => {
           <Link
             to="/sample"
             className="nav_header-link"
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", color: "black" }}
           >
             <ListItemButton>
               <ListItemIcon>
@@ -48,7 +48,7 @@ const MainPage = () => {
           <Link
             to="/hehe"
             className="nav_header-link"
-            style={{ textDecoration: "none" }}
+            style={{ textDecoration: "none", color: "black" }}
           >
             <ListItemButton>
               <ListItemIcon>
