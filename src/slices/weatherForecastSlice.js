@@ -28,7 +28,6 @@ export const WeatherForecast = createSlice({
   },
 });
 
-export const { getStudent } = WeatherForecast.actions;
 export const listWeatherForecast = (state) => state.list.weatherForecast;
 export const isLoading = (state) => state.list.status;
 export default WeatherForecast.reducer;

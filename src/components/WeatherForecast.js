@@ -15,14 +15,18 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { loginResult } from "../slices/userSlices";
+import Cookies from "js-cookie";
 const WeatherForecast = () => {
   const listWeather = useSelector(listWeatherForecast);
   const isLoading1 = useSelector(isLoading);
+  const result = useSelector(loginResult);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getWeatherForecast());
   }, []);
   const handeReload = () => {
+    const myCookieValue = Cookies.get("us");
     dispatch(getWeatherForecast());
   };
   return isLoading1 === "succeeded" ? (
