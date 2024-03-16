@@ -7,14 +7,18 @@ import { registerLicense } from "@syncfusion/ej2-base";
 import { syncfusionToken } from "./helpers/contanst";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import { QueryClient, QueryClientProvider } from "react-query";
+const queryClient = new QueryClient();
 registerLicense(syncfusionToken);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <Provider store={store}>
-      <App />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
 

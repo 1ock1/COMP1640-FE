@@ -1,5 +1,6 @@
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
 import { backgroundColor } from "../helpers/constantColor";
+import { Options } from "../helpers/contanst";
 import React from "react";
 import {
   AppBar,
@@ -8,59 +9,60 @@ import {
   Typography,
   Button,
   IconButton,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Drawer,
 } from "@mui/material";
+import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import SamplePage from "./Sample/SamplePage";
 import SignIn from "./Authen/SignIn";
 import { useMediaQuery } from "@mui/material";
+import { AppLinkAdmin, AppBarAdmin } from "./Admin/components/AppBarAdmin";
+import { DrawList } from "../components/DrawerList";
+import { Footer } from "../components/Footer";
+import UnAuthorized from "./Unauthorized";
+import { role } from "../slices/userSlices";
+import { useSelector } from "react-redux";
+import Cookies from "js-cookie";
+import {
+  AppBarStudent,
+  AppLinkStudent,
+} from "./Student/components/AppBarStudent";
+import { HomePage } from "./HomePage";
+import { SignOut } from "./Authen/SignOut";
 const MainPage = () => {
+  const userRole = useSelector(role);
   const [open, setOpen] = React.useState(false);
-  const matches = useMediaQuery("(min-width:600px)");
+  const [userTab, setUserTab] = React.useState(undefined);
+  const [options, setOptions] = React.useState([]);
+  const [auth, setAuth] = React.useState({});
+  const [isSigned, setIsSigned] = React.useState(false);
+  // const matches = useMediaQuery("(min-width:600px)");
   const toggleDrawer = () => {
     setOpen(!open);
   };
-  const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer}>
-      <List>
-        <ListItem key={"hehe"} disablePadding style={{ display: "block" }}>
-          <Link
-            to="/sample"
-            className="nav_header-link"
-            style={{ textDecoration: "none" }}
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <InboxIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Shop"} />
-            </ListItemButton>
-          </Link>
-        </ListItem>
-        <ListItem key={"hehe"} disablePadding style={{ display: "block" }}>
-          <Link
-            to="/hehe"
-            className="nav_header-link"
-            style={{ textDecoration: "none" }}
-          >
-            <ListItemButton>
-              <ListItemIcon>
-                <MailIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Hehe"} />
-            </ListItemButton>
-          </Link>
-        </ListItem>
-      </List>
-    </Box>
-  );
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    axios
+      .post("https://localhost:7044/api/User/auth", input, {
+        headers: {
+          Authorization: `Bearer ` + cookie,
+        },
+      })
+      .then((response) => {
+        const data = response.data;
+        setAuth(data);
+        setUserTab(data.role);
+        setOptions(Options[data.role.toLowerCase()]);
+        if (data.role === "UNAUTHORIZED") {
+          setIsSigned(false);
+        } else {
+          setIsSigned(true);
+        }
+      })
+      .catch(() => setIsSigned(false));
+  }, [userRole]);
   return (
     <>
       <BrowserRouter>
@@ -81,64 +83,67 @@ const MainPage = () => {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                {matches ? (
-                  <>
-                    <Link
-                      to="/sample"
-                      className="nav_header-link"
-                      style={{
-                        textDecoration: "none",
-                        color: "white",
-                        padding: 10,
-                      }}
-                    >
-                      Shop
-                    </Link>
-                    <Link
-                      to="/hehe"
-                      className="nav_header-link"
-                      style={{
-                        textDecoration: "none",
-                        color: "white",
-                        padding: 10,
-                      }}
-                    >
-                      Hehe
-                    </Link>
-                  </>
+                {userTab === "STUDENT" ? (
+                  <AppLinkStudent />
+                ) : userTab === "ADMIN" ? (
+                  <AppLinkAdmin />
                 ) : (
                   ""
                 )}
               </Typography>
-              <Button style={{ backgroundColor: "#2cc302" }}>
-                {" "}
-                <Link
-                  to="/signin"
-                  className="nav_header-link"
-                  style={{
-                    textDecoration: "none",
-                    color: "white",
-                  }}
-                >
-                  Sign In
-                </Link>
-              </Button>
+              {!isSigned && (
+                <Button style={{ backgroundColor: "#2cc302" }}>
+                  {" "}
+                  <Link
+                    to="/signin"
+                    className="nav_header-link"
+                    style={{
+                      textDecoration: "none",
+                      color: "white",
+                    }}
+                  >
+                    Sign In
+                  </Link>
+                </Button>
+              )}
+              {isSigned && (
+                <SignOut
+                  setUserTab={setUserTab}
+                  setIsSigned={setIsSigned}
+                  setOptions={setOptions}
+                />
+              )}
             </Toolbar>
           </AppBar>
         </Box>
         <Drawer open={open} onClose={toggleDrawer}>
-          {DrawerList}
+          <DrawList toggleDrawer={toggleDrawer} options={options} />
         </Drawer>
         <Routes>
-          <Route path="/sample" element={<SamplePage />} />
+          <Route path="/" element={<HomePage auth={auth} />} />
         </Routes>
         <Routes>
-          <Route path="/hehe" element={<>hehe</>} />
+          <Route
+            path="/signin"
+            element={
+              <SignIn
+                setUserTab={setUserTab}
+                setIsSigned={setIsSigned}
+                setOptions={setOptions}
+              />
+            }
+          />
         </Routes>
         <Routes>
-          <Route path="/signin" element={<SignIn />} />
+          <Route path="/unauthorized" element={<UnAuthorized />} />
         </Routes>
+        <Routes>
+          <Route path="/logout" element={<SignOut />} />
+        </Routes>
+        <AppBarAdmin />
+        <AppBarStudent />
       </BrowserRouter>
+      <Footer />
     </>
   );
 };
