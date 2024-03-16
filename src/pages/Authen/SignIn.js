@@ -19,6 +19,7 @@ import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import { Options } from "../../helpers/contanst";
+import { apiEndpointStaging, path } from "../../helpers/apiEndpoints";
 export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
@@ -45,7 +46,7 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
         token: cookie,
       };
       axios
-        .post("https://localhost:7044/api/User/auth", input, {
+        .post(apiEndpointStaging + path.user.authRole, input, {
           headers: {
             Authorization: `Bearer ` + cookie,
           },

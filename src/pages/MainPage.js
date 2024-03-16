@@ -28,6 +28,7 @@ import {
 } from "./Student/components/AppBarStudent";
 import { HomePage } from "./HomePage";
 import { SignOut } from "./Authen/SignOut";
+import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 const MainPage = () => {
   const userRole = useSelector(role);
   const [open, setOpen] = React.useState(false);
@@ -45,7 +46,7 @@ const MainPage = () => {
       token: cookie,
     };
     axios
-      .post("https://localhost:7044/api/User/auth", input, {
+      .post(apiEndpointStaging + path.user.authRole, input, {
         headers: {
           Authorization: `Bearer ` + cookie,
         },
