@@ -21,3 +21,11 @@ export const signup = createAsyncThunk("users/signup", async (data) => {
   const repsone = await axios.post(api + path.user.signup, data);
   return repsone.data;
 });
+
+export const checkAuth = (input, cookie) => {
+  return axios.post(api + path.user.authRole, input, {
+    headers: {
+      Authorization: `Bearer ` + cookie,
+    },
+  });
+};

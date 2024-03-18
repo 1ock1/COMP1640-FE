@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Link, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import { backgroundColor } from "../helpers/constantColor";
 import { Options } from "../helpers/contanst";
 import React from "react";
@@ -11,6 +11,7 @@ import {
   IconButton,
   Drawer,
 } from "@mui/material";
+import { checkAuth } from "../actions/UserActions";
 import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
 import SignIn from "./Authen/SignIn";
@@ -45,12 +46,7 @@ const MainPage = () => {
     const input = {
       token: cookie,
     };
-    axios
-      .post(apiEndpointStaging + path.user.authRole, input, {
-        headers: {
-          Authorization: `Bearer ` + cookie,
-        },
-      })
+    checkAuth(input, cookie)
       .then((response) => {
         const data = response.data;
         setAuth(data);
@@ -118,7 +114,10 @@ const MainPage = () => {
           </AppBar>
         </Box>
         <Drawer open={open} onClose={toggleDrawer}>
-          <DrawList toggleDrawer={toggleDrawer} options={options} />
+          <DrawList
+            toggleDrawer={toggleDrawer}
+            options={Options[userRole.toLowerCase()]}
+          />
         </Drawer>
         <Routes>
           <Route path="/" element={<HomePage auth={auth} />} />

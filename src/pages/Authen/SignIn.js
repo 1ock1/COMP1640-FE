@@ -1,37 +1,45 @@
-import Button from "@mui/material/Button";
-import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Container from "@mui/material/Container";
+import {
+  Button,
+  TextField,
+  FormControlLabel,
+  Checkbox,
+  Grid,
+  Box,
+  Typography,
+  Container,
+  Link,
+} from "@mui/material";
+import { useForm } from "react-hook-form";
 import { backgroundColor } from "../../helpers/constantColor";
 import { useDispatch, useSelector } from "react-redux";
-import { login } from "../../actions/UserActions";
+import { checkAuth, login } from "../../actions/UserActions";
 import { SHA256 } from "crypto-js";
 import { isStatusLogin, messageStatus } from "../../slices/userSlices";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import React, { useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import { Options } from "../../helpers/contanst";
-import { apiEndpointStaging, path } from "../../helpers/apiEndpoints";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInSchema } from "../../helpers/validator";
 export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const isLoading = useSelector(isStatusLogin);
   const loginMessage = useSelector(messageStatus);
   const dispatch = useDispatch();
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    resolver: zodResolver(signInSchema),
+  });
+  const onSubmit = (values) => {
     const infr = {
-      email: data.get("email"),
-      password: SHA256(data.get("password")).toString(),
+      email: values.email,
+      password: SHA256(values.password).toString(),
     };
     dispatch(login(infr));
   };
@@ -45,12 +53,7 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
       const input = {
         token: cookie,
       };
-      axios
-        .post(apiEndpointStaging + path.user.authRole, input, {
-          headers: {
-            Authorization: `Bearer ` + cookie,
-          },
-        })
+      checkAuth(input, cookie)
         .then((response) => {
           const decoded = jwtDecode(cookie);
           if (decoded["role"] === response.data.role) {
@@ -65,7 +68,6 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
       setMessage("You are run out of expired time, sign in again");
     }
   }, [isLoading]);
-
   useEffect(() => {
     setMessage(loginMessage);
   }, [loginMessage]);
@@ -101,16 +103,23 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
             {message}
           </Typography>
         )}
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
           <TextField
             margin="normal"
             required
             fullWidth
-            id="email"
             label="Email Address"
             name="email"
             autoComplete="email"
             autoFocus
+            error={!!errors["email"]}
+            helperText={errors["email"] ? errors["email"].message : ""}
+            {...register("email")}
           />
           <TextField
             margin="normal"
@@ -119,8 +128,10 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
             name="password"
             label="Password"
             type="password"
-            id="password"
             autoComplete="current-password"
+            error={!!errors["password"]}
+            helperText={errors["password"] ? errors["password"].message : ""}
+            {...register("password")}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
