@@ -15,6 +15,9 @@ import {
   ListItemText,
   Drawer,
 } from "@mui/material";
+
+import TopicPage from "./TopicPage";
+import FacultyPage from "./FacultyPage";
 import MenuIcon from "@mui/icons-material/Menu";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import MailIcon from "@mui/icons-material/Mail";
@@ -84,7 +87,7 @@ const MainPage = () => {
                 {matches ? (
                   <>
                     <Link
-                      to="/sample"
+                      to="/account"
                       className="nav_header-link"
                       style={{
                         textDecoration: "none",
@@ -92,10 +95,11 @@ const MainPage = () => {
                         padding: 10,
                       }}
                     >
-                      Shop
+                      Account Management
                     </Link>
+
                     <Link
-                      to="/hehe"
+                      to="/faculty"
                       className="nav_header-link"
                       style={{
                         textDecoration: "none",
@@ -103,8 +107,21 @@ const MainPage = () => {
                         padding: 10,
                       }}
                     >
-                      Hehe
+                      Faculty Management
                     </Link>
+
+                    <Link
+                      to="/topic"
+                      className="nav_header-link"
+                      style={{
+                        textDecoration: "none",
+                        color: "white",
+                        padding: 10,
+                      }}
+                    >
+                      Topic Management
+                    </Link>
+
                   </>
                 ) : (
                   ""
@@ -130,10 +147,13 @@ const MainPage = () => {
           {DrawerList}
         </Drawer>
         <Routes>
-          <Route path="/sample" element={<SamplePage />} />
+          <Route path="/account" element={<SamplePage/>} />
         </Routes>
         <Routes>
-          <Route path="/hehe" element={<>hehe</>} />
+          <Route path="/faculty" element={<FacultyPage/>} />
+        </Routes>
+        <Routes>
+          <Route path="/topic" element={<TopicPage/>} />
         </Routes>
         <Routes>
           <Route path="/signin" element={<SignIn />} />

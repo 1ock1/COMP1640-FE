@@ -43,7 +43,10 @@ export default function SignIn() {
           src="https://greenwich.edu.vn/wp-content/uploads/2022/05/2022-Greenwich-Eng.png"
         />
         <Typography component="h4" variant="h4">
-          Login in
+          Sign in for Staff & Student
+        </Typography>
+        <Typography align="center" component="h14" variant="h15">
+          Please contact your Faculty Administrator if you haven't got your account.
         </Typography>
         <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
           <TextField
