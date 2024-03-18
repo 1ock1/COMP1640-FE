@@ -1,3 +1,4 @@
+import React from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -11,6 +12,13 @@ import { backgroundColor } from "../../helpers/constantColor";
 import { useDispatch } from "react-redux";
 import { signup } from "../../actions/UserActions";
 import { SHA256 } from "crypto-js";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import {
+  createAccountSchema,
+  validatePasswordConfirm,
+} from "../../helpers/validator";
+
 export default function CreateAccount() {
   const dispatch = useDispatch();
   const today = new Date();
@@ -18,19 +26,31 @@ export default function CreateAccount() {
   const month = today.getMonth() + 1; // Months are zero-based
   const year = today.getFullYear();
   const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    const infr = {
-      name: data.get("name"),
-      phonenumber: data.get("phonenumber"),
-      birthdate: formattedDate,
-      email: data.get("email"),
-      password: SHA256(data.get("password")).toString(),
-      role: data.get("role"),
-      status: data.get("status"),
-    };
-    dispatch(signup(infr));
+  const [isMatchPassword, setIsMatchPassword] = React.useState(true);
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm({
+    resolver: zodResolver(createAccountSchema),
+  });
+
+  const onSubmit = (data) => {
+    if (!validatePasswordConfirm(data.password, data.confirmPassword)) {
+      setIsMatchPassword(false);
+    } else {
+      setIsMatchPassword(true);
+      const infr = {
+        name: data.name,
+        phonenumber: data.phoneNumber,
+        birthdate: formattedDate,
+        email: data.email,
+        password: SHA256(data.password).toString(),
+        role: data.role,
+        status: data.status,
+      };
+      dispatch(signup(infr));
+    }
   };
   return (
     <Container maxWidth="sm">
@@ -58,16 +78,23 @@ export default function CreateAccount() {
         <Typography component="h4" variant="h4">
           Login in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit(onSubmit)}
+          noValidate
+          sx={{ mt: 1 }}
+        >
           <TextField
             margin="normal"
             required
             fullWidth
-            id="email"
             label="User Name"
             name="name"
             autoComplete="email"
             autoFocus
+            error={!!errors["name"]}
+            helperText={errors["name"] ? errors["name"].message : ""}
+            {...register("name")}
           />
           <TextField
             margin="normal"
@@ -75,9 +102,14 @@ export default function CreateAccount() {
             fullWidth
             id="email"
             label="Phone Number"
-            name="phonenumber"
+            name="phoneNumber"
             autoComplete="email"
             autoFocus
+            error={!!errors["phoneNumber"]}
+            helperText={
+              errors["phoneNumber"] ? errors["phoneNumber"].message : ""
+            }
+            {...register("phoneNumber")}
           />
           <TextField
             margin="normal"
@@ -88,6 +120,9 @@ export default function CreateAccount() {
             name="email"
             autoComplete="email"
             autoFocus
+            error={!!errors["email"]}
+            helperText={errors["email"] ? errors["email"].message : ""}
+            {...register("email")}
           />
           <TextField
             margin="normal"
@@ -98,6 +133,27 @@ export default function CreateAccount() {
             name="password"
             autoFocus
             type="password"
+            error={!!errors["password"]}
+            helperText={errors["password"] ? errors["password"].message : ""}
+            {...register("password")}
+          />
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Confirm Password"
+            name="confirmPassword"
+            autoFocus
+            type="password"
+            error={!!errors["confirmPassword"] || !isMatchPassword}
+            helperText={
+              (errors["confirmPassword"]
+                ? errors["confirmPassword"].message
+                : "") ||
+              (!isMatchPassword ? "Confirm Password does not match" : "")
+            }
+            {...register("confirmPassword")}
           />
           <TextField
             margin="normal"
@@ -108,6 +164,9 @@ export default function CreateAccount() {
             name="role"
             autoComplete="email"
             autoFocus
+            error={!!errors["role"]}
+            helperText={errors["role"] ? errors["role"].message : ""}
+            {...register("role")}
           />
           <TextField
             margin="normal"
@@ -118,6 +177,9 @@ export default function CreateAccount() {
             name="status"
             autoComplete="email"
             autoFocus
+            error={!!errors["status"]}
+            helperText={errors["status"] ? errors["status"].message : ""}
+            {...register("status")}
           />
           <TextField
             margin="normal"

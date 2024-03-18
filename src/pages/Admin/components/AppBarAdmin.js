@@ -3,12 +3,18 @@ import React from "react";
 import CreateAccount from "../../Authen/CreateAccount";
 import { Options } from "../../../helpers/contanst";
 import Dashboard from "../pages/Dashboard";
+import TopicManagementPage from "../pages/TopicPage";
+import FacultyManagementPage from "../pages/FalcutyPage";
+import AccountManagementPage from "../pages/AccountManagementPage";
 export const AppBarAdmin = () => {
   return (
     <>
       <Routes>
         <Route path="/admin" element={<Dashboard />} />
         <Route path="/admin/signup" element={<CreateAccount />} />
+        <Route path="/admin/accounts" element={<AccountManagementPage />} />
+        <Route path="/admin/falcuty" element={<FacultyManagementPage />} />
+        <Route path="/admin/topics" element={<TopicManagementPage />} />
       </Routes>
     </>
   );

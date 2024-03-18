@@ -35,7 +35,6 @@ export const User = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.isStatusLogin = "succeeded";
         state.loginResult = action.payload;
-        state.messageStatus = "Login Successfully";
         const cookie = Cookies.get("us");
         const decoded = jwtDecode(cookie);
         state.role = decoded["role"];
@@ -43,6 +42,7 @@ export const User = createSlice({
       .addCase(login.rejected, (state, action) => {
         state.isStatusLogin = "failed";
         state.messageStatus = "Email or password is wrong";
+        state.role = "";
         state.error = action.error.message;
       });
   },
