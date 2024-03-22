@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import EditIcon from '@mui/icons-material/Edit';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import {
   Button,
@@ -13,117 +12,209 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemAvatar,
   ListItemSecondaryAction,
   ListItemText,
   Avatar,
+  Paper,
+  Typography,
+  Box,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import PersonIcon from '@mui/icons-material/Person';
+import SchoolIcon from '@mui/icons-material/School';
 
 const theme = createTheme();
 
 const FacultyManagementPage = () => {
   const [openDialog, setOpenDialog] = useState(false);
-  const [newFacultyName, setNewFacultyName] = useState('');
-  const [newFacultyDescription, setNewFacultyDescription] = useState('');
-  const [newFacultyImage, setNewFacultyImage] = useState('');
+  const [newFaculty, setNewFaculty] = useState({
+    id: null,
+    name: '',
+    description: '',
+    image: '',
+  });
   const [faculties, setFaculties] = useState([
     {
       id: 1,
       name: 'Faculty 1',
-      description: 'Description for Faculty 1',
+      description: 'Description of Faculty 1',
       image: 'https://via.placeholder.com/150',
+      students: ['Student 1', 'Student 2'],
+      teachers: ['Teacher 1', 'Teacher 2'],
     },
     {
       id: 2,
       name: 'Faculty 2',
-      description: 'Description for Faculty 2',
+      description: 'Description of Faculty 2',
       image: 'https://via.placeholder.com/150',
-    },
-    {
-      id: 3,
-      name: 'Faculty 3',
-      description: 'Description for Faculty 3',
-      image: 'https://via.placeholder.com/150',
+      students: ['Student 3', 'Student 4'],
+      teachers: ['Teacher 3', 'Teacher 4'],
     },
   ]);
 
   const [editingFaculty, setEditingFaculty] = useState(null);
 
   const handleAddFaculty = () => {
-    if (newFacultyName.trim() !== '') {
-      setFaculties([...faculties, { id: Date.now(), name: newFacultyName, description: newFacultyDescription, image: newFacultyImage }]);
-      setNewFacultyName('');
-      setNewFacultyDescription('');
-      setNewFacultyImage('');
+    if (newFaculty.name.trim() !== '') {
+      setFaculties([...faculties, { ...newFaculty, id: Date.now(), students: [], teachers: [] }]);
+      setNewFaculty({
+        id: null,
+        name: '',
+        description: '',
+        image: '',
+      });
       setOpenDialog(false);
+    } else {
+      alert('Please enter a valid faculty name.');
     }
   };
 
   const handleDeleteFaculty = (id) => {
-    const newFaculties = faculties.filter(faculty => faculty.id !== id);
+    const newFaculties = faculties.filter((faculty) => faculty.id !== id);
     setFaculties(newFaculties);
   };
 
   const handleEditFaculty = (faculty) => {
     setEditingFaculty(faculty);
+    setNewFaculty(faculty);
     setOpenDialog(true);
   };
 
   const handleUpdateFaculty = () => {
-    if (newFacultyName.trim() !== '') {
-      const updatedFaculties = faculties.map(faculty => {
+    if (newFaculty.name.trim() !== '') {
+      const updatedFaculties = faculties.map((faculty) => {
         if (faculty.id === editingFaculty.id) {
-          return { ...faculty, name: newFacultyName, description: newFacultyDescription, image: newFacultyImage };
+          return newFaculty;
         }
         return faculty;
       });
       setFaculties(updatedFaculties);
-      setNewFacultyName('');
-      setNewFacultyDescription('');
-      setNewFacultyImage('');
+      setNewFaculty({
+        id: null,
+        name: '',
+        description: '',
+        image: '',
+      });
       setEditingFaculty(null);
       setOpenDialog(false);
+    } else {
+      alert('Please enter a valid faculty name.');
     }
   };
 
   return (
     <ThemeProvider theme={theme}>
       <div style={{ padding: theme.spacing(2) }}>
+        <Typography variant="h4" gutterBottom>
+          Faculty Management Dashboard
+        </Typography>
         <Grid container spacing={3}>
           <Grid item xs={12}>
-            <Button
-              style={{ marginBottom: theme.spacing(2) }}
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                setEditingFaculty(null);
-                setOpenDialog(true);
-              }}
-            >
-              Add Faculty
-            </Button>
+            <Grid container spacing={3}>
+              <Grid item xs={4}>
+                <Paper elevation={3}>
+                  <Typography variant="h6" align="center" gutterBottom>
+                    Students
+                  </Typography>
+                  <List>
+                    {faculties.map((faculty) => (
+                      <ListItem key={faculty.id}>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <PersonIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={faculty.name} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Grid>
+              <Grid item xs={4}>
+                <Paper elevation={3}>
+                  <Typography variant="h6" align="center" gutterBottom>
+                    Teachers
+                  </Typography>
+                  <List>
+                    {faculties.map((faculty) => (
+                      <ListItem key={faculty.id}>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <SchoolIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={faculty.name} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Grid>
+              <Grid item xs={4}>
+                <Paper elevation={3}>
+                  <Typography variant="h6" align="center" gutterBottom>
+                    Staff
+                  </Typography>
+                  <List>
+                    {faculties.map((faculty) => (
+                      <ListItem key={faculty.id}>
+                        <ListItemAvatar>
+                          <Avatar>
+                            <SchoolIcon />
+                          </Avatar>
+                        </ListItemAvatar>
+                        <ListItemText primary={faculty.name} />
+                      </ListItem>
+                    ))}
+                  </List>
+                </Paper>
+              </Grid>
+            </Grid>
           </Grid>
-          <Grid item xs={12}>
-            <List>
-              {faculties.map((faculty) => (
-                <ListItem key={faculty.id} sx={{ border: '1px solid #ccc', borderRadius: '4px', marginBottom: '8px' }}>
-                  <Avatar
-                    alt={faculty.name}
-                    src={faculty.image}
-                    sx={{ width: theme.spacing(7), height: theme.spacing(7), marginRight: theme.spacing(2) }}
-                  />
-                  <ListItemText primary={faculty.name} secondary={faculty.description} />
-                  <ListItemSecondaryAction>
-                    <IconButton edge="end" aria-label="edit" onClick={() => handleEditFaculty(faculty)}>
-                      <EditIcon />
-                    </IconButton>
-                    <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFaculty(faculty.id)}>
-                      <DeleteIcon />
-                    </IconButton>
-                  </ListItemSecondaryAction>
-                </ListItem>
-              ))}
-            </List>
+          <Grid item xs={12} md={8}>
+            <Paper elevation={3}>
+              <List>
+                {faculties.map((faculty) => (
+                  <ListItem key={faculty.id} sx={{ border: '1px solid #ccc', borderRadius: '4px', marginBottom: '8px' }}>
+                    <ListItemAvatar>
+                      <Avatar alt={faculty.name} src={faculty.image} />
+                    </ListItemAvatar>
+                    <ListItemText
+                      primary={faculty.name}
+                      secondary={
+                        <>
+                          <div>Description: {faculty.description}</div>
+                        </>
+                      }
+                    />
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="edit" onClick={() => handleEditFaculty(faculty)}>
+                        <EditIcon />
+                      </IconButton>
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFaculty(faculty.id)}>
+                        <DeleteIcon />
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                ))}
+              </List>
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Box component={Paper} p={3} elevation={3}>
+              <Button
+                fullWidth
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setEditingFaculty(null);
+                  setOpenDialog(true);
+                }}
+              >
+                Add Faculty
+              </Button>
+            </Box>
           </Grid>
         </Grid>
 
@@ -138,17 +229,16 @@ const FacultyManagementPage = () => {
               label="Faculty Name"
               type="text"
               fullWidth
-              value={newFacultyName}
-              onChange={(e) => setNewFacultyName(e.target.value)}
+              value={newFaculty.name}
+              onChange={(e) => setNewFaculty({ ...newFaculty, name: e.target.value })}
             />
-            <TextField
-              margin="dense"
+            <TextField margin="dense"
               id="description"
               label="Description"
               type="text"
               fullWidth
-              value={newFacultyDescription}
-              onChange={(e) => setNewFacultyDescription(e.target.value)}
+              value={newFaculty.description}
+              onChange={(e) => setNewFaculty({ ...newFaculty, description: e.target.value })}
             />
             <TextField
               margin="dense"
@@ -156,8 +246,8 @@ const FacultyManagementPage = () => {
               label="Image URL"
               type="text"
               fullWidth
-              value={newFacultyImage}
-              onChange={(e) => setNewFacultyImage(e.target.value)}
+              value={newFaculty.image}
+              onChange={(e) => setNewFaculty({ ...newFaculty, image: e.target.value })}
             />
           </DialogContent>
           <DialogActions>
@@ -181,3 +271,4 @@ const FacultyManagementPage = () => {
 };
 
 export default FacultyManagementPage;
+             
