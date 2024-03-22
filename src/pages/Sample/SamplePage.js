@@ -1,173 +1,286 @@
-// import WeatherForecast from "../../components/WeatherForecast";
-// import { Container } from "@mui/material";
-// const SamplePage = () => {
-//   return (
-//     <Container maxWidth="xl">
-//       <WeatherForecast />
-//     </Container>
-//   );
-// };
-// export default SamplePage;
+import React, { useState } from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import {
+  Button,
+  TextField,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemSecondaryAction,
+  ListItemText,
+  Avatar,
+} from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
 
-import { Container } from '@mui/material';
-import * as React from 'react';
-import Button from '@mui/material/Button';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import Box from '@mui/material/Box';
-import Modal from '@mui/material/Modal';
-import { TextField } from '@mui/material';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import Select from '@mui/material/Select';
+const theme = createTheme();
 
-const style = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
-  boxShadow: 24,
-  pt: 2,
-  px: 4,
-  pb: 3,
-};
+const AccountManagementPage = () => {
+  const [openDialog, setOpenDialog] = useState(false);
+  const [newAccount, setNewAccount] = useState({
+    id: null,
+    department: '',
+    fullName: '',
+    dateOfBirth: '',
+    email: '',
+    password: '',
+    userRole: '',
+    faculty: '',
+    facultyId: '',
+    image: '', // New attribute for account image URL
+  });
+  const [accounts, setAccounts] = useState([
+    {
+      id: 1,
+      department: 'Department 1',
+      fullName: 'John Doe',
+      dateOfBirth: '1990-01-01',
+      email: 'john.doe@example.com',
+      password: 'password123',
+      userRole: 'Admin',
+      faculty: 'Faculty 1',
+      facultyId: 'F1',
+      image: 'https://via.placeholder.com/150', // Example image URL
+    },
+    {
+      id: 2,
+      department: 'Department 2',
+      fullName: 'Jane Smith',
+      dateOfBirth: '1995-05-15',
+      email: 'jane.smith@example.com',
+      password: 'password456',
+      userRole: 'User',
+      faculty: 'Faculty 2',
+      facultyId: 'F2',
+      image: 'https://via.placeholder.com/150', // Example image URL
+    },
+  ]);
 
-function createData(account_username, account_password, account_id, account_name, account_dob, account_department, account_faculty, account_role) {
-  return { account_username, account_password, account_id, account_name, account_dob, account_department, account_faculty, account_role };
-}
+  const [editingAccount, setEditingAccount] = useState(null);
 
-const rows = [
-  createData('minhnvqgch200711', '123123', 1, 'Nguyen Vu Quang Minh', '24/10/2002', 'IT', 'Ha Noi', 'Student'),
-  createData('thainqgch210000', '123123', 1, 'Nguyen Quang Thai', '24/10/2002', 'IT', 'Ha Noi', 'Student'),
-  createData('minhnngch200000', '123123', 1, 'Nguyen Ngoc Minh', '24/10/2002', 'IT', 'Ha Noi', 'Student'),
-  createData('anhndgch190000', '123123', 1, 'Nguyen Duc Anh', '24/10/2002', 'IT', 'Ha Noi', 'Student'), 3.
-];
-
-
-
-export default function BasicTable() {
-  const [status, setStatus] = React.useState('');
-
-  const handleChange = (event) => {
-    setStatus(event.target.value);
-  };
-
-  const Clicked = () => {
-    alert("Account Successfully Updated!!!")
-  }
-
-  const [open, setOpen] = React.useState(false);
-  const handleOpen = () => {
-    setOpen(true);
-  };
-  const handleClose = () => {
-    setOpen(false);
-  };
-  document.addEventListener("DOMContentLoaded", function() {
-    // Function to handle cancel button click event
-    function cancelButtonHandle() {
-        console.log("Cancellation logic executed.");
+  const handleAddAccount = () => {
+    if (newAccount.fullName.trim() !== '' && newAccount.email.trim() !== '') {
+      setAccounts([...accounts, { ...newAccount, id: Date.now() }]);
+      setNewAccount({
+        id: null,
+        department: '',
+        fullName: '',
+        dateOfBirth: '',
+        email: '',
+        password: '',
+        userRole: '',
+        faculty: '',
+        facultyId: '',
+        image: '',
+      });
+      setOpenDialog(false);
+    } else {
+      alert('Please enter a valid full name and email.');
     }
+  };
 
-    // Create a new cancel button element
-    const cancelButton = document.createElement("button");
-    cancelButton.textContent = "Cancel";
-    cancelButton.id = "cancelButton";
+  const handleDeleteAccount = (id) => {
+    const newAccounts = accounts.filter((account) => account.id !== id);
+    setAccounts(newAccounts);
+  };
 
-    // Append the cancel button to a container element in the DOM
-    const Box = document.getElementById("Box");
-    Box.appendChild(cancelButton);
+  const handleEditAccount = (account) => {
+    setEditingAccount(account);
+    setNewAccount(account);
+    setOpenDialog(true);
+  };
 
-    // Attach event listener to the cancel button
-    cancelButton.addEventListener("click", cancelButtonHandle);
-});
-
+  const handleUpdateAccount = () => {
+    if (newAccount.fullName.trim() !== '' && newAccount.email.trim() !== '') {
+      const updatedAccounts = accounts.map((account) => {
+        if (account.id === editingAccount.id) {
+          return newAccount;
+        }
+        return account;
+      });
+      setAccounts(updatedAccounts);
+      setNewAccount({
+        id: null,
+        department: '',
+        fullName: '',
+        dateOfBirth: '',
+        email: '',
+        password: '',
+        userRole: '',
+        faculty: '',
+        facultyId: '',
+        image: '',
+      });
+      setEditingAccount(null);
+      setOpenDialog(false);
+    } else {
+      alert('Please enter a valid full name and email.');
+    }
+  };
 
   return (
-    <Container maxWidth="xl">
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>Account Username</TableCell>
-              <TableCell align="right">Password</TableCell>
-              <TableCell align="right">ID</TableCell>
-              <TableCell align="right">Name</TableCell>
-              <TableCell align="right">DoB</TableCell>
-              <TableCell align="right">Department</TableCell>
-              <TableCell align="right">Faculty</TableCell>
-              <TableCell align="right">Action</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.account_username}
-                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-              >
-                <TableCell component="th" scope="row">
-                  {row.account_name}
-                </TableCell>
-                <TableCell align="right">{row.account_password}</TableCell>
-                <TableCell align="right">{row.account_id}</TableCell>
-                <TableCell align="right">{row.account_name}</TableCell>
-                <TableCell align="right">{row.account_dob}</TableCell>
-                <TableCell align="right">{row.account_department}</TableCell>
-                <TableCell align="right">{row.account_faculty}</TableCell>
-                <TableCell align="right"><Button onClick={handleOpen}>Edit</Button>
-                  <Modal
-                    open={open}
-                    onClose={handleClose}
-                    aria-labelledby="modal-title"
-                    aria-describedby="modal-description"
-                  >
-                    <form>
-                      <Box sx={{ ...style, width: 400 }}>
-                        <h2 id="modal-title">Account Detailed Information</h2>
-                        <p id="modal-description">
-                          <TextField fullWidth={true} margin='normal' label="Account Username" variant="filled"></TextField>
-                          <TextField fullWidth={true} margin='normal' label="Account Name" variant="filled"></TextField>
-                          <TextField fullWidth={true} margin='normal' label="Account Password" variant="filled"></TextField>
-                          <TextField fullWidth={true} margin='normal' label="Account DoB" variant="filled"></TextField>
-                          <TextField fullWidth={true} margin='normal' label="Account Department" variant="filled"></TextField>
-                          <TextField fullWidth={true} margin='normal' label="Account Faculty" variant="filled"></TextField>
-                        </p>
-                        <Box>
-                          <FormControl sx={{ m:1, minWidth: 120}} >
-                            <InputLabel>Status</InputLabel>
-                            <Select
-                              value={status}
-                              onChange={handleChange}
-                            >
-                              <MenuItem value={10}>Active</MenuItem>
-                              <MenuItem value={20}>Disabled</MenuItem>
-                            </Select>
-                          </FormControl>
-                        </Box>
-                        <Button variant="contained" onClick={Clicked}>
-                           Update
-                        </Button>
-                        <Button id="cancelButton">
-                          Cancel
-                        </Button>
-                      </Box>
-                    </form>
-                  </Modal>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    </Container>
+    <ThemeProvider theme={theme}>
+      <div style={{ padding: theme.spacing(2) }}>
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <Button
+              style={{ marginBottom: theme.spacing(2) }}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                setEditingAccount(null);
+                setOpenDialog(true);
+              }}
+            >
+              Add Account
+            </Button>
+          </Grid>
+          <Grid item xs={12}>
+            <List>
+              {accounts.map((account) => (
+                <ListItem key={account.id} sx={{ border: '1px solid #ccc', borderRadius: '4px', marginBottom: '8px' }}>
+                  <ListItemAvatar>
+                    <Avatar alt={account.fullName} src={account.image} />
+                  </ListItemAvatar>
+                  <ListItemText
+                    primary={account.fullName}
+                    secondary={
+                      <>
+                        <div>Department: {account.department}</div>
+                        <div>Date of Birth: {account.dateOfBirth}</div>
+                        <div>Email: {account.email}</div>
+                        <div>User Role: {account.userRole}</div>
+                        <div>Faculty: {account.faculty}</div>
+                        <div>Faculty ID: {account.facultyId}</div>
+                      </>
+                    }
+                  />
+                  <ListItemSecondaryAction>
+                    <IconButton edge="end" aria-label="edit" onClick={() => handleEditAccount(account)}>
+                      <EditIcon />
+                    </IconButton>
+                    <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteAccount(account.id)}>
+                      <DeleteIcon />
+                    </IconButton>
+                  </ListItemSecondaryAction>
+                </ListItem>
+              ))}
+            </List>
+          </Grid>
+        </Grid>
+
+        <Dialog open={openDialog} onClose={() => setOpenDialog(false)} aria-labelledby="form-dialog-title">
+          <DialogTitle id="form-dialog-title">{editingAccount ? 'Update Account' : 'Add New Account'}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>Enter the details of the {editingAccount ? 'updated ' : 'new '} account:</DialogContentText>
+            <TextField
+              autoFocus
+              margin="dense"
+              id="department"
+              label="Department"
+              type="text"
+              fullWidth
+              value={newAccount.department}
+              onChange={(e) => setNewAccount({ ...newAccount, department: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="fullName"
+              label="Full Name"
+              type="text"
+              fullWidth
+              value={newAccount.fullName}
+              onChange={(e) => setNewAccount({ ...newAccount, fullName: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="dateOfBirth"
+              label="Date of Birth"
+              type="date"
+              fullWidth
+              value={newAccount.dateOfBirth}
+              onChange={(e) => setNewAccount({ ...newAccount, dateOfBirth: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="email"
+              label="Email"
+              type="email"
+              fullWidth
+              value={newAccount.email}
+              onChange={(e) => setNewAccount({ ...newAccount, email: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="password"
+              label="Password"
+              type="password"
+              fullWidth
+              value={newAccount.password}
+              onChange={(e) => setNewAccount({ ...newAccount, password: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="userRole"
+              label="User Role"
+              type="text"
+              fullWidth
+              value={newAccount.userRole}
+              onChange={(e) => setNewAccount({ ...newAccount, userRole: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="faculty"
+              label="Faculty"
+              type="text"
+              fullWidth
+              value={newAccount.faculty}
+              onChange={(e) => setNewAccount({ ...newAccount, faculty: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="facultyId"
+              label="Faculty ID"
+              type="text"
+              fullWidth
+              value={newAccount.facultyId}
+              onChange={(e) => setNewAccount({ ...newAccount, facultyId: e.target.value })}
+            />
+            <TextField
+              margin="dense"
+              id="image"
+              label="Image URL"
+              type="text"
+              fullWidth
+              value={newAccount.image}
+              onChange={(e) => setNewAccount({ ...newAccount, image: e.target.value })}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)} color="primary">
+              Cancel
+            </Button>
+            {editingAccount ? (
+              <Button onClick={handleUpdateAccount} color="primary">
+                Update
+              </Button>
+            ) : (
+              <Button onClick={handleAddAccount} color="primary">
+                Add
+              </Button>
+            )}
+          </DialogActions>
+        </Dialog>
+      </div>
+    </ThemeProvider>
   );
-}
+};
+
+export default AccountManagementPage;
