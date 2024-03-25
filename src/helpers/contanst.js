@@ -38,3 +38,11 @@ export const Options = {
   marketingCoordinator: [],
   marketingManager: [],
 };
+
+
+// DateTime format
+const today = new Date();
+const date = today.getDate();
+const month = today.getMonth() + 1; // Months are zero-based
+const year = today.getFullYear();
+export  const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
