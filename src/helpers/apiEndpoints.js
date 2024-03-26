@@ -7,5 +7,21 @@ export const path = {
     signup: "api/User/signup",
     authRole: "api/User/auth",
   },
+  file: {
+    load: "api/File/",
+    upload: "api/File/UploadFile",
+    save: "api/File/SaveDocument",
+    delete: "api/File/",
+    uploadImages: "api/File/UploadImages",
+  },
+  fileReport: {
+    loadImages: "api/FileReport/GetDocumentImages",
+  },
+  students: {
+    topics: "api/Topic/GetAllTopic",
+    getTopicId: "api/Topic/GetTopicById?id=",
+    checkIsSubmitted: "api/File/IsReportSubmitted",
+    getDocumentId: "api/FileReport/GetDocumentId?reportId=",
+  },
   WeatherForecast: "WeatherForecast",
 };
