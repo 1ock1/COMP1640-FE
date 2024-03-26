@@ -10,7 +10,12 @@ import {
   Button,
   IconButton,
   Drawer,
+  Menu,
+  Tooltip,
+  Avatar,
+  Badge,
 } from "@mui/material";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { checkAuth } from "../actions/UserActions";
 import axios from "axios";
 import MenuIcon from "@mui/icons-material/Menu";
@@ -29,7 +34,11 @@ import {
 } from "./Student/components/AppBarStudent";
 import { HomePage } from "./HomePage";
 import { SignOut } from "./Authen/SignOut";
+import { Notifications } from "../components/Notification";
+
 const MainPage = () => {
+  const [anchorElNoti, setAnchorElNoti] = React.useState(null);
+  const [anchorElUser, setAnchorElUser] = React.useState(null);
   const userRole = useSelector(role);
   const [open, setOpen] = React.useState(false);
   const [userTab, setUserTab] = React.useState(undefined);
@@ -39,6 +48,20 @@ const MainPage = () => {
   // const matches = useMediaQuery("(min-width:600px)");
   const toggleDrawer = () => {
     setOpen(!open);
+  };
+  const handleOpenUserMenu = (event) => {
+    setAnchorElUser(event.currentTarget);
+  };
+
+  const handleCloseUserMenu = () => {
+    setAnchorElUser(null);
+  };
+  const handleOpenNoti = (event) => {
+    setAnchorElNoti(event.currentTarget);
+  };
+
+  const handleCloseNoti = () => {
+    setAnchorElNoti(null);
   };
   React.useEffect(() => {
     const cookie = Cookies.get("us");
@@ -102,21 +125,76 @@ const MainPage = () => {
                   </Link>
                 </Button>
               )}
+
               {isSigned && (
-                <SignOut
-                  setUserTab={setUserTab}
-                  setIsSigned={setIsSigned}
-                  setOptions={setOptions}
-                />
+                <Box sx={{ flexGrow: 0 }}>
+                  <IconButton
+                    size="large"
+                    aria-label="show 17 new notifications"
+                    color="inherit"
+                    style={{ marginRight: 20 }}
+                    onClick={handleOpenNoti}
+                  >
+                    <Badge badgeContent={17} color="error">
+                      <NotificationsIcon />
+                    </Badge>
+                  </IconButton>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElNoti}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElNoti)}
+                    onClose={handleCloseNoti}
+                  >
+                    <Notifications />
+                  </Menu>
+                  <Tooltip title="Open settings">
+                    <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="https://cdn.universitycompare.com/content/images/UniLogo--University-of-Greenwich-Logo.jpg"
+                      />
+                    </IconButton>
+                  </Tooltip>
+                  <Menu
+                    sx={{ mt: "45px" }}
+                    id="menu-appbar"
+                    anchorEl={anchorElUser}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    keepMounted
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "right",
+                    }}
+                    open={Boolean(anchorElUser)}
+                    onClose={handleCloseUserMenu}
+                  >
+                    <SignOut
+                      setUserTab={setUserTab}
+                      setIsSigned={setIsSigned}
+                      setOptions={setOptions}
+                      setCloseDropDown={setAnchorElUser}
+                    />
+                  </Menu>
+                </Box>
               )}
             </Toolbar>
           </AppBar>
         </Box>
         <Drawer open={open} onClose={toggleDrawer}>
-          <DrawList
-            toggleDrawer={toggleDrawer}
-            options={Options[userRole.toLowerCase()]}
-          />
+          <DrawList toggleDrawer={toggleDrawer} options={options} />
         </Drawer>
         <Routes>
           <Route path="/" element={<HomePage auth={auth} />} />

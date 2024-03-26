@@ -30,10 +30,6 @@ export const Options = {
       value: "Home",
       link: "/student",
     },
-    {
-      value: "Infor",
-      link: "/student/infor",
-    },
   ],
   marketingCoordinator: [],
   marketingManager: [],
