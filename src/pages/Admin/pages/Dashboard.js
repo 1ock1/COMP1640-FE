@@ -1,7 +1,8 @@
 import React from "react";
 
 const Dashboard = () => {
-  React.useEffect(() => {}, []);
-  return "heheccc";
+  return (
+    <h1>Sample Page</h1>
+  );
 };
 export default Dashboard;

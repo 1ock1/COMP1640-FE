@@ -17,11 +17,15 @@ export const Options = {
     },
     {
       value: "Falcuty Management",
-      link: "/admin/falcuty",
+      link: "/admin/falcutys",
     },
     {
       value: "Topic Management",
       link: "/admin/topics",
+    },
+    {
+      value: "Academic Management",
+      link: "/admin/academics",
     },
   ],
   guest: [],
@@ -39,10 +43,11 @@ export const Options = {
   marketingManager: [],
 };
 
-
 // DateTime format
 const today = new Date();
 const date = today.getDate();
 const month = today.getMonth() + 1; // Months are zero-based
 const year = today.getFullYear();
-export  const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
+export const formattedDate = `${year}-${
+  month < 10 ? `0${month}` : month
+}-${date}`;
