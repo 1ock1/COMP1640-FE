@@ -24,34 +24,43 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
-
-import { formattedDate } from "../../../helpers/contanst";
-import { set } from "react-hook-form";
-import { date } from "zod";
+import EditIcon from "@mui/icons-material/Edit";
 
 const theme = createTheme();
 
 const TopicManagementPage = () => {
+  //Open Dialog
   const [openDialog, setOpenDialog] = useState(false);
-
+  const [addMode, setAddMode] = useState(true);
+  // Add Topic
   const [newTopic, setNewTopic] = useState("");
   const [newDescription, setNewDescription] = useState("");
-
+// date of Topic
   const [entriesDatez, setEntriesDatez] = useState("");
   const [finalDatez, setFinalDatez] = useState("");
-
+// all Topics
   const [topics, setTopics] = useState([]);
 
+  // Faculties
   const [faculties, setFaculties] = useState([]);
   const [faculty, setFaculty] = useState("");
-
+// Academics
   const [academics, setAcademics] = useState([]);
   const [academic, setAcademic] = useState("");
-
+// Academic Year
   const [academicStartDate, setAcademicStartDate] = useState("");
   const [academicEndDate, setAcademicEndDate] = useState("");
-
+// Fields Disabled
   const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
+
+  // update State
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedName, setSelectedName] = useState("");
+  const [selectedDescription, setSelectedDescription] = useState("");
+  const [selectedEntriesDate, setSelectedEntriesDate] = useState("");
+  const [selectedFinalDate, setSelectedFinalDate] = useState("");
+  const [selectedFaculty, setSelectedFaculty] = useState("");
+  const [selectedAcademic, setSelectedAcademic] = useState("");
 
   useEffect(() => {
     fetchTopics();
@@ -103,8 +112,8 @@ const TopicManagementPage = () => {
         description: newDescription,
         entriesDate: entriesDatez,
         finalDate: finalDatez,
-        falcuty: faculties,
-        academic: academic,
+        falcutyId: faculty.id,
+        academicId: academic.id,
       },
     })
       .then((response) => {
@@ -119,13 +128,19 @@ const TopicManagementPage = () => {
             name: newTopic,
             description: newDescription,
             entriesDate: entriesDatez,
+            finalDate: finalDatez,
+            faculty: faculty.id,
+            academic: academic.id,
           },
         ]);
         setNewTopic("");
         setNewDescription("");
         setEntriesDatez("");
         setFinalDatez("");
+        setFaculty("");
+        setAcademic("");
         setOpenDialog(false);
+        setAcademicEndDate("");
       })
       .catch((error) => {
         console.error(
@@ -148,6 +163,7 @@ const TopicManagementPage = () => {
           throw new Error("Network response was not ok");
         }
         // handle your data here
+        setOpenDialog(false);
         setTopics(topics.filter((topic) => topic.id !== index));
       })
       .catch((error) => {
@@ -158,46 +174,70 @@ const TopicManagementPage = () => {
       });
   };
 
+  const handleEditTopic = async (index) => {
+    try {
+      const url = `https://localhost:7044/api/Topic/UpdateTopic?id=${index}`; // Use template literals for safer URLs
+      const response = await axios.put(url, {
+        name: selectedName,
+        description: selectedDescription,
+        entriesDate: selectedEntriesDate,
+        finalDate: selectedFinalDate,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(`Update failed with status code: ${response.status}`);
+      }
+
+      console.log("Topic updated successfully!");
+
+      setNewTopic("");
+      setNewDescription("");
+      setEntriesDatez("");
+      setFinalDatez("");
+    } catch (error) {
+      console.error("Error updating topic:", error);
+    }
+  };
+
   const handleFildChange = (e) => {
     setIsFieldsDisabled(false);
 
-    setAcademicStartDate(new Date(e).toString().split("T")[0]);
-    
-    let academicDate = academics.filter(
+    let academic = academics.filter(
       (academic) => academic.startDate.toString().split("T")[0] === e
     );
 
-    setAcademic(academicDate[0].id);
-    setAcademicEndDate(academicDate[0].endDate.toString().split("T")[0]);
+    setAcademic(academic[0]);
+
+    setAcademicEndDate(academic[0].endDate.toString().split("T")[0]);
   };
 
   const handleEtriDatesChange = (e) => {
     let entriesDate = new Date(e);
-    let academicStartDateFormatted = new Date(academicStartDate);
+    let formattedDate = entriesDate.toISOString().split("T")[0];
+    let academicStartDate = new Date(academic.startDate);
 
-    console.log(entriesDate);
-    console.log(academicStartDateFormatted);
-
-
-    if (entriesDate < academicStartDateFormatted) {
+    if (entriesDate < academicStartDate) {
       alert(
         "The topic start date needs to be later than the school year start date"
       );
     } else {
-      setEntriesDatez(entriesDate);
+      setEntriesDatez(formattedDate);
     }
   };
 
   const handleFinalDateChange = (e) => {
     let finalDate = new Date(e);
-    let academicEndDateFormatted = new Date(academicEndDate);
 
-    if (finalDate > academicEndDateFormatted) {
+    let formattedDate = finalDate.toISOString().split("T")[0];
+
+    let academicEndDate = new Date(academic.endDate);
+
+    if (finalDate > academicEndDate) {
       alert(
         "The topic end date needs to be earlier than the school year end date"
       );
     } else {
-      setFinalDatez(finalDate);
+      setFinalDatez(formattedDate);
     }
   };
 
@@ -210,7 +250,10 @@ const TopicManagementPage = () => {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={() => setOpenDialog(true)}
+                onClick={() => {
+                  setAddMode(true);
+                  setOpenDialog(true);
+                }}
               >
                 Add Topic
               </Button>
@@ -223,15 +266,15 @@ const TopicManagementPage = () => {
                       <TableCell>Topic Name</TableCell>
                       <TableCell align="left">Description</TableCell>
                       <TableCell align="right">Entries Date</TableCell>
-                      <TableCell align="right">Falculty</TableCell>
-                      <TableCell align="right">Academic</TableCell>
                       <TableCell align="right">Final Date</TableCell>
+                      <TableCell align="right">FalcultyId</TableCell>
+                      <TableCell align="right">AcademicId</TableCell>
                       <TableCell
                         align="right"
                         sx={{
                           padding: "0 2rem",
                         }}
-                      ></TableCell>
+                      ></TableCell>{" "}
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -262,14 +305,43 @@ const TopicManagementPage = () => {
                         <TableCell align="right">
                           {row.finalDate.toString().split("T")[0]}
                         </TableCell>{" "}
-                        <TableCell align="right">{row.faculty}</TableCell>{" "}
-                        <TableCell align="right">{row.academic}</TableCell>{" "}
+                        <TableCell align="right">{row.falcutyId}</TableCell>{" "}
+                        <TableCell align="right">{row.academicId}</TableCell>{" "}
                         <TableCell align="right">
                           {
-                            <DeleteIcon
-                              onClick={() => handleDeleteTopic(row.id)}
-                              style={{ color: "red" }}
-                            ></DeleteIcon>
+                            <EditIcon
+                              onClick={async () => {
+                                await setAddMode(false);
+                                await setSelectedRow(row.id);
+                                await setSelectedName(row.name);
+                                await setSelectedDescription(row.description);
+                                let entriesDate = row.entriesDate
+                                  .toString()
+                                  .split("T")[0];
+                                await setSelectedEntriesDate(entriesDate);
+                                let finalDate = row.finalDate
+                                  .toString()
+                                  .split("T")[0];
+                                await setSelectedFinalDate(finalDate);
+
+                                let faculty = faculties.filter(
+                                  (faculty) => faculty.id === row.falcutyId
+                                );
+                                let academic = academics.filter(
+                                  (academic) => academic.id === row.academicId
+                                );
+                                await setSelectedFaculty(faculty[0]);
+                                await setSelectedAcademic(
+                                  academic[0].startDate.toString().split("T")[0]
+                                );
+                                await setAcademicEndDate(
+                                  academic[0].endDate.toString().split("T")[0]
+                                );
+
+                                setOpenDialog(true);
+                              }}
+                              style={{ color: "#3d6bb3" }}
+                            ></EditIcon>
                           }
                         </TableCell>
                       </TableRow>
@@ -280,150 +352,305 @@ const TopicManagementPage = () => {
             </Grid>
           </Grid>
 
-          <Dialog
-            open={openDialog}
-            onClose={() => setOpenDialog(false)}
-            aria-labelledby="form-dialog-title"
-            maxWidth="sm" //
-            fullWidth={true}
-          >
-            <DialogTitle id="form-dialog-title">Add New Topic</DialogTitle>
-            <DialogContent>
-              <DialogContentText>
-                Enter the name and description of the new topic:
-              </DialogContentText>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="name"
-                label="Topic Name"
-                type="text"
-                fullWidth
-                value={newTopic}
-                onChange={(e) => setNewTopic(e.target.value)}
-              />
-              <TextField
-                margin="dense"
-                id="description"
-                label="Description"
-                type="text"
-                fullWidth
-                value={newDescription}
-                onChange={(e) => setNewDescription(e.target.value)}
-              />
+          {addMode ? (
+            <Dialog
+              open={openDialog}
+              onClose={() => setOpenDialog(false)}
+              aria-labelledby="form-dialog-title"
+              maxWidth="sm" //
+              fullWidth={true}
+            >
+              <DialogTitle id="form-dialog-title">Add New Topic</DialogTitle>
+              <DialogContent>
+                <DialogContentText>
+                  Enter the name and description of the new topic:
+                </DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Topic Name"
+                  type="text"
+                  fullWidth
+                  value={newTopic}
+                  onChange={(e) => setNewTopic(e.target.value)}
+                />
+                <TextField
+                  margin="dense"
+                  id="description"
+                  label="Description"
+                  type="text"
+                  fullWidth
+                  value={newDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
 
-              <Box display={"flex"} justifyContent={"space-between"}>
-                <Autocomplete
-                  disablePortal
-                  id="combo-box-demo"
-                  options={academics.map(
-                    (option) => option.startDate.toString().split("T")[0]
-                  )}
-                  sx={{ width: 251 }}
-                  onChange={(event, value) => {
-                    handleFildChange(value);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      label="Academic"
-                      margin="normal"
-                      name="academic"
-                      value={academicStartDate}
-                      type={academicStartDate === "" ? "text" : "date"}
-                      {...params}
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={academics.map(
+                      (option) => option.startDate.toString().split("T")[0]
+                    )}
+                    sx={{ width: 251 }}
+                    onChange={(event, value) => {
+                      handleFildChange(value);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Academic"
+                        margin="normal"
+                        name="academic"
+                        value={academicStartDate}
+                        type={academicStartDate === "" ? "text" : "date"}
+                        {...params}
+                      />
+                    )}
+                  />
+                  {/* <Box width={52} /> */}
+                  <TextField
+                    sx={{ width: 251 }}
+                    id="entriesDate"
+                    margin="normal"
+                    name="entriesDate"
+                    label="Entries Date"
+                    InputLabelProps={{ shrink: true, required: true }}
+                    type="date"
+                    fullWidth
+                    value={entriesDatez}
+                    onChange={(e) => {
+                      let entriDate = e.target.value;
+                      handleEtriDatesChange(entriDate);
+                    }}
+                    disabled={isFieldsDisabled}
+                  />
+                </Box>
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <TextField
+                    id="academicEndDate"
+                    margin="normal"
+                    name="academicEndDate"
+                    label="Academic End Date"
+                    type={academicStartDate === "" ? "text" : "date"}
+                    fullWidth
+                    value={academicEndDate}
+                    disablePortal
+                    sx={{ width: 251 }}
+                    inputProps={{ readOnly: true }}
+                  />
+
+                  <TextField
+                    sx={{ width: 251 }}
+                    id="finalDate"
+                    margin="normal"
+                    name="finalDate"
+                    label="Final Date"
+                    InputLabelProps={{ shrink: true, required: true }}
+                    type="date"
+                    fullWidth
+                    value={finalDatez}
+                    onChange={(e) => {
+                      let finalDate = e.target.value;
+
+                      handleFinalDateChange(finalDate);
+                    }}
+                    disabled={isFieldsDisabled}
+                  />
+                </Box>
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={faculties.map((option) => option.name)}
+                    sx={{ width: 251 }}
+                    onChange={(event, value) => {
+                      let facultyId = faculties.filter(
+                        (faculty) => faculty.name === value
+                      );
+
+                      setFaculty(facultyId[0]);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Falcuty"
+                        margin="normal"
+                        name="academic"
+                        value={faculty}
+                        type="text"
+                        {...params}
+                      />
+                    )}
+                  />
+                </Box>
+              </DialogContent>
+
+              <DialogActions className="AddTopic">
+                <Button onClick={() => setOpenDialog(false)} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  disabled={isFieldsDisabled}
+                  onClick={handleAddTopic}
+                  color="primary"
+                >
+                  Add
+                </Button>
+              </DialogActions>
+            </Dialog>
+          ) : (
+            <Dialog
+              open={openDialog}
+              onClose={() => setOpenDialog(false)}
+              aria-labelledby="form-dialog-title"
+              maxWidth="sm" //
+              fullWidth={true}
+            >
+              <DialogTitle id="form-dialog-title">UpdateTopic</DialogTitle>
+              <DialogContent>
+                <DialogContentText>Update the topis details:</DialogContentText>
+                <TextField
+                  autoFocus
+                  margin="dense"
+                  id="name"
+                  label="Topic Name"
+                  type="text"
+                  fullWidth
+                  value={selectedName}
+                  onChange={(e) => setNewTopic(e.target.value)}
+                />
+                <TextField
+                  margin="dense"
+                  id="description"
+                  label="Description"
+                  type="text"
+                  fullWidth
+                  value={selectedDescription}
+                  onChange={(e) => setNewDescription(e.target.value)}
+                />
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={academics.map(
+                      (option) => option.startDate.toString().split("T")[0]
+                    )}
+                    sx={{ width: 251 }}
+                    onChange={(event, value) => {
+                      handleFildChange(value);
+                    }}
+                    defaultValue={selectedAcademic}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Academic"
+                        margin="normal"
+                        name="academic"
+                        type={"date"}
+                        {...params}
+                      />
+                    )}
+                  />
+                  {/* <Box width={52} /> */}
+                  <TextField
+                    sx={{ width: 251 }}
+                    id="entriesDate"
+                    margin="normal"
+                    name="entriesDate"
+                    label="Entries Date"
+                    InputLabelProps={{ shrink: true, required: true }}
+                    type="date"
+                    fullWidth
+                    defaultValue={selectedEntriesDate}
+                    onChange={(e) => {
+                      let entriDate = e.target.value;
+                      handleEtriDatesChange(entriDate);
+                    }}
+                    // disabled={isFieldsDisabled}
+                  />
+                </Box>
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <TextField
+                    id="academicEndDate"
+                    margin="normal"
+                    name="academicEndDate"
+                    label="Academic End Date"
+                    defaultValue={academicEndDate}
+                    type={"date"}
+                    fullWidth
+                    disablePortal
+                    sx={{ width: 251 }}
+                    inputProps={{ readOnly: true }}
+                  />
+
+                  <TextField
+                    sx={{ width: 251 }}
+                    id="finalDate"
+                    margin="normal"
+                    name="finalDate"
+                    label="Final Date"
+                    InputLabelProps={{ shrink: true, required: true }}
+                    type="date"
+                    fullWidth
+                    defaultValue={selectedFinalDate}
+                    onChange={(e) => {
+                      let finalDate = e.target.value;
+
+                      handleFinalDateChange(finalDate);
+                    }}
+                    // disabled={isFieldsDisabled}
+                  />
+                </Box>
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={faculties.map((option) => option.name)}
+                    sx={{ width: 251 }}
+                    defaultValue={selectedFaculty.name}
+                    onChange={(event, value) => {
+                      let facultyId = faculties.filter(
+                        (faculty) => faculty.name === value
+                      );
+
+                      setFaculty(facultyId);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Falcuty"
+                        margin="normal"
+                        name="academic"
+                        value={faculty}
+                        type="text"
+                        {...params}
+                      />
+                    )}
+                  />
+                  <Button>
+                    <DeleteIcon
+                      style={{ color: "red" }}
+                      onClick={() => handleDeleteTopic(selectedRow)}
                     />
-                  )}
-                />
-                {/* <Box width={52} /> */}
-                <TextField
-                  sx={{ width: 251 }}
-                  id="entriesDate"
-                  margin="normal"
-                  name="entriesDate"
-                  label="Entries Date"
-                  InputLabelProps={{ shrink: true, required: true }}
-                  type="date"
-                  fullWidth
-                  value={entriesDatez}
-                  onChange={(e) => {
-                    let entriDate = e.target.value;
-                    handleEtriDatesChange(entriDate);
-                  }}
-                  disabled={isFieldsDisabled}
-                />
-              </Box>
+                  </Button>
+                </Box>
+              </DialogContent>
 
-              <Box display={"flex"} justifyContent={"space-between"}>
-                <TextField
-                  id="academicEndDate"
-                  margin="normal"
-                  name="academicEndDate"
-                  label="Academic End Date"
-                  type={academicStartDate === "" ? "text" : "date"}
-                  fullWidth
-                  value={academicEndDate}
-                  disablePortal
-                  sx={{ width: 251 }}
-                  inputProps={{ readOnly: true }}
-                />
-
-                <TextField
-                  sx={{ width: 251 }}
-                  id="finalDate"
-                  margin="normal"
-                  name="finalDate"
-                  label="Final Date"
-                  InputLabelProps={{ shrink: true, required: true }}
-                  type="date"
-                  fullWidth
-                  value={finalDatez}
-                  onChange={(e) => {
-                    let finalDate = e.target.value;
-
-                    handleFinalDateChange(finalDate);
-                  }}
-                  disabled={isFieldsDisabled}
-                />
-              </Box>
-
-              <Box display={"flex"} justifyContent={"space-between"}>
-                <Autocomplete
-                  disabled={isFieldsDisabled}
-                  disablePortal
-                  id="combo-box-demo"
-                  options={faculties.map((option) => option.name)}
-                  sx={{ width: 300 }}
-                  onChange={(e) => {
-                    let faculty = e.target.value;
-
-                    console.log(faculty);
-                  }}
-                  renderInput={(params) => (
-                    <TextField
-                      margin="normal"
-                      name="falcuty"
-                      label="Falcuty"
-                      {...params}
-                      value={faculty}
-                    />
-                  )}
-                />
-              </Box>
-            </DialogContent>
-
-            <DialogActions>
-              <Button onClick={() => setOpenDialog(false)} color="primary">
-                Cancel
-              </Button>
-              <Button
-                disabled={isFieldsDisabled}
-                onClick={handleAddTopic}
-                color="primary"
-              >
-                Add
-              </Button>
-            </DialogActions>
-          </Dialog>
+              <DialogActions className="UpdateTopic">
+                <Button onClick={() => setOpenDialog(false)} color="primary">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={() => handleEditTopic(selectedRow)}
+                  color="primary"
+                >
+                  Save
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </div>
       </ThemeProvider>
     </Container>

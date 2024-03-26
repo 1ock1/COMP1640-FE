@@ -6,6 +6,7 @@ import Dashboard from "../pages/Dashboard";
 import TopicManagementPage from "../pages/TopicPage";
 import FacultyManagementPage from "../pages/FalcutyPage";
 import AccountManagementPage from "../pages/AccountManagementPage";
+import AcademicPage from "../pages/AcademicPage";
 export const AppBarAdmin = () => {
   return (
     <>
@@ -15,6 +16,7 @@ export const AppBarAdmin = () => {
         <Route path="/admin/accounts" element={<AccountManagementPage />} />
         <Route path="/admin/falcuty" element={<FacultyManagementPage />} />
         <Route path="/admin/topics" element={<TopicManagementPage />} />
+        <Route path="/admin/academics" element={<AcademicPage />} />
       </Routes>
     </>
   );
