@@ -12,7 +12,7 @@ import { backgroundColor } from "../../../helpers/constantColor";
 import ArticleIcon from "@mui/icons-material/Article";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -40,7 +40,7 @@ export const TopicStudent = () => {
     formData.append("studentId", decoded["usid"]);
     formData.append("topicId", id);
     const response = await axios.post(
-      apiEndpointLocal + path.file.upload,
+      apiEndpointStaging + path.file.upload,
       formData,
       {
         headers: {
@@ -65,7 +65,7 @@ export const TopicStudent = () => {
       topicId: id,
     };
     axios
-      .post(apiEndpointLocal + path.students.checkIsSubmitted, data)
+      .post(apiEndpointStaging + path.students.checkIsSubmitted, data)
       .then((resp) => {
         if (resp.data !== -1) {
           setSubmiited(true);
@@ -74,14 +74,14 @@ export const TopicStudent = () => {
       })
       .catch((err) => console.log(err));
     axios
-      .get(apiEndpointLocal + path.students.getTopicId + id)
+      .get(apiEndpointStaging + path.students.getTopicId + id)
       .then((response) => setTopicInfor(response.data))
       .catch((err) => navigate("/"));
   }, []);
   React.useEffect(() => {
     if (isSubmmited) {
       axios
-        .post(apiEndpointLocal + path.students.getDocumentId + reportId)
+        .post(apiEndpointStaging + path.students.getDocumentId + reportId)
         .then((rep) => {
           if (rep.data !== "-1") {
             setDocumentId(rep.data);

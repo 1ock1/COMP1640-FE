@@ -16,7 +16,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { VisuallyHiddenInput } from "../../../components/VisuallyHiddenInput";
 import React from "react";
 import { useParams } from "react-router-dom";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import axios from "axios";
 export const DocumentStudent = () => {
   const { fileId, reportId } = useParams();
@@ -29,7 +29,7 @@ export const DocumentStudent = () => {
   };
   const handleRemoveImage = () => {
     axios
-      .delete(apiEndpointLocal + path.file.delete + selectedImg)
+      .delete(apiEndpointStaging + path.file.delete + selectedImg)
       .then((response) => {
         setSelectedImg("");
       })
@@ -44,7 +44,7 @@ export const DocumentStudent = () => {
     });
     files.append("reportId", reportId);
     await axios
-      .post(apiEndpointLocal + path.file.uploadImages, files)
+      .post(apiEndpointStaging + path.file.uploadImages, files)
       .then((response) => setIsUploadedImages(true))
       .catch((err) => console.log(err));
   };
@@ -54,7 +54,7 @@ export const DocumentStudent = () => {
       type: "image",
     };
     const response = await axios.post(
-      apiEndpointLocal + path.fileReport.loadImages,
+      apiEndpointStaging + path.fileReport.loadImages,
       data
     );
     if (response.data === "") {

@@ -23,7 +23,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import TabPanel from "@mui/lab/TabPanel";
 import { Options } from "../../../helpers/contanst";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { TopicTabPanelList } from "../TopicTabPanelList";
 //
 export const TopicList = () => {

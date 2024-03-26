@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../helpers/apiEndpoints";
 import { Box, Paper, Typography } from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import { Link } from "react-router-dom";
@@ -9,7 +9,7 @@ export const TopicTabPanelList = () => {
   const [topics, setTopics] = React.useState(undefined);
   React.useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.students.topics)
+      .get(apiEndpointStaging + path.students.topics)
       .then((response) => setTopics(response.data))
       .catch((err) => console.log(err));
   }, []);

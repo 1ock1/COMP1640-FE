@@ -5,7 +5,7 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { apiEndpointLocal, path } from "../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 import axios from "axios";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Checkbox from "@mui/material/Checkbox";

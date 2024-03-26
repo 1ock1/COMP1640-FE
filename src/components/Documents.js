@@ -1,7 +1,7 @@
 import "../helpers/document.css";
 import React, { useState } from "react";
 import { Box, Button } from "@mui/material";
-import { apiEndpointLocal, path } from "../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 import axios from "axios";
 import {
   DocumentEditorContainerComponent,
@@ -24,7 +24,7 @@ export const Document = ({ id }) => {
       formData.append("name", file);
       formData.append("data", exportedDocument);
       let req = new XMLHttpRequest();
-      req.open("POST", apiEndpointLocal + path.file.save, true);
+      req.open("POST", apiEndpointStaging + path.file.save, true);
       req.onreadystatechange = () => {
         if (req.readyState === 4) {
           if (req.status === 200) {
@@ -39,7 +39,7 @@ export const Document = ({ id }) => {
   const loadSfdt = () => {
     const file = id + ".docx";
     axios
-      .get(apiEndpointLocal + path.file.load + file)
+      .get(apiEndpointStaging + path.file.load + file)
       .then((response) => {
         container.documentEditor.open(response.data);
       })
@@ -53,7 +53,7 @@ export const Document = ({ id }) => {
     formData.append("studentId", 1);
     formData.append("topicId", 1);
     const response = await axios.post(
-      apiEndpointLocal + path.file.upload,
+      apiEndpointStaging + path.file.upload,
       formData,
       {
         headers: {
@@ -65,7 +65,7 @@ export const Document = ({ id }) => {
   };
   // const handleRemoveFile = () => {
   //   axios
-  //     .delete(apiEndpointLocal + path.file.delete + "hehe.docx")
+  //     .delete(apiEndpointStaging + path.file.delete + "hehe.docx")
   //     .then((response) => console.log(response.data))
   //     .catch((err) => console.log(err));
   // };
