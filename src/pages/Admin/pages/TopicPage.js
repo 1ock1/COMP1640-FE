@@ -35,22 +35,22 @@ const TopicManagementPage = () => {
   // Add Topic
   const [newTopic, setNewTopic] = useState("");
   const [newDescription, setNewDescription] = useState("");
-// date of Topic
+  // date of Topic
   const [entriesDatez, setEntriesDatez] = useState("");
   const [finalDatez, setFinalDatez] = useState("");
-// all Topics
+  // all Topics
   const [topics, setTopics] = useState([]);
 
   // Faculties
   const [faculties, setFaculties] = useState([]);
   const [faculty, setFaculty] = useState("");
-// Academics
+  // Academics
   const [academics, setAcademics] = useState([]);
   const [academic, setAcademic] = useState("");
-// Academic Year
+  // Academic Year
   const [academicStartDate, setAcademicStartDate] = useState("");
   const [academicEndDate, setAcademicEndDate] = useState("");
-// Fields Disabled
+  // Fields Disabled
   const [isFieldsDisabled, setIsFieldsDisabled] = useState(true);
 
   // update State
@@ -386,27 +386,7 @@ const TopicManagementPage = () => {
                 />
 
                 <Box display={"flex"} justifyContent={"space-between"}>
-                  <Autocomplete
-                    disablePortal
-                    id="combo-box-demo"
-                    options={academics.map(
-                      (option) => option.startDate.toString().split("T")[0]
-                    )}
-                    sx={{ width: 251 }}
-                    onChange={(event, value) => {
-                      handleFildChange(value);
-                    }}
-                    renderInput={(params) => (
-                      <TextField
-                        label="Academic"
-                        margin="normal"
-                        name="academic"
-                        value={academicStartDate}
-                        type={academicStartDate === "" ? "text" : "date"}
-                        {...params}
-                      />
-                    )}
-                  />
+             
                   {/* <Box width={52} /> */}
                   <TextField
                     sx={{ width: 251 }}
