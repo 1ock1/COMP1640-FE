@@ -386,7 +386,27 @@ const TopicManagementPage = () => {
                 />
 
                 <Box display={"flex"} justifyContent={"space-between"}>
-             
+                  <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={academics.map(
+                      (option) => option.startDate.toString().split("T")[0]
+                    )}
+                    sx={{ width: 251 }}
+                    onChange={(event, value) => {
+                      handleFildChange(value);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Academic"
+                        margin="normal"
+                        name="academic"
+                        value={academicStartDate}
+                        type={academicStartDate === "" ? "text" : "date"}
+                        {...params}
+                      />
+                    )}
+                  />
                   {/* <Box width={52} /> */}
                   <TextField
                     sx={{ width: 251 }}
