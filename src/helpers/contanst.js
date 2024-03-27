@@ -12,31 +12,46 @@ export const Options = {
       link: "/admin/signup",
     },
     {
-      value: "Accounts Managements",
+      value: "Accounts",
       link: "/admin/accounts",
     },
     {
-      value: "Falcuty Management",
-      link: "/admin/falcutys",
+      value: "Falcuty",
+      link: "/admin/falcuty",
     },
     {
-      value: "Topic Management",
+      value: "Topic",
       link: "/admin/topics",
     },
     {
-      value: "Academic Management",
+      value: "Academic",
       link: "/admin/academics",
     },
   ],
-  guest: [],
+  guest: [
+    {
+      value: "Home",
+      link: "/guest",
+    },
+  ],
   student: [
     {
       value: "Home",
       link: "/student",
     },
   ],
-  marketingCoordinator: [],
-  marketingManager: [],
+  marketingCoordinator: [
+    {
+      value: "Home",
+      link: "/coordinator",
+    },
+  ],
+  marketingManager: [
+    {
+      value: "Home",
+      link: "/manager",
+    },
+  ],
 };
 
 // DateTime format

@@ -35,6 +35,9 @@ import {
 import { HomePage } from "./HomePage";
 import { SignOut } from "./Authen/SignOut";
 import { Notifications } from "../components/Notification";
+import { AppBarCoordinator } from "./Coordinator/components/AppBarCoordinator";
+import { AppBarManager } from "./Manager/components/AppBarManager";
+import { AppBarGuest } from "./Guest/components/AppBarGuest";
 
 const MainPage = () => {
   const [anchorElNoti, setAnchorElNoti] = React.useState(null);
@@ -219,6 +222,9 @@ const MainPage = () => {
         </Routes>
         <AppBarAdmin />
         <AppBarStudent />
+        <AppBarCoordinator />
+        <AppBarManager />
+        <AppBarGuest />
       </BrowserRouter>
       <Footer />
     </>
