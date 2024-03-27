@@ -18,7 +18,7 @@ export const path = {
     loadImages: "api/FileReport/GetDocumentImages",
   },
   students: {
-    topics: "api/Topic/GetAllTopic",
+    topics: "api/Topic/GetTopicsByAcademicAndFalcuty",
     getTopicId: "api/Topic/GetTopicById?id=",
     checkIsSubmitted: "api/File/IsReportSubmitted",
     getDocumentId: "api/FileReport/GetDocumentId?reportId=",

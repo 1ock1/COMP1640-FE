@@ -18,6 +18,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 import axios from "axios";
+import { ListComment } from "../../../components/ListComment";
+import { AddComment } from "../../../components/AddComment";
 export const DocumentStudent = () => {
   const { fileId, reportId } = useParams();
   const [fileList, setFileList] = React.useState([]);
@@ -196,6 +198,19 @@ export const DocumentStudent = () => {
               Remove Image
             </Button>
           </Box>
+        </Grid>
+      </Grid>
+      <Grid container spacing={0} mt={3} mb={5}>
+        <Grid item xs={9}>
+          <Box>
+            <AddComment />
+          </Box>
+          <Box mb={2} mt={5}>
+            <Typography variant="h5">Comment</Typography>
+            <Divider />
+          </Box>
+
+          <ListComment />
         </Grid>
       </Grid>
     </Container>
