@@ -38,7 +38,7 @@ const AcademicPage = () => {
 
   useEffect(() => {
     axios
-      .get("https://localhost:7044/api/Academic")
+      .get("https://localhost:7044/api/Academic/GetAllAcademic")
       .then((response) => {
         setAcademicYears(response.data);
       })
@@ -48,7 +48,6 @@ const AcademicPage = () => {
   }, []);
 
   // console.log(academicYears.startDate.getFullYear());
-
 
   const handleEtriDatesChange = (entriDate) => {
     let date = new Date(entriDate);
@@ -125,7 +124,7 @@ const AcademicPage = () => {
 
   return (
     <>
-      <Container maxWidth="lg">
+      <Container maxWidth="xl">
         <Button
           style={{ float: "right", margin: "1rem" }}
           variant="contained"

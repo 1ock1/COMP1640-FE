@@ -96,7 +96,9 @@ const TopicManagementPage = () => {
 
   const fetchAcademic = async () => {
     try {
-      const response = await axios.get("https://localhost:7044/api/Academic");
+      const response = await axios.get(
+        "https://localhost:7044/api/Academic/GetAllAcademic"
+      );
       setAcademics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);

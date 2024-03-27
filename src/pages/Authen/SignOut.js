@@ -1,23 +1,25 @@
 import { Button } from "@mui/material";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
-import { Logout } from "@mui/icons-material";
-
-export const SignOut = ({ setUserTab, setIsSigned, setOptions }) => {
+import { MenuItem, Typography } from "@mui/material";
+export const SignOut = ({
+  setUserTab,
+  setIsSigned,
+  setOptions,
+  setCloseDropDown,
+}) => {
   const navigate = useNavigate();
   const handleLogOUt = () => {
     setUserTab("");
     setIsSigned(false);
     setOptions([]);
     Cookies.remove("us");
+    setCloseDropDown(null);
     navigate("/");
   };
   return (
-    <Button
-      style={{ backgroundColor: "red", color: "white" }}
-      onClick={handleLogOUt}
-    >
-      Logout <Logout />
-    </Button>
+    <MenuItem onClick={handleLogOUt}>
+      <Typography textAlign="center">Logout</Typography>
+    </MenuItem>
   );
 };
