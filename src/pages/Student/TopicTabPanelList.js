@@ -5,9 +5,23 @@ import { Box, Paper, Typography } from "@mui/material";
 import ArticleIcon from "@mui/icons-material/Article";
 import { Link } from "react-router-dom";
 import { CircularProgress } from "@mui/material";
+import Cookies from "js-cookie";
+import { jwtDecode } from "jwt-decode";
+import { useNavigate } from "react-router-dom";
 export const TopicTabPanelList = () => {
+  const navigate = useNavigate();
   const [topics, setTopics] = React.useState(undefined);
   React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    if (cookie === undefined) {
+      navigate("/signin");
+      return;
+    }
+    const decoded = jwtDecode(cookie);
+    const data = {
+      academicId: 1,
+      falcutyId: parseInt(decoded["falcutyId"]),
+    };
     axios
       .get(apiEndpointStaging + path.students.topics)
       .then((response) => setTopics(response.data))
