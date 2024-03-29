@@ -1,12 +1,12 @@
 import { Routes, Route, Link } from "react-router-dom";
 import React from "react";
 import { Options } from "../../../helpers/contanst";
-import { Dashboard } from "../pages/Dashboard";
+import CoordinatorDashboard from "../pages/Dashboard";
 export const AppBarCoordinator = () => {
   return (
     <>
       <Routes>
-        <Route path="/coordinator" element={<Dashboard />} />
+        <Route path="/coordinator" element={<CoordinatorDashboard />} />
       </Routes>
     </>
   );
