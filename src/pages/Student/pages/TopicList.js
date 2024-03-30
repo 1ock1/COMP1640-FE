@@ -14,25 +14,37 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  FormControl,
+  NativeSelect,
 } from "@mui/material";
-import { Link } from "react-router-dom";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
-import ArticleIcon from "@mui/icons-material/Article";
 import TabPanel from "@mui/lab/TabPanel";
-import { Options } from "../../../helpers/contanst";
 import axios from "axios";
-import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
-import { TopicTabPanelList } from "../TopicTabPanelList";
+import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { TopicTabPanelList } from "../components/TopicTabPanelList";
+import { FormateDate } from "../../../helpers/utils";
 //
 export const TopicList = () => {
   const [value, setValue] = React.useState("1");
-
+  const [falcuties, setFalcuties] = React.useState(undefined);
+  const [academics, setAcademics] = React.useState(undefined);
+  const [selectedFalcuty, setSelectedFalcuty] = React.useState(-1);
+  const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
 
+  React.useEffect(() => {
+    axios
+      .get(apiEndpointLocal + path.falcuty.getall)
+      .then((rep) => setFalcuties(rep.data));
+    axios
+      .get(apiEndpointLocal + path.academic.getall)
+      .then((rep) => setAcademics(rep.data));
+  }, []);
+  console.log(academics);
   return (
     <>
       <div
@@ -84,25 +96,56 @@ export const TopicList = () => {
         </Box>
       </div>
       <Container maxWidth="xl" style={{ marginTop: 20 }}>
+        <FormControl style={{ width: 250 }}>
+          <Typography variant="h8">Academic Year</Typography>
+          <NativeSelect
+            defaultChecked={1}
+            inputProps={{
+              name: "age",
+              id: "uncontrolled-native",
+            }}
+            onChange={(event) => setSelectedAcademic(event.target.value)}
+          >
+            {academics?.map((obj, index) => {
+              console.log(obj);
+              const startDate = new Date(obj.startDate);
+              const startDateFormatted = FormateDate(startDate);
+              const endDate = new Date(obj.endDate);
+              const endDateFormatted = FormateDate(endDate);
+              return (
+                <option key={index} value={obj.id}>
+                  {startDateFormatted + " - " + endDateFormatted}
+                </option>
+              );
+            })}
+          </NativeSelect>
+        </FormControl>
         <Grid container spacing={0}>
           <Grid xs={9}>
             <Box sx={{ width: "100%", typography: "body1" }}>
               <TabContext value={value}>
-                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                <Box
+                  sx={{
+                    borderBottom: 1,
+                    borderColor: "divider",
+                    marginRight: 3,
+                  }}
+                >
                   <TabList
                     onChange={handleChange}
                     aria-label="lab API tabs example"
                   >
                     <Tab label="Topic" value="1" />
                     <Tab label="Your Submission" value="2" />
-                    <Tab label="New Published Report" value="3" />
                   </TabList>
                 </Box>
                 <TabPanel value="1">
-                  <TopicTabPanelList />
+                  <TopicTabPanelList
+                    falcutyId={selectedFalcuty}
+                    academicId={selectedAcademic}
+                  />
                 </TabPanel>
                 <TabPanel value="2">Your Submission</TabPanel>
-                <TabPanel value="3">New Published Report</TabPanel>
               </TabContext>
             </Box>
           </Grid>
@@ -121,24 +164,19 @@ export const TopicList = () => {
 
                 <Box maxWidth role="presentation">
                   <List>
-                    {Options.student?.map((obj, index) => (
+                    {falcuties?.map((obj, index) => (
                       <ListItem
-                        key={index}
+                        key={obj.id}
                         disablePadding
                         style={{ display: "block" }}
+                        onClick={() => setSelectedFalcuty(obj.id)}
                       >
-                        <Link
-                          to={obj.link}
-                          className="nav_header-link"
-                          style={{ textDecoration: "none", color: "black" }}
-                        >
-                          <ListItemButton>
-                            <ListItemIcon>
-                              <InboxIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={obj.value} />
-                          </ListItemButton>
-                        </Link>
+                        <ListItemButton>
+                          <ListItemIcon>
+                            <InboxIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={obj.name} />
+                        </ListItemButton>
                       </ListItem>
                     ))}
                   </List>

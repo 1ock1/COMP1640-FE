@@ -25,6 +25,7 @@ import {
   Paper,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
+import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 
 const theme = createTheme();
 
@@ -68,9 +69,7 @@ const TopicManagementPage = () => {
 
   const fetchTopics = async () => {
     try {
-      const response = await axios.get(
-        "https://localhost:7044/api/Topic/GetAllTopic"
-      );
+      const response = await axios.get(apiEndpointLocal + path.topic.getall);
       setTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -83,7 +82,7 @@ const TopicManagementPage = () => {
 
   const fetchFalcuty = async () => {
     try {
-      const response = await axios.get("https://localhost:7044/api/Faculty");
+      const response = await axios.get(apiEndpointLocal + path.falcuty.getall);
       setFaculties(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -96,9 +95,7 @@ const TopicManagementPage = () => {
 
   const fetchAcademic = async () => {
     try {
-      const response = await axios.get(
-        "https://localhost:7044/api/Academic/GetAllAcademic"
-      );
+      const response = await axios.get(apiEndpointLocal + path.academic.getall);
       setAcademics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -108,7 +105,7 @@ const TopicManagementPage = () => {
   const handleAddTopic = () => {
     axios({
       method: "post",
-      url: "https://localhost:7044/api/Topic/CreateTopic",
+      url: apiEndpointLocal + path.topic.create,
       data: {
         name: newTopic,
         description: newDescription,
@@ -154,7 +151,7 @@ const TopicManagementPage = () => {
 
   const handleDeleteTopic = (index) => {
     axios
-      .delete(`https://localhost:7044/api/Topic/DeleteTopic?id=${index}`, {
+      .delete(apiEndpointLocal + path.topic.delete + index, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -178,7 +175,7 @@ const TopicManagementPage = () => {
 
   const handleEditTopic = async (index) => {
     try {
-      const url = `https://localhost:7044/api/Topic/UpdateTopic?id=${index}`; // Use template literals for safer URLs
+      const url = apiEndpointLocal + path.topic.update + index;
       const response = await axios.put(url, {
         name: selectedName,
         description: selectedDescription,

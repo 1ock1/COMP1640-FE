@@ -26,6 +26,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { set } from "react-hook-form";
+import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 
 const theme = createTheme();
 
@@ -45,7 +46,7 @@ const FacultyManagementPage = () => {
 
   useEffect(() => {
     axios
-      .get("https://localhost:7044/api/Faculty")
+      .get(apiEndpointLocal + path.falcuty.getall)
       .then((response) => {
         setFaculties(response.data);
       })
@@ -56,7 +57,7 @@ const FacultyManagementPage = () => {
 
   const handleAddFaculty = () => {
     axios
-      .post("https://localhost:7044/api/Faculty", {
+      .post(apiEndpointLocal + path.falcuty.create, {
         name: newFacultyName,
         status: newStatus,
       })
@@ -87,17 +88,19 @@ const FacultyManagementPage = () => {
     console.log(updateStatus);
     console.log(selectedRow);
     axios
-      .put(`https://localhost:7044/api/Faculty/${index.id}`, {
+      .put(apiEndpointLocal + path.falcuty.update + index.id, {
         name: updateName,
         status: updateStatus,
       })
       .then((response) => {
-      setFaculties(
-        faculties.map((faculty) =>
-          faculty.id === index.id ? { ...faculty, name: updateName, status: updateStatus } : faculty
-        )
-      );
-      
+        setFaculties(
+          faculties.map((faculty) =>
+            faculty.id === index.id
+              ? { ...faculty, name: updateName, status: updateStatus }
+              : faculty
+          )
+        );
+
         setUpdateName("");
         setUpdateStatus(true);
         setSelectedRow("");
@@ -215,7 +218,11 @@ const FacultyManagementPage = () => {
                   type="text"
                   fullWidth
                   value={editingFaculty ? updateName : newFacultyName}
-                  onChange={(e) => editingFaculty ? setUpdateName(e.target.value) : setNewFacultyName(e.target.value)}
+                  onChange={(e) =>
+                    editingFaculty
+                      ? setUpdateName(e.target.value)
+                      : setNewFacultyName(e.target.value)
+                  }
                 />
                 <Box sx={{ height: "1rem" }}></Box>
 

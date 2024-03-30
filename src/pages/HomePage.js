@@ -20,5 +20,5 @@ export const HomePage = ({ auth }) => {
     }
   }, [auth]);
 
-  return <>THIS IS HOME PAGE AND YOU NEED TO DESIGN IT</>;
+  return <></>;
 };

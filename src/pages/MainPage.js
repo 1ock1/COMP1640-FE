@@ -35,9 +35,15 @@ import {
 import { HomePage } from "./HomePage";
 import { SignOut } from "./Authen/SignOut";
 import { Notifications } from "../components/Notification";
-import { AppBarCoordinator } from "./Coordinator/components/AppBarCoordinator";
-import { AppBarManager } from "./Manager/components/AppBarManager";
-import { AppBarGuest } from "./Guest/components/AppBarGuest";
+import {
+  AppBarCoordinator,
+  AppLinkCoordinator,
+} from "./Coordinator/components/AppBarCoordinator";
+import {
+  AppBarManager,
+  AppLinkManager,
+} from "./Manager/components/AppBarManager";
+import { AppBarGuest, AppLinkGuest } from "./Guest/components/AppBarGuest";
 
 const MainPage = () => {
   const [anchorElNoti, setAnchorElNoti] = React.useState(null);
@@ -64,6 +70,7 @@ const MainPage = () => {
   };
 
   const handleCloseNoti = () => {
+    console.log("closed");
     setAnchorElNoti(null);
   };
   React.useEffect(() => {
@@ -109,6 +116,10 @@ const MainPage = () => {
                   <AppLinkStudent />
                 ) : userTab === "ADMIN" ? (
                   <AppLinkAdmin />
+                ) : userTab === "COORDINATOR" ? (
+                  <AppLinkCoordinator />
+                ) : userTab === "GUEST" ? (
+                  <AppLinkGuest />
                 ) : (
                   ""
                 )}
@@ -138,7 +149,7 @@ const MainPage = () => {
                     style={{ marginRight: 20 }}
                     onClick={handleOpenNoti}
                   >
-                    <Badge badgeContent={17} color="error">
+                    <Badge badgeContent={1} color="error">
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>

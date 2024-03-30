@@ -17,15 +17,22 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { TermPolicy } from "../../../components/TermPolicy";
+import { FormateDate } from "../../../helpers/utils";
 export const TopicStudent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
+  const [isAllowedTopic, setAllowedTopic] = React.useState(false);
   const [onAccept, setAccept] = React.useState(false);
   const [reportId, setReportId] = React.useState(-1);
   const [documentId, setDocumentId] = React.useState("");
   const [topicInfor, setTopicInfor] = React.useState({});
   const [isSubmmited, setSubmiited] = React.useState(false);
+  const [buttonControl, setButtonControl] = React.useState();
+  const [topicDate, setTopicDate] = React.useState({
+    entriesDate: "",
+    finalDate: "",
+  });
   const handleUpload = async (event) => {
     const cookie = Cookies.get("us");
     if (cookie === undefined) {
@@ -60,6 +67,20 @@ export const TopicStudent = () => {
       return;
     }
     const decoded = jwtDecode(cookie);
+    const dataCheckTopicAllowed = {
+      topicId: parseInt(id),
+      falcutyId: decoded["falcutyId"],
+    };
+    axios
+      .post(
+        apiEndpointLocal + path.topic.checkIsTopicAllowed,
+        dataCheckTopicAllowed
+      )
+      .then((rep) => {
+        setAllowedTopic(rep.data);
+        console.log(rep.data);
+      })
+      .then((err) => console.log(err));
     const data = {
       studentId: decoded["usid"],
       topicId: id,
@@ -90,23 +111,93 @@ export const TopicStudent = () => {
         .catch((err) => console.log(err));
     }
   }, [isSubmmited]);
-  // console.log(topicInfor);
-  // console.log(topicInfor.finalDate);
-  // const dateFinal = new Date(topicInfor.finalDate);
-  // const formatFInal = dateFinal.toLocaleDateString().split("T")[0];
-  // console.log(`The date is: ${formatFInal}`);
-  // console.log(topicInfor.entriesDate);
-  // const dateEntries = new Date(topicInfor.entriesDate);
-  // const formatEntries = dateEntries.toLocaleDateString().split("T")[0];
-  // console.log(`The date is: ${formatEntries}`);
-  // const currentDate = new Date();
-  // const formatCurrentDate = currentDate.toLocaleDateString();
-  // console.log(formatCurrentDate);
-  // if (formatCurrentDate < formatFInal) {
-  //   console.log("entries bigger");
-  // } else {
-  //   console.log("final bigger");
-  // }
+  React.useEffect(() => {
+    if (topicInfor !== undefined) {
+      const dateFinal = new Date(topicInfor.finalDate);
+      const formatFinal = FormateDate(dateFinal);
+      const dateEntries = new Date(topicInfor.entriesDate);
+      const formatEntries = FormateDate(dateEntries);
+      const dateTopic = {
+        ...topicDate,
+        entriesDate: formatEntries,
+        finalDate: formatFinal,
+      };
+      setTopicDate(dateTopic);
+    }
+    if (topicInfor !== undefined && isAllowedTopic === true) {
+      const dateFinal = new Date(topicInfor.finalDate);
+      const formatFinal = FormateDate(dateFinal);
+      const dateEntries = new Date(topicInfor.entriesDate);
+      const formatEntries = FormateDate(dateEntries);
+      const currentDate = new Date();
+      const formatCurrentDate = FormateDate(currentDate);
+      const dateTopic = {
+        ...topicDate,
+        entriesDate: formatEntries,
+        finalDate: formatFinal,
+      };
+      setTopicDate(dateTopic);
+      if (formatCurrentDate >= formatEntries && documentId === "") {
+        setButtonControl(
+          <Box>
+            <Alert
+              severity="error"
+              style={{ textAlign: "center", padding: "15px 10px" }}
+            >
+              <Typography>
+                You are out of date to submit to this topic
+              </Typography>
+            </Alert>
+          </Box>
+        );
+      } else if (formatCurrentDate < formatEntries && documentId === "") {
+        setButtonControl(
+          <Box display="flex" width="200px" justifyContent="space-between">
+            <Button variant="outlined" size="large">
+              Back
+            </Button>
+            <TermPolicy
+              open={open}
+              setOpen={setOpen}
+              onAccept={onAccept}
+              setAccept={setAccept}
+              handleUpload={handleUpload}
+            />
+          </Box>
+        );
+      } else if (documentId !== "") {
+        setButtonControl(
+          <Box
+            display="flex"
+            width="250px"
+            justifyContent="space-between"
+            margin="20px 0"
+          >
+            <Link
+              style={{ textDecoration: "none" }}
+              to={
+                "/student/topics/" +
+                id +
+                "/report/" +
+                reportId +
+                "/" +
+                documentId
+              }
+            >
+              <Button
+                variant="outlined"
+                size="large"
+                style={{ backgroundColor: backgroundColor, color: "white" }}
+              >
+                View Submission
+              </Button>
+            </Link>
+          </Box>
+        );
+      }
+    }
+  }, [topicInfor, documentId, isAllowedTopic]);
+
   return (
     <Container maxWidth="xl">
       <Paper
@@ -120,10 +211,7 @@ export const TopicStudent = () => {
           Topic:{topicInfor.name}
         </Typography>
         <Box display="flex" pb={2}>
-          <Typography variant="h6" fontWeight={600}>
-            Academic Year: 2015 - 2016
-          </Typography>
-          <Typography paddingLeft={11.5} variant="h6" fontWeight={600}>
+          <Typography paddingLeft={0.5} variant="h6" fontWeight={600}>
             Falcuty: Information Technology
           </Typography>
         </Box>
@@ -135,7 +223,7 @@ export const TopicStudent = () => {
         </Box>
         <Box display="flex" mt={2} pb={2}>
           <Typography variant="h6" color="#1565c0" fontWeight={600}>
-            Entries Date: 01/01/2022
+            Entries Date: {topicDate?.entriesDate}
           </Typography>
           <Typography
             paddingLeft={15}
@@ -143,56 +231,11 @@ export const TopicStudent = () => {
             color="#c62828"
             fontWeight={600}
           >
-            Final Closure Date: 03/03/2022
+            Final Closure Date: {topicDate?.finalDate}
           </Typography>
         </Box>
       </Paper>
-      {documentId === "" && (
-        <Box display="flex" width="200px" justifyContent="space-between">
-          <Button variant="outlined" size="large">
-            Back
-          </Button>
-          <TermPolicy
-            open={open}
-            setOpen={setOpen}
-            onAccept={onAccept}
-            setAccept={setAccept}
-            handleUpload={handleUpload}
-          />
-        </Box>
-      )}
-      {documentId !== "" && (
-        <Box
-          display="flex"
-          width="250px"
-          justifyContent="space-between"
-          margin="20px 0"
-        >
-          <Link
-            style={{ textDecoration: "none" }}
-            to={
-              "/student/topics/" + id + "/report/" + reportId + "/" + documentId
-            }
-          >
-            <Button
-              variant="outlined"
-              size="large"
-              style={{ backgroundColor: backgroundColor, color: "white" }}
-            >
-              View Submission
-            </Button>
-          </Link>
-        </Box>
-      )}
-
-      <Box>
-        <Alert
-          severity="error"
-          style={{ textAlign: "center", padding: "15px 10px" }}
-        >
-          <Typography>You are out of date to submit to this topic</Typography>
-        </Alert>
-      </Box>
+      {buttonControl}
       <Box padding="20px 0px">
         <Typography variant="h5" color={backgroundColor} fontWeight={600}>
           Published Report

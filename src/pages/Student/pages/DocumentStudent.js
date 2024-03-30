@@ -20,12 +20,15 @@ import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import axios from "axios";
 import { ListComment } from "../../../components/ListComment";
 import { AddComment } from "../../../components/AddComment";
+import { FormateDate } from "../../../helpers/utils";
 export const DocumentStudent = () => {
-  const { fileId, reportId } = useParams();
+  const { fileId, reportId, id } = useParams();
   const [fileList, setFileList] = React.useState([]);
   const [isUploadedImages, setIsUploadedImages] = React.useState(false);
   const [isLoadedImages, setIsLoadedImages] = React.useState(false);
   const [selectedImg, setSelectedImg] = React.useState("");
+  const [topicInfor, setTopicInfor] = React.useState({});
+  const [isAllowedUpdateReport, setAllowedUpateReport] = React.useState(true);
   const handleImageSelected = (event) => {
     setSelectedImg(event.target.alt);
   };
@@ -68,6 +71,9 @@ export const DocumentStudent = () => {
   };
   React.useEffect(() => {
     handleLoadImages();
+    axios
+      .get(apiEndpointLocal + path.students.getTopicId + id)
+      .then((response) => setTopicInfor(response.data));
   }, []);
   React.useEffect(() => {
     if (isUploadedImages === true) {
@@ -80,6 +86,20 @@ export const DocumentStudent = () => {
       handleLoadImages();
     }
   }, [selectedImg]);
+  React.useEffect(() => {
+    if (topicInfor !== undefined) {
+      const dateFinal = new Date(topicInfor.finalDate);
+      const formatFinal = FormateDate(dateFinal);
+      const currentDate = new Date();
+      const formatCurrentDate = FormateDate(currentDate);
+      if (formatCurrentDate < formatFinal) {
+        setAllowedUpateReport(true);
+      } else if (formatCurrentDate > formatFinal) {
+        setAllowedUpateReport(false);
+      }
+    }
+  }, [topicInfor]);
+  console.log(fileList.length);
   return (
     <Container maxWidth="xl">
       <Paper
@@ -138,7 +158,11 @@ export const DocumentStudent = () => {
       </Paper>
       <Grid container spacing={0}>
         <Grid item xs={9}>
-          {fileList === undefined ? "" : <Document id={fileId} />}
+          {fileList === undefined ? (
+            ""
+          ) : (
+            <Document id={fileId} allowedAction={isAllowedUpdateReport} />
+          )}
         </Grid>
         <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
           <Divider orientation="vertical" />
@@ -170,33 +194,40 @@ export const DocumentStudent = () => {
             </ImageList>
           </Box>
           <Box display="block">
-            <Button
-              component="label"
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-              fullWidth
-              style={{
-                marginBottom: 15,
-              }}
-            >
-              Upload Image
-              <VisuallyHiddenInput
-                type="file"
-                accept="image/*"
-                multiple
-                onChange={handleFileChange}
-              />
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              fullWidth
-              disabled={selectedImg === "" ? true : false}
-              onClick={handleRemoveImage}
-            >
-              Remove Image
-            </Button>
+            {isAllowedUpdateReport === true ? (
+              <>
+                <Button
+                  component="label"
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  fullWidth
+                  style={{
+                    marginBottom: 15,
+                  }}
+                  disabled={fileList?.length === 10 ? true : false}
+                >
+                  Upload Image
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={handleFileChange}
+                  />
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  fullWidth
+                  disabled={selectedImg === "" ? true : false}
+                  onClick={handleRemoveImage}
+                >
+                  Remove Image
+                </Button>
+              </>
+            ) : (
+              ""
+            )}
           </Box>
         </Grid>
       </Grid>

@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { authRole, login } from "../actions/UserActions";
+import { authRole, login, loginSelectedRole } from "../actions/UserActions";
 import { jwtDecode } from "jwt-decode";
 import Cookies from "js-cookie";
 const builderCase = (builder, func) => {
@@ -40,6 +40,23 @@ export const User = createSlice({
         state.role = decoded["role"];
       })
       .addCase(login.rejected, (state, action) => {
+        state.isStatusLogin = "failed";
+        state.messageStatus = "Email or password is wrong";
+        state.role = "";
+        state.error = action.error.message;
+      });
+    builder
+      .addCase(loginSelectedRole.pending, (state) => {
+        state.isStatusLogin = "loading";
+      })
+      .addCase(loginSelectedRole.fulfilled, (state, action) => {
+        state.isStatusLogin = "succeeded";
+        state.loginResult = action.payload;
+        const cookie = Cookies.get("us");
+        const decoded = jwtDecode(cookie);
+        state.role = decoded["role"];
+      })
+      .addCase(loginSelectedRole.rejected, (state, action) => {
         state.isStatusLogin = "failed";
         state.messageStatus = "Email or password is wrong";
         state.role = "";
