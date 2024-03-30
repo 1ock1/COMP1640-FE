@@ -12,7 +12,12 @@ import {
 import { useForm } from "react-hook-form";
 import { backgroundColor } from "../../helpers/constantColor";
 import { useDispatch, useSelector } from "react-redux";
-import { checkAuth, login } from "../../actions/UserActions";
+import {
+  checkAuth,
+  login,
+  checkMultipleRole,
+  loginSelectedRole,
+} from "../../actions/UserActions";
 import { SHA256 } from "crypto-js";
 import { isStatusLogin, messageStatus } from "../../slices/userSlices";
 import { useNavigate } from "react-router-dom";
@@ -23,10 +28,16 @@ import { CircularProgress } from "@mui/material";
 import { Options } from "../../helpers/contanst";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signInSchema } from "../../helpers/validator";
+import { SelectedRoleDialog } from "../../components/SelectRoleDialog";
 export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
   const navigate = useNavigate();
   const [message, setMessage] = useState("");
   const isLoading = useSelector(isStatusLogin);
+  const [isSelectedRoleDialogOpen, setDialogOpen] = useState(false);
+  const [account, setAccount] = useState({
+    email: "",
+    password: "",
+  });
   const loginMessage = useSelector(messageStatus);
   const dispatch = useDispatch();
   const {
@@ -41,7 +52,29 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
       email: values.email,
       password: SHA256(values.password).toString(),
     };
-    dispatch(login(infr));
+    const updateAccount = {
+      ...account,
+      email: values.email,
+      password: SHA256(values.password).toString(),
+    };
+    setAccount(updateAccount);
+    checkMultipleRole(infr).then((response) => {
+      if (response.data === true) {
+        setDialogOpen(true);
+      } else {
+        console.log("check login for single role");
+        dispatch(login(infr));
+      }
+    });
+  };
+  const handleLoginSelectedRole = (values) => {
+    const data = {
+      email: account.email,
+      password: account.password,
+      roleSelected: values,
+    };
+    setDialogOpen(false);
+    dispatch(loginSelectedRole(data));
   };
   useEffect(() => {
     const cookie = Cookies.get("us");
@@ -146,6 +179,11 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
           >
             Sign In {isLoading === "loading" && <CircularProgress size={20} />}
           </Button>
+          <SelectedRoleDialog
+            open={isSelectedRoleDialogOpen}
+            setOpen={setDialogOpen}
+            onClose={handleLoginSelectedRole}
+          />
           <Grid container>
             <Grid item xs>
               <Link href="#" variant="body2">

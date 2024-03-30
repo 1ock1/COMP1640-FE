@@ -40,13 +40,17 @@ export const Options = {
       link: "/student",
     },
   ],
-  marketingCoordinator: [
+  coordinator: [
     {
       value: "Home",
       link: "/coordinator",
     },
+    {
+      value: "Topics",
+      link: "/coordinator/topics",
+    },
   ],
-  marketingManager: [
+  manager: [
     {
       value: "Home",
       link: "/manager",

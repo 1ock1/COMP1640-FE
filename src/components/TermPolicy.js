@@ -58,8 +58,8 @@ export const TermPolicy = ({
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button color="error" variant="contained" onClick={handleClose}>
-              Disagree
+            <Button variant="outlined" onClick={handleClose}>
+              Cancel
             </Button>
             <Button
               component="label"

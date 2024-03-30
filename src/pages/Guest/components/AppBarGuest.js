@@ -12,7 +12,7 @@ export const AppBarGuest = () => {
   );
 };
 
-export const AppGuestManager = () => {
+export const AppLinkGuest = () => {
   const NavLink = (
     <>
       {Options.guest?.map((obj, index) => (

@@ -12,9 +12,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 DocumentEditorContainerComponent.Inject(Toolbar);
 
-export const Document = ({ id }) => {
+export const Document = ({ id, allowedAction }) => {
   const [isDocumentChange, setDocumentChange] = React.useState(false);
-
+  const [isUpdatedNewFile, setUpdatedNewFile] = React.useState(false);
   let container;
   async function save() {
     const file = id + ".docx";
@@ -45,15 +45,13 @@ export const Document = ({ id }) => {
       })
       .catch((error) => {});
   };
-  const handleUpload = async (event) => {
+  const handleUpdateFile = async (event) => {
     const file = event.target.files[0];
     const formData = new FormData();
     formData.append("file", file);
-    formData.append("type", "document");
-    formData.append("studentId", 1);
-    formData.append("topicId", 1);
-    const response = await axios.post(
-      apiEndpointLocal + path.file.upload,
+    formData.append("guid", id);
+    const response = await axios.put(
+      apiEndpointLocal + path.file.update,
       formData,
       {
         headers: {
@@ -62,6 +60,9 @@ export const Document = ({ id }) => {
         },
       }
     );
+    if (response.data === "Uploaded File Successfully") {
+      setUpdatedNewFile(true);
+    }
   };
   // const handleRemoveFile = () => {
   //   axios
@@ -72,6 +73,12 @@ export const Document = ({ id }) => {
   React.useEffect(() => {
     loadSfdt();
   });
+  React.useEffect(() => {
+    if (isUpdatedNewFile === true) {
+      loadSfdt();
+      setUpdatedNewFile(false);
+    }
+  }, [isUpdatedNewFile]);
   return (
     <>
       <DocumentEditorContainerComponent
@@ -94,16 +101,36 @@ export const Document = ({ id }) => {
         zoomFactor={0.8}
       />
       <Box mt={2} mb={2}>
-        <Button
-          variant="contained"
-          style={{
-            marginRight: 20,
-          }}
-          onClick={save}
-          disabled={!isDocumentChange}
-        >
-          Save
-        </Button>
+        {allowedAction === true ? (
+          <>
+            <Button
+              variant="contained"
+              style={{
+                marginRight: 20,
+              }}
+              onClick={save}
+              disabled={!isDocumentChange}
+            >
+              Save
+            </Button>
+            <Button
+              component="label"
+              variant="contained"
+              tabIndex={-1}
+              startIcon={<CloudUploadIcon />}
+            >
+              Update Current File
+              <VisuallyHiddenInput
+                type="file"
+                accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={handleUpdateFile}
+              />
+            </Button>
+          </>
+        ) : (
+          ""
+        )}
+
         {/* <Button
           variant="contained"
           style={{

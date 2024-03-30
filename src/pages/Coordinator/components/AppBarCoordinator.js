@@ -2,11 +2,13 @@ import { Routes, Route, Link } from "react-router-dom";
 import React from "react";
 import { Options } from "../../../helpers/contanst";
 import { Dashboard } from "../pages/Dashboard";
+import { TopicCoordinatorList } from "../pages/TopicCoordinatorList";
 export const AppBarCoordinator = () => {
   return (
     <>
       <Routes>
         <Route path="/coordinator" element={<Dashboard />} />
+        <Route path="/coordinator/topics" element={<TopicCoordinatorList />} />
       </Routes>
     </>
   );
@@ -15,7 +17,7 @@ export const AppBarCoordinator = () => {
 export const AppLinkCoordinator = () => {
   const NavLink = (
     <>
-      {Options.marketingCoordinator?.map((obj, index) => (
+      {Options.coordinator?.map((obj, index) => (
         <Link
           key={index}
           to={obj.link}
