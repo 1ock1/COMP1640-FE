@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { publishedReportSchema } from "../../../helpers/validator";
 import { HelpTextDateWarning } from "../../../components/HelpTextDate";
+import { VietNamDate } from "../../../helpers/utils";
 export const PublishedReportForm = ({
   open,
   onClose,
@@ -31,15 +32,11 @@ export const PublishedReportForm = ({
   });
 
   const onSubmit = (value) => {
-    const today = new Date();
-    const date = today.getDate();
-    const month = today.getMonth() + 1; // Months are zero-based
-    const year = today.getFullYear();
-    const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
+    const currentDate = VietNamDate();
     const data = {
       title: value.title,
       description: value.description,
-      publishedDate: formattedDate,
+      publishedDate: currentDate,
       viewedNumber: 1,
       reportId: reportId,
     };
