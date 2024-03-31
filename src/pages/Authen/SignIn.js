@@ -62,7 +62,6 @@ export default function SignIn({ setIsSigned, setUserTab, setOptions }) {
       if (response.data === true) {
         setDialogOpen(true);
       } else {
-        console.log("check login for single role");
         dispatch(login(infr));
       }
     });

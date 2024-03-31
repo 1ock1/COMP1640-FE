@@ -8,6 +8,7 @@ import {
   Paper,
   Typography,
   Button,
+  Alert,
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import ImageList from "@mui/material/ImageList";
@@ -19,18 +20,41 @@ import { useParams } from "react-router-dom";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import axios from "axios";
 import { ListComment } from "../../../components/ListComment";
-import { AddComment } from "../../../components/AddComment";
 import { FormateDate } from "../../../helpers/utils";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { handleUpdateStatus } from "../../../actions/ReportActions";
 export const DocumentStudent = () => {
+  const navigate = useNavigate();
   const { fileId, reportId, id } = useParams();
   const [fileList, setFileList] = React.useState([]);
   const [isUploadedImages, setIsUploadedImages] = React.useState(false);
   const [isLoadedImages, setIsLoadedImages] = React.useState(false);
+  const [isUpdateReport, setIsUpdateReport] = React.useState(false);
   const [selectedImg, setSelectedImg] = React.useState("");
   const [topicInfor, setTopicInfor] = React.useState({});
   const [isAllowedUpdateReport, setAllowedUpateReport] = React.useState(true);
+  const [finalDate, setFinalDate] = React.useState("");
+  const [comments, setComments] = React.useState(undefined);
   const handleImageSelected = (event) => {
     setSelectedImg(event.target.alt);
+  };
+  const fetchComment = () => {
+    const cookie = Cookies.get("us");
+    if (cookie === undefined) {
+      navigate("/signin");
+      return;
+    }
+    const decoded = jwtDecode(cookie);
+    const data = {
+      publishedReportId: null,
+      reportId: reportId,
+      responseForUserId: parseInt(decoded["usid"]),
+    };
+    axios
+      .post(apiEndpointLocal + path.comment.getReportComment, data)
+      .then((rep) => setComments(rep.data));
   };
   const handleRemoveImage = () => {
     axios
@@ -71,6 +95,7 @@ export const DocumentStudent = () => {
   };
   React.useEffect(() => {
     handleLoadImages();
+    fetchComment();
     axios
       .get(apiEndpointLocal + path.students.getTopicId + id)
       .then((response) => setTopicInfor(response.data));
@@ -87,19 +112,20 @@ export const DocumentStudent = () => {
     }
   }, [selectedImg]);
   React.useEffect(() => {
+    if (isUpdateReport === true) {
+      handleUpdateStatus("Pending", null, reportId, "STUDENT");
+      setIsUpdateReport(false);
+    }
+  }, [isUpdateReport]);
+  React.useEffect(() => {
     if (topicInfor !== undefined) {
       const dateFinal = new Date(topicInfor.finalDate);
       const formatFinal = FormateDate(dateFinal);
       const currentDate = new Date();
-      const formatCurrentDate = FormateDate(currentDate);
-      if (formatCurrentDate < formatFinal) {
-        setAllowedUpateReport(true);
-      } else if (formatCurrentDate > formatFinal) {
-        setAllowedUpateReport(false);
-      }
+      setFinalDate(formatFinal);
+      setAllowedUpateReport(currentDate < dateFinal);
     }
   }, [topicInfor]);
-  console.log(fileList.length);
   return (
     <Container maxWidth="xl">
       <Paper
@@ -161,7 +187,13 @@ export const DocumentStudent = () => {
           {fileList === undefined ? (
             ""
           ) : (
-            <Document id={fileId} allowedAction={isAllowedUpdateReport} />
+            <Document
+              id={fileId}
+              allowedAction={isAllowedUpdateReport}
+              role="STUDENT"
+              setMakeUpdated={setIsUpdateReport}
+              lastDateAction={finalDate}
+            />
           )}
         </Grid>
         <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
@@ -233,15 +265,17 @@ export const DocumentStudent = () => {
       </Grid>
       <Grid container spacing={0} mt={3} mb={5}>
         <Grid item xs={9}>
-          <Box>
-            <AddComment />
-          </Box>
           <Box mb={2} mt={5}>
             <Typography variant="h5">Comment</Typography>
             <Divider />
           </Box>
-
-          <ListComment />
+          {comments?.length === 0 ? (
+            <Alert severity="info">
+              Your coordinator doesnt give any feedback in this report.
+            </Alert>
+          ) : (
+            <ListComment comments={comments} />
+          )}
         </Grid>
       </Grid>
     </Container>

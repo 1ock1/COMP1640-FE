@@ -66,3 +66,5 @@ const year = today.getFullYear();
 export const formattedDate = `${year}-${
   month < 10 ? `0${month}` : month
 }-${date}`;
+
+export const reportStatus = ["Pending", "Editted", "Published"];

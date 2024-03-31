@@ -47,9 +47,6 @@ const AcademicPage = () => {
         console.error("There was an error!", error);
       });
   }, []);
-
-  // console.log(academicYears.startDate.getFullYear());
-
   const handleEtriDatesChange = (entriDate) => {
     let date = new Date(entriDate);
     let dateEnd = new Date(endDate);
@@ -178,7 +175,6 @@ const AcademicPage = () => {
                           setSelectedRow(row.id);
                           setAddMode(false);
                           setOpenDialog(true);
-                          console.log(addMode);
                         }}
                       ></EditIcon>
                     }

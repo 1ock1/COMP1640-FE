@@ -44,7 +44,6 @@ export const TopicList = () => {
       .get(apiEndpointLocal + path.academic.getall)
       .then((rep) => setAcademics(rep.data));
   }, []);
-  console.log(academics);
   return (
     <>
       <div
@@ -107,7 +106,6 @@ export const TopicList = () => {
             onChange={(event) => setSelectedAcademic(event.target.value)}
           >
             {academics?.map((obj, index) => {
-              console.log(obj);
               const startDate = new Date(obj.startDate);
               const startDateFormatted = FormateDate(startDate);
               const endDate = new Date(obj.endDate);
