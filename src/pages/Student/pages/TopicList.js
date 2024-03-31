@@ -37,12 +37,14 @@ export const TopicList = () => {
   };
 
   React.useEffect(() => {
-    axios
-      .get(apiEndpointLocal + path.falcuty.getall)
-      .then((rep) => setFalcuties(rep.data));
-    axios
-      .get(apiEndpointLocal + path.academic.getall)
-      .then((rep) => setAcademics(rep.data));
+    axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
+      setSelectedFalcuty(rep.data[0].id);
+      setFalcuties(rep.data);
+    });
+    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+      setSelectedAcademic(rep.data[0].id);
+      setAcademics(rep.data);
+    });
   }, []);
   return (
     <>
