@@ -22,7 +22,7 @@ import {
   Box,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 
 const AcademicPage = () => {
   const [academicYears, setAcademicYears] = useState([]);
@@ -39,7 +39,7 @@ const AcademicPage = () => {
 
   useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.academic.getall)
+      .get(apiEndpointStaging + path.academic.getall)
       .then((response) => {
         setAcademicYears(response.data);
       })
@@ -70,7 +70,7 @@ const AcademicPage = () => {
 
   const handleFill = () => {
     axios
-      .post(apiEndpointLocal + path.academic.create, {
+      .post(apiEndpointStaging + path.academic.create, {
         startDate: entriDate,
         endDate: endDate,
       })
@@ -85,7 +85,7 @@ const AcademicPage = () => {
 
   const handleFillUpdate = (index) => {
     axios
-      .put(apiEndpointLocal + path.academic.update + index, {
+      .put(apiEndpointStaging + path.academic.update + index, {
         startDate: entriDate,
         endDate: endDate,
       })
@@ -106,7 +106,7 @@ const AcademicPage = () => {
 
   const handleDelete = (id) => {
     axios
-      .delete(apiEndpointLocal + path.academic.delete + id, {
+      .delete(apiEndpointStaging + path.academic.delete + id, {
         headers: {
           "Content-Type": "application/json",
         },

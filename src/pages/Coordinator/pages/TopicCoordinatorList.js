@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import { FormateDate } from "../../../helpers/utils";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import {
   Container,
   FormControl,
@@ -23,7 +23,7 @@ export const TopicCoordinatorList = () => {
   const [selectedTopic, setSelectedTopic] = React.useState(-1);
   const [selectStatus, setSelectedStatus] = React.useState("Pending");
   React.useEffect(() => {
-    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);
       setSelectedAcademic(rep.data[0]?.id);
     });
@@ -41,7 +41,7 @@ export const TopicCoordinatorList = () => {
         falcutyId: parseInt(decoded["falcutyId"]),
       };
       axios
-        .post(apiEndpointLocal + path.students.topics, data)
+        .post(apiEndpointStaging + path.students.topics, data)
         .then((response) => {
           setTopics(response.data);
           setSelectedTopic(response.data[0]?.id);
@@ -55,7 +55,7 @@ export const TopicCoordinatorList = () => {
       status: selectStatus,
     };
     axios
-      .post(apiEndpointLocal + path.report.getReportBaseStatus, data)
+      .post(apiEndpointStaging + path.report.getReportBaseStatus, data)
       .then((response) => {
         setReports(response.data);
       });

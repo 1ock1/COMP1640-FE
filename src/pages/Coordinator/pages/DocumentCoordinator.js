@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useParams } from "react-router-dom";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { FormateDate } from "../../../helpers/utils";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
@@ -60,7 +60,7 @@ export const DocumentCoordinator = () => {
   const handleCreatePublishedReport = (data) => {
     if (isPublishReportExisted === false) {
       axios
-        .post(apiEndpointLocal + path.publishedReport.create, data)
+        .post(apiEndpointStaging + path.publishedReport.create, data)
         .then((rep) => {
           handleCheckIfPublishedReportExist();
         });
@@ -70,7 +70,9 @@ export const DocumentCoordinator = () => {
   const handleCheckIfPublishedReportExist = () => {
     axios
       .post(
-        apiEndpointLocal + path.publishedReport.isPublishReportExist + reportId
+        apiEndpointStaging +
+          path.publishedReport.isPublishReportExist +
+          reportId
       )
       .then((rep) => {
         setIsPublishedReportExisted(rep.data);
@@ -83,7 +85,7 @@ export const DocumentCoordinator = () => {
       responseForUserId: reportInfor.studentId,
     };
     axios
-      .post(apiEndpointLocal + path.comment.getReportComment, data)
+      .post(apiEndpointStaging + path.comment.getReportComment, data)
       .then((rep) => setCommentList(rep.data));
   };
   const handleAddComment = () => {
@@ -101,7 +103,7 @@ export const DocumentCoordinator = () => {
       responseForUserId: reportInfor.studentId,
     };
     axios
-      .post(apiEndpointLocal + path.comment.createComment, data)
+      .post(apiEndpointStaging + path.comment.createComment, data)
       .then((rep) => {
         fetchComment();
       });
@@ -137,7 +139,7 @@ export const DocumentCoordinator = () => {
   };
   React.useEffect(() => {
     axios
-      .post(apiEndpointLocal + path.report.getReportInformation + reportId)
+      .post(apiEndpointStaging + path.report.getReportInformation + reportId)
       .then((rep) => {
         setReportInfor(rep.data);
         setTopicId(rep.data.topicId);
@@ -151,7 +153,7 @@ export const DocumentCoordinator = () => {
         }
       });
     axios
-      .post(apiEndpointLocal + path.fileReport.getAllFileReport + reportId)
+      .post(apiEndpointStaging + path.fileReport.getAllFileReport + reportId)
       .then((rep) => {
         const imagesArray = rep.data.filter((obj) => obj.type === "image");
         const document = rep.data.find((obj) => obj.type === "document");
@@ -171,7 +173,7 @@ export const DocumentCoordinator = () => {
         "Your contribution has editted by your coordinator"
       );
       axios
-        .post(apiEndpointLocal + path.notify.createNoti, data)
+        .post(apiEndpointStaging + path.notify.createNoti, data)
         .then((rep) => {
           const data = rep.data;
         });
@@ -186,7 +188,7 @@ export const DocumentCoordinator = () => {
         "Your coordinator has given a new feedback to your contribution"
       );
       axios
-        .post(apiEndpointLocal + path.notify.createNoti, data)
+        .post(apiEndpointStaging + path.notify.createNoti, data)
         .then((rep) => {
           const data = rep.data;
         });
@@ -195,7 +197,7 @@ export const DocumentCoordinator = () => {
   React.useEffect(() => {
     if (topicId !== -1) {
       axios
-        .get(apiEndpointLocal + path.students.getTopicId + topicId)
+        .get(apiEndpointStaging + path.students.getTopicId + topicId)
         .then((response) => {
           const afterDatePublish = new Date(response.data.finalDate);
           const formatAfterDatePublish = FormateDate(afterDatePublish);

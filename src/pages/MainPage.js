@@ -46,7 +46,7 @@ import {
 } from "./Manager/components/AppBarManager";
 import { AppBarGuest, AppLinkGuest } from "./Guest/components/AppBarGuest";
 import { jwtDecode } from "jwt-decode";
-import { apiEndpointLocal, path } from "../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 
 const MainPage = () => {
   const [anchorElNoti, setAnchorElNoti] = React.useState(null);
@@ -89,14 +89,14 @@ const MainPage = () => {
       isRead: false,
     };
     axios
-      .post(apiEndpointLocal + path.notify.getNotification, data)
+      .post(apiEndpointStaging + path.notify.getNotification, data)
       .then((rep) => {
         setNotification(rep.data);
       });
   };
   const handleRemoveReadedNotification = (id) => {
     axios
-      .delete(apiEndpointLocal + path.notify.deleteNotification + id)
+      .delete(apiEndpointStaging + path.notify.deleteNotification + id)
       .then((rep) => setNotifiSelectedStatus(rep.data));
   };
   React.useEffect(() => {

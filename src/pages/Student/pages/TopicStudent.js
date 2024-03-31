@@ -13,8 +13,8 @@ import ArticleIcon from "@mui/icons-material/Article";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 import {
-  apiEndpointLocal,
-  apiFEEndpointLocal,
+  apiEndpointStaging,
+  apiFEEndpointStg,
   path,
 } from "../../../helpers/apiEndpoints";
 import Cookies from "js-cookie";
@@ -51,7 +51,7 @@ export const TopicStudent = () => {
     formData.append("studentId", decoded["usid"]);
     formData.append("topicId", id);
     await axios
-      .post(apiEndpointLocal + path.file.upload, formData, {
+      .post(apiEndpointStaging + path.file.upload, formData, {
         headers: {
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
@@ -64,7 +64,7 @@ export const TopicStudent = () => {
             topic_name: topicInfor.name,
             to_name: coordinatorInfor.name,
             url:
-              apiFEEndpointLocal +
+              apiFEEndpointStg +
               "coordinator/topics/report/" +
               response.data.reportID,
           };
@@ -86,7 +86,7 @@ export const TopicStudent = () => {
     };
     axios
       .post(
-        apiEndpointLocal + path.topic.checkIsTopicAllowed,
+        apiEndpointStaging + path.topic.checkIsTopicAllowed,
         dataCheckTopicAllowed
       )
       .then((rep) => {
@@ -115,7 +115,7 @@ export const TopicStudent = () => {
       role: "COORDINATOR, GUEST",
     };
     axios
-      .post(apiEndpointLocal + path.user.getCoordinatorInfor, dataCoordinator)
+      .post(apiEndpointStaging + path.user.getCoordinatorInfor, dataCoordinator)
       .then((rep) => setCoordinatorInfor(rep.data));
   }, []);
   React.useEffect(() => {

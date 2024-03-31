@@ -53,7 +53,7 @@ export const DocumentStudent = () => {
       responseForUserId: parseInt(decoded["usid"]),
     };
     axios
-      .post(apiEndpointLocal + path.comment.getReportComment, data)
+      .post(apiEndpointStaging + path.comment.getReportComment, data)
       .then((rep) => setComments(rep.data));
   };
   const handleRemoveImage = () => {
@@ -97,7 +97,7 @@ export const DocumentStudent = () => {
     handleLoadImages();
     fetchComment();
     axios
-      .get(apiEndpointLocal + path.students.getTopicId + id)
+      .get(apiEndpointStaging + path.students.getTopicId + id)
       .then((response) => setTopicInfor(response.data));
   }, []);
   React.useEffect(() => {

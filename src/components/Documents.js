@@ -65,7 +65,7 @@ export const Document = ({
     formData.append("file", file);
     formData.append("guid", id);
     const response = await axios.put(
-      apiEndpointLocal + path.file.update,
+      apiEndpointStaging + path.file.update,
       formData,
       {
         headers: {

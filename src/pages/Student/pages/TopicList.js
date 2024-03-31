@@ -22,7 +22,7 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { TopicTabPanelList } from "../components/TopicTabPanelList";
 import { FormateDate } from "../../../helpers/utils";
 //
@@ -38,10 +38,10 @@ export const TopicList = () => {
 
   React.useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.falcuty.getall)
+      .get(apiEndpointStaging + path.falcuty.getall)
       .then((rep) => setFalcuties(rep.data));
     axios
-      .get(apiEndpointLocal + path.academic.getall)
+      .get(apiEndpointStaging + path.academic.getall)
       .then((rep) => setAcademics(rep.data));
   }, []);
   return (

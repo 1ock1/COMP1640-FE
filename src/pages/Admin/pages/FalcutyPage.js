@@ -26,7 +26,7 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { set } from "react-hook-form";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 
 const theme = createTheme();
 
@@ -46,7 +46,7 @@ const FacultyManagementPage = () => {
 
   useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.falcuty.getall)
+      .get(apiEndpointStaging + path.falcuty.getall)
       .then((response) => {
         setFaculties(response.data);
       })
@@ -57,7 +57,7 @@ const FacultyManagementPage = () => {
 
   const handleAddFaculty = () => {
     axios
-      .post(apiEndpointLocal + path.falcuty.create, {
+      .post(apiEndpointStaging + path.falcuty.create, {
         name: newFacultyName,
         status: newStatus,
       })
@@ -83,7 +83,7 @@ const FacultyManagementPage = () => {
 
   const handleUpdateFaculty = (index) => {
     axios
-      .put(apiEndpointLocal + path.falcuty.update + index.id, {
+      .put(apiEndpointStaging + path.falcuty.update + index.id, {
         name: updateName,
         status: updateStatus,
       })
