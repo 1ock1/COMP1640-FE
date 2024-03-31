@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { Select, MenuItem } from '@mui/material';
+import { Select, MenuItem, InputLabel, FormControl } from '@mui/material';
 import { PieChart } from '@mui/x-charts/PieChart';
 import { BarChart } from '@mui/x-charts/BarChart';
 import Box from '@mui/material/Box';
@@ -10,7 +10,6 @@ import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
 import { axisClasses } from '@mui/x-charts';
-import { InputLabel } from '@mui/material';
 
 const FacultyData = {
   totalContributions: 123,
@@ -31,12 +30,12 @@ const year =  [
   { id: 2, label: '2023-2024'},
 ];
 
-const valueFormatter = (value) => `${value}mm`;
+const valueFormatter = (value) => `${value} contributions`;
 
 const chartSetting = {
   yAxis: [
     {
-      label: 'rainfall (mm)',
+      label: 'Contributions',
     },
   ],
   width: 500,
@@ -55,135 +54,60 @@ const size = {
 
 const dataset = [
   {
-    HaNoi: 59,
-    CanTho: 57,
-    DaNang: 86,
-    HoChiMinhCity: 21,
-    month: 'Jan',
+    Topic1: 50,
+    Topic2: 52,
+    Topic3: 78,
+    Topic4: 28,
   },
   {
-    HaNoi: 50,
-    CanTho: 52,
-    DaNang: 78,
-    HoChiMinhCity: 28,
-    month: 'Fev',
-  },
-  {
-    HaNoi: 47,
-    CanTho: 53,
-    DaNang: 106,
-    HoChiMinhCity: 41,
-    month: 'Mar',
-  },
-  {
-    HaNoi: 54,
-    CanTho: 56,
-    DaNang: 92,
-    HoChiMinhCity: 73,
-    month: 'Apr',
-  },
-  {
-    HaNoi: 57,
-    CanTho: 69,
-    DaNang: 92,
-    HoChiMinhCity: 99,
-    month: 'May',
-  },
-  {
-    HaNoi: 60,
-    CanTho: 63,
-    DaNang: 103,
-    HoChiMinhCity: 144,
-    month: 'June',
-  },
-  {
-    HaNoi: 59,
-    CanTho: 60,
-    DaNang: 105,
-    HoChiMinhCity: 319,
-    month: 'July',
-  },
-  {
-    HaNoi: 65,
-    CanTho: 60,
-    DaNang: 106,
-    HoChiMinhCity: 249,
-    month: 'Aug',
-  },
-  {
-    HaNoi: 51,
-    CanTho: 51,
-    DaNang: 95,
-    HoChiMinhCity: 131,
-    month: 'Sept',
-  },
-  {
-    HaNoi: 60,
-    CanTho: 65,
-    DaNang: 97,
-    HoChiMinhCity: 55,
-    month: 'Oct',
-  },
-  {
-    HaNoi: 67,
-    CanTho: 64,
-    DaNang: 76,
-    HoChiMinhCity: 48,
-    month: 'Nov',
-  },
-  {
-    HaNoi: 61,
-    CanTho: 70,
-    DaNang: 103,
-    HoChiMinhCity: 25,
-    month: 'Dec',
+    Topic1: 50,
+    Topic2: 52,
+    Topic3: 78,
+    Topic4: 28,
   },
 ];
 
 export default function CoordinatorDashboard() {
   const [selectedPieOption, setSelectedPieOption] = useState(year.id=0);
-  const [selectedBarOption, setSelectedBarOption] = useState('HaNoi');
-  const [selectedDashboardOption, setSelectedDashboardOption] = useState('Year');
 
   return (
     <div>
-      <Box sx={{ '& .MuiSelect-root': { fontSize: '14px' } }}>
-      <InputLabel shrink htmlFor="select-outlined">Select Year</InputLabel>
-        <Select
-              value={selectedDashboardOption}
-              onChange={(event) => setSelectedDashboardOption(event.target.value)}
-              fullWidth
-            >
-              {year.map((item) => (
-                <MenuItem key={item.id} value={item.label}>
-                  {item.label}
-                </MenuItem>
-              ))}
-        </Select>
-      </Box>
       <Box>
-        <Grid container spacing={2}>
-          <Grid item xs={4}> {/* Adjust width to xs={4} for equal columns */}
-          </Grid>
-          <Grid item xs={2}> {/* Adjust width to xs={2} for equal columns */}
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+        <InputLabel id="SelectYear">Academic Year</InputLabel>
+          <Select 
+                labelId="SelectYear"
+                value={selectedPieOption}
+                label='Academic Year'
+                onChange={(event) => setSelectedPieOption(event.target.value)}
+              >
+                {year.map((item) => (
+                  <MenuItem key={item.id} value={item.label}>
+                    {item.label}
+                  </MenuItem>
+                ))}
+          </Select>
+        </FormControl>
+        <Grid container spacing={2}  justifyContent={'space-between'}>
+          <Grid item xs={2}> 
             <Paper sx={{ padding: 2, height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="h6">{FacultyData.totalContributions}</Typography>
               <Typography variant="body2">Total Contributions</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={2}> {/* Adjust width to xs={2} for equal columns */}
+          <Grid item xs={2}>
             <Paper sx={{ padding: 2, height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="h6">{FacultyData.totalTopics}</Typography>
               <Typography variant="body2">Total Topics</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={2}> {/* Adjust width to xs={2} for equal columns */}
+          <Grid item xs={2}>
             <Paper sx={{ padding: 2, height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="h6">{FacultyData.totalUploadedContributions}</Typography>
               <Typography variant="body2">Uploaded Contributions</Typography>
             </Paper>
           </Grid>
-          <Grid item xs={2}> {/* Adjust width to xs={2} for equal columns */}
+          <Grid item xs={2}>
             <Paper sx={{ padding: 2, height: '100px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <Typography variant="h6">{FacultyData.totalPublishedContributions}</Typography>
               <Typography variant="body2">Published Contributions</Typography>
@@ -192,19 +116,35 @@ export default function CoordinatorDashboard() {
         </Grid>
       </Box>
       <Stack direction="row" width="100%" textAlign="center" spacing={2} divider={<Divider orientation="vertical" flexGrow />}>
-        <Box flexGrow={1}>
-          <Typography>Contribution</Typography>
-          <Select
-
-            value={selectedPieOption}
-            onChange={(event) => setSelectedPieOption(event.target.value)}
-          >
-            {year.map((item) => (
-              <MenuItem key={item.id} value={item.label}>
-                {item.label}
-              </MenuItem>
-            ))}
-          </Select>
+        <Box sx={{
+          p: 2,
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? '#101010' : 'grey.50',
+          color: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+          border: '1px solid',
+          borderColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+          borderRadius: 2,
+          fontSize: '0.875rem',
+          fontWeight: '700',
+        }}flexGrow={1}>
+          <Typography>Contribution Statistics</Typography>
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+            <InputLabel id="SelectYear">Academic Year</InputLabel>
+              <Select 
+                    labelId="SelectYear"
+                    value={selectedPieOption}
+                    label='Academic Year'
+                    onChange={(event) => setSelectedPieOption(event.target.value)}
+                  >
+                    {year.map((item) => (
+                      <MenuItem key={item.id} value={item.label}>
+                        {item.label}
+                      </MenuItem>
+                    ))}
+              </Select>
+            </FormControl>
           <PieChart
             series={[
               {
@@ -224,26 +164,34 @@ export default function CoordinatorDashboard() {
             {...size}
           />
         </Box>
-        <Box flexGrow={1}>
-          <Typography>Item</Typography>
-          <Select
-              value={selectedBarOption}
-              onChange={(event) => setSelectedBarOption(event.target.value)}
-            >
-              {year.map((item) => (
-                <MenuItem key={item.id} value={item.label}>
-                  {item.label}
-                </MenuItem>
-              ))}
-            </Select>
+        <Box sx={{
+          p: 2,
+          bgcolor: (theme) =>
+            theme.palette.mode === 'dark' ? '#101010' : 'grey.50',
+          color: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.300' : 'grey.800',
+          border: '1px solid',
+          borderColor: (theme) =>
+            theme.palette.mode === 'dark' ? 'grey.800' : 'grey.300',
+          borderRadius: 2,
+          fontSize: '0.875rem',
+          fontWeight: '700',
+        }} flexGrow={1} justifyContent={'center'}>
+          <Typography>Topic Contribution Statistics</Typography>
             <BarChart
+              margin={{
+                left: 80,
+                right: 80,
+                top: 80,
+                bottom: 80,
+              }}
               dataset={dataset}
-              xAxis={[{ scaleType: 'band', dataKey: 'month' }]}
+              xAxis={[{ scaleType: 'band', dataKey: 'topic' }]}
               series={[
-                { dataKey: 'HaNoi', label: 'Ha Noi', valueFormatter },
-                { dataKey: 'CanTho', label: 'Can Tho', valueFormatter },
-                { dataKey: 'DaNang', label: 'Da Nang', valueFormatter },
-                { dataKey: 'HoChiMinhCity', label: 'Ho Chi Minh City', valueFormatter },
+                { dataKey: 'Topic1', label: 'Topic 1', valueFormatter },
+                { dataKey: 'Topic2', label: 'Topic 2', valueFormatter },
+                { dataKey: 'Topic3', label: 'Topic 3', valueFormatter },
+                { dataKey: 'Topic4', label: 'Topic 4', valueFormatter },
               ]}
               {...chartSetting}
             />
