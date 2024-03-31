@@ -13,7 +13,7 @@ export const TopicTabPanelList = ({ falcutyId, academicId }) => {
       falcutyId: falcutyId,
     };
     axios
-      .get(apiEndpointStaging + path.students.topics, data)
+      .post(apiEndpointStaging + path.students.topics, data)
       .then((response) => setTopics(response.data))
       .catch((err) => console.log(err));
   }, [falcutyId, academicId]);
