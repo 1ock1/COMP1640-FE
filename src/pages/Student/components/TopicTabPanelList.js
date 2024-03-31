@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { apiEndpointStaging, path } from "../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { Box, Paper, Typography } from "@mui/material";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { Link } from "react-router-dom";
