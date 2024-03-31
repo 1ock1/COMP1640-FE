@@ -7,3 +7,11 @@ export const FormateDate = (date) => {
   const formattedDate = `${day}-${month}-${year}`;
   return formattedDate;
 };
+
+export const VietNamDate = () => {
+  const now = new Date();
+  const vietnamTimezoneOffset = 7 * 60;
+  const vietnamTime = new Date(now.getTime() + vietnamTimezoneOffset * 60000);
+  const formattedVietnamDate = vietnamTime.toISOString().split("T")[0];
+  return formattedVietnamDate;
+};

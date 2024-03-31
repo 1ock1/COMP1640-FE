@@ -17,7 +17,7 @@ import {
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useParams } from "react-router-dom";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
-import { FormateDate } from "../../../helpers/utils";
+import { FormateDate, VietNamDate } from "../../../helpers/utils";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -87,14 +87,10 @@ export const DocumentCoordinator = () => {
       .then((rep) => setCommentList(rep.data));
   };
   const handleAddComment = () => {
-    const today = new Date();
-    const date = today.getDate();
-    const month = today.getMonth() + 1; // Months are zero-based
-    const year = today.getFullYear();
-    const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
+    const currentDate = VietNamDate();
     const data = {
       content: comment,
-      date: formattedDate,
+      date: currentDate,
       isEdited: false,
       publishedReportId: null,
       reportId: reportId,
@@ -112,12 +108,7 @@ export const DocumentCoordinator = () => {
       navigate("/signin");
       return;
     }
-    const today = new Date();
-    const date = today.getDate();
-    const month = today.getMonth() + 1; // Months are zero-based
-    const year = today.getFullYear();
-    const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
-
+    const currentDate = VietNamDate();
     const decoded = jwtDecode(cookie);
     const data = {
       title: title,
@@ -128,7 +119,7 @@ export const DocumentCoordinator = () => {
         reportId +
         "/" +
         reportDocument.id,
-      date: formattedDate,
+      date: currentDate,
       isRead: false,
       toUserId: reportInfor.studentId,
       fromUserId: parseInt(decoded["usid"]),
