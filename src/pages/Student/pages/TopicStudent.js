@@ -12,23 +12,27 @@ import { backgroundColor } from "../../../helpers/constantColor";
 import ArticleIcon from "@mui/icons-material/Article";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import {
+  apiEndpointLocal,
+  apiFEEndpointLocal,
+  path,
+} from "../../../helpers/apiEndpoints";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { TermPolicy } from "../../../components/TermPolicy";
 import { FormateDate } from "../../../helpers/utils";
+import { sendEmail } from "../../../actions/EmailAction";
 export const TopicStudent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [open, setOpen] = React.useState(false);
   const [isAllowedTopic, setAllowedTopic] = React.useState(false);
-  const [onAccept, setAccept] = React.useState(false);
   const [reportId, setReportId] = React.useState(-1);
   const [documentId, setDocumentId] = React.useState("");
   const [topicInfor, setTopicInfor] = React.useState({});
   const [isSubmmited, setSubmiited] = React.useState(false);
   const [buttonControl, setButtonControl] = React.useState();
+  const [coordinatorInfor, setCoordinatorInfor] = React.useState({});
   const [topicDate, setTopicDate] = React.useState({
     entriesDate: "",
     finalDate: "",
@@ -46,19 +50,28 @@ export const TopicStudent = () => {
     formData.append("type", "document");
     formData.append("studentId", decoded["usid"]);
     formData.append("topicId", id);
-    const response = await axios.post(
-      apiEndpointLocal + path.file.upload,
-      formData,
-      {
+    await axios
+      .post(apiEndpointLocal + path.file.upload, formData, {
         headers: {
           Accept: "application/json",
           "Content-Type": "multipart/form-data",
         },
-      }
-    );
-    setDocumentId(response.data);
-    setAccept(false);
-    setOpen(false);
+      })
+      .then((response) => {
+        if (coordinatorInfor !== null) {
+          const data = {
+            to_coordinator_email: coordinatorInfor.email,
+            topic_name: topicInfor.name,
+            to_name: coordinatorInfor.name,
+            url:
+              apiFEEndpointLocal +
+              "coordinator/topics/report/" +
+              response.data.reportID,
+          };
+          sendEmail(data);
+        }
+        setDocumentId(response.data.guid);
+      });
   };
   React.useEffect(() => {
     const cookie = Cookies.get("us");
@@ -78,7 +91,6 @@ export const TopicStudent = () => {
       )
       .then((rep) => {
         setAllowedTopic(rep.data);
-        console.log(rep.data);
       })
       .then((err) => console.log(err));
     const data = {
@@ -98,6 +110,13 @@ export const TopicStudent = () => {
       .get(apiEndpointLocal + path.students.getTopicId + id)
       .then((response) => setTopicInfor(response.data))
       .catch((err) => navigate("/"));
+    const dataCoordinator = {
+      falcutyId: parseInt(decoded["falcutyId"]),
+      role: "COORDINATOR, GUEST",
+    };
+    axios
+      .post(apiEndpointLocal + path.user.getCoordinatorInfor, dataCoordinator)
+      .then((rep) => setCoordinatorInfor(rep.data));
   }, []);
   React.useEffect(() => {
     if (isSubmmited) {
@@ -130,14 +149,13 @@ export const TopicStudent = () => {
       const dateEntries = new Date(topicInfor.entriesDate);
       const formatEntries = FormateDate(dateEntries);
       const currentDate = new Date();
-      const formatCurrentDate = FormateDate(currentDate);
       const dateTopic = {
         ...topicDate,
         entriesDate: formatEntries,
         finalDate: formatFinal,
       };
       setTopicDate(dateTopic);
-      if (formatCurrentDate >= formatEntries && documentId === "") {
+      if (currentDate > dateEntries && documentId === "") {
         setButtonControl(
           <Box>
             <Alert
@@ -150,19 +168,13 @@ export const TopicStudent = () => {
             </Alert>
           </Box>
         );
-      } else if (formatCurrentDate < formatEntries && documentId === "") {
+      } else if (currentDate < dateEntries && documentId === "") {
         setButtonControl(
           <Box display="flex" width="200px" justifyContent="space-between">
             <Button variant="outlined" size="large">
               Back
             </Button>
-            <TermPolicy
-              open={open}
-              setOpen={setOpen}
-              onAccept={onAccept}
-              setAccept={setAccept}
-              handleUpload={handleUpload}
-            />
+            <TermPolicy handleUpload={handleUpload} />
           </Box>
         );
       } else if (documentId !== "") {

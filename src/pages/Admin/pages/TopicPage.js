@@ -186,9 +186,6 @@ const TopicManagementPage = () => {
       if (response.status !== 200) {
         throw new Error(`Update failed with status code: ${response.status}`);
       }
-
-      console.log("Topic updated successfully!");
-
       setNewTopic("");
       setNewDescription("");
       setEntriesDatez("");

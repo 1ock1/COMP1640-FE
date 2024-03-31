@@ -6,8 +6,10 @@ import {
   Avatar,
   ListItemText,
   Typography,
+  ListItemButton,
 } from "@mui/material";
-export const Notifications = (message, type) => {
+import { Link } from "react-router-dom";
+export const Notifications = ({ list, onClose }) => {
   return (
     <List
       sx={{
@@ -19,102 +21,41 @@ export const Notifications = (message, type) => {
         maxHeight: 300,
       }}
     >
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://www.reminiscencetheatrearchive.org.uk/wp-content/uploads/cms/LOGO_Greenwich_2-658x658.jpg"
-          />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Brunch this weekend?"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Ali Connors
-              </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://www.reminiscencetheatrearchive.org.uk/wp-content/uploads/cms/LOGO_Greenwich_2-658x658.jpg"
-          />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Brunch this weekend?"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Ali Connors
-              </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://www.reminiscencetheatrearchive.org.uk/wp-content/uploads/cms/LOGO_Greenwich_2-658x658.jpg"
-          />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Brunch this weekend?"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Ali Connors
-              </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
-      <ListItem alignItems="flex-start">
-        <ListItemAvatar>
-          <Avatar
-            alt="Remy Sharp"
-            src="https://www.reminiscencetheatrearchive.org.uk/wp-content/uploads/cms/LOGO_Greenwich_2-658x658.jpg"
-          />
-        </ListItemAvatar>
-        <ListItemText
-          primary="Brunch this weekend?"
-          secondary={
-            <React.Fragment>
-              <Typography
-                sx={{ display: "inline" }}
-                component="span"
-                variant="body2"
-                color="text.primary"
-              >
-                Ali Connors
-              </Typography>
-              {" — I'll be in your neighborhood doing errands this…"}
-            </React.Fragment>
-          }
-        />
-      </ListItem>
+      {list?.map((obj, idx) => (
+        <Link
+          to={obj.description}
+          key={obj.id}
+          onClick={() => {
+            onClose(obj.id);
+          }}
+        >
+          <ListItemButton>
+            <ListItem alignItems="flex-start">
+              <ListItemAvatar>
+                <Avatar
+                  alt="Remy Sharp"
+                  src="https://www.reminiscencetheatrearchive.org.uk/wp-content/uploads/cms/LOGO_Greenwich_2-658x658.jpg"
+                />
+              </ListItemAvatar>
+              <ListItemText
+                primary={obj.title}
+                secondary={
+                  <React.Fragment>
+                    <Typography
+                      sx={{ display: "inline" }}
+                      component="span"
+                      variant="body2"
+                      color="text.primary"
+                    >
+                      {obj.date}
+                    </Typography>
+                  </React.Fragment>
+                }
+              />
+            </ListItem>
+          </ListItemButton>
+        </Link>
+      ))}
     </List>
   );
 };

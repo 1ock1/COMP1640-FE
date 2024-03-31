@@ -1,6 +1,8 @@
 export const apiEndpointLocal = "https://localhost:7044/"; //or replace to your localhost
 export const apiEndpointStaging = "https://comp1640-stg.azurewebsites.net/";
 export const apiEndpointProduction = "https://comp1640-prod.azurewebsites.net/";
+export const apiFEEndpointLocal = "http://localhost:3000/";
+export const apiFEEndpointStg = "https://comp1640-stg-be472.web.app/";
 export const path = {
   user: {
     login: "api/User/login",
@@ -8,6 +10,7 @@ export const path = {
     authRole: "api/User/auth",
     isMultipleRole: "api/User/checkMultipleRole",
     loginAsSelectedRole: "api/User/loginSelectedRole",
+    getCoordinatorInfor: "api/User/GetCoordinatorInformation",
   },
   file: {
     load: "api/File/",
@@ -19,6 +22,7 @@ export const path = {
   },
   fileReport: {
     loadImages: "api/FileReport/GetDocumentImages",
+    getAllFileReport: "api/FileReport/GetAllFileOfOneReport?reportId=",
   },
   students: {
     topics: "api/Topic/GetTopicsByAcademicAndFalcuty",
@@ -43,6 +47,25 @@ export const path = {
     update: "api/Topic/UpdateTopic?id=",
     delete: "api/Topic/DeleteTopic?id=",
     checkIsTopicAllowed: "api/Topic/CheckIsTopicAllowed",
+  },
+  report: {
+    getReportBaseStatus: "api/Report/GetReportBaseStatus",
+    getReportInformation: "api/Report/GetReportInformation?reportId=",
+    updateReportStatus: "api/Report/UpdateReportStatus",
+  },
+  notify: {
+    createNoti: "api/Notifcation/CreateNoti",
+    getNotification: "api/Notifcation/GetNotification",
+    deleteNotification: "api/Notifcation/DeleteNotification?notifyId=",
+  },
+  comment: {
+    createComment: "api/ReportComment/CreateComment",
+    getReportComment: "api/ReportComment/GetCommentReport",
+  },
+  publishedReport: {
+    create: "api/PubllishedReport/CreatePublishedReport",
+    isPublishReportExist:
+      "api/PubllishedReport/CheckIfReportPublished?reportId=",
   },
   WeatherForecast: "WeatherForecast",
 };

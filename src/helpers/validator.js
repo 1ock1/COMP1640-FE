@@ -36,3 +36,14 @@ export const createAccountSchema = z.object({
   role: z.enum(["STUDENT", "ADMIN", "MANAGER", "COORDINATOR, GUEST"]),
   status: z.enum(["ACTIVE", "DEACTIVE"]),
 });
+
+export const publishedReportSchema = z.object({
+  title: z
+    .string()
+    .min(30, "Title is required")
+    .max(100, "Title must be less than 100 characters"),
+  description: z
+    .string()
+    .min(30, "Description is required")
+    .max(250, "Description must be less than 250 characters"),
+});

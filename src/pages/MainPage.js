@@ -14,6 +14,7 @@ import {
   Tooltip,
   Avatar,
   Badge,
+  Alert,
 } from "@mui/material";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { checkAuth } from "../actions/UserActions";
@@ -44,6 +45,8 @@ import {
   AppLinkManager,
 } from "./Manager/components/AppBarManager";
 import { AppBarGuest, AppLinkGuest } from "./Guest/components/AppBarGuest";
+import { jwtDecode } from "jwt-decode";
+import { apiEndpointLocal, path } from "../helpers/apiEndpoints";
 
 const MainPage = () => {
   const [anchorElNoti, setAnchorElNoti] = React.useState(null);
@@ -51,6 +54,9 @@ const MainPage = () => {
   const userRole = useSelector(role);
   const [open, setOpen] = React.useState(false);
   const [userTab, setUserTab] = React.useState(undefined);
+  const [notifications, setNotification] = React.useState(undefined);
+  const [isNotifiSelectDeleted, setNotifiSelectedStatus] =
+    React.useState(false);
   const [options, setOptions] = React.useState([]);
   const [auth, setAuth] = React.useState({});
   const [isSigned, setIsSigned] = React.useState(false);
@@ -70,8 +76,28 @@ const MainPage = () => {
   };
 
   const handleCloseNoti = () => {
-    console.log("closed");
     setAnchorElNoti(null);
+  };
+  const fetchNotification = () => {
+    const cookie = Cookies.get("us");
+    if (cookie === undefined) {
+      return;
+    }
+    const decoded = jwtDecode(cookie);
+    const data = {
+      toUserId: parseInt(decoded["usid"]),
+      isRead: false,
+    };
+    axios
+      .post(apiEndpointLocal + path.notify.getNotification, data)
+      .then((rep) => {
+        setNotification(rep.data);
+      });
+  };
+  const handleRemoveReadedNotification = (id) => {
+    axios
+      .delete(apiEndpointLocal + path.notify.deleteNotification + id)
+      .then((rep) => setNotifiSelectedStatus(rep.data));
   };
   React.useEffect(() => {
     const cookie = Cookies.get("us");
@@ -92,6 +118,19 @@ const MainPage = () => {
       })
       .catch(() => setIsSigned(false));
   }, [userRole]);
+
+  React.useEffect(() => {
+    if (isSigned === true) {
+      fetchNotification();
+    }
+  }, [isSigned]);
+  React.useEffect(() => {
+    if (isNotifiSelectDeleted) {
+      handleCloseNoti();
+      fetchNotification();
+      setNotifiSelectedStatus(false);
+    }
+  }, [isNotifiSelectDeleted]);
   return (
     <>
       <BrowserRouter>
@@ -149,7 +188,7 @@ const MainPage = () => {
                     style={{ marginRight: 20 }}
                     onClick={handleOpenNoti}
                   >
-                    <Badge badgeContent={1} color="error">
+                    <Badge badgeContent={notifications?.length} color="error">
                       <NotificationsIcon />
                     </Badge>
                   </IconButton>
@@ -169,7 +208,16 @@ const MainPage = () => {
                     open={Boolean(anchorElNoti)}
                     onClose={handleCloseNoti}
                   >
-                    <Notifications />
+                    {notifications?.length === 0 ? (
+                      <Alert severity="success">
+                        Yayy. You dont have any notification.
+                      </Alert>
+                    ) : (
+                      <Notifications
+                        list={notifications}
+                        onClose={handleRemoveReadedNotification}
+                      />
+                    )}
                   </Menu>
                   <Tooltip title="Open settings">
                     <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>

@@ -78,15 +78,10 @@ const FacultyManagementPage = () => {
     setUpdateName(faculty.name);
 
     setSelectedRow(faculty);
-    console.log(faculty);
     setOpenDialog(true);
   };
 
   const handleUpdateFaculty = (index) => {
-    console.log(index);
-    console.log(updateName);
-    console.log(updateStatus);
-    console.log(selectedRow);
     axios
       .put(apiEndpointLocal + path.falcuty.update + index.id, {
         name: updateName,

@@ -3,12 +3,17 @@ import React from "react";
 import { Options } from "../../../helpers/contanst";
 import CoordinatorDashboard from "../pages/Dashboard";
 import { TopicCoordinatorList } from "../pages/TopicCoordinatorList";
+import { DocumentCoordinator } from "../pages/DocumentCoordinator";
 export const AppBarCoordinator = () => {
   return (
     <>
       <Routes>
         <Route path="/coordinator" element={<CoordinatorDashboard />} />
         <Route path="/coordinator/topics" element={<TopicCoordinatorList />} />
+        <Route
+          path="/coordinator/topics/report/:reportId"
+          element={<DocumentCoordinator />}
+        />
       </Routes>
     </>
   );

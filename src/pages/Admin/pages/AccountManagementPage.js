@@ -116,9 +116,7 @@ export default function AccountManagementPage() {
   };
   document.addEventListener("DOMContentLoaded", function () {
     // Function to handle cancel button click event
-    function cancelButtonHandle() {
-      console.log("Cancellation logic executed.");
-    }
+    function cancelButtonHandle() {}
 
     // Create a new cancel button element
     const cancelButton = document.createElement("button");

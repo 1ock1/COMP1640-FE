@@ -11,13 +11,9 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import Checkbox from "@mui/material/Checkbox";
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 import { Box, Typography } from "@mui/material";
-export const TermPolicy = ({
-  handleUpload,
-  open,
-  setOpen,
-  onAccept,
-  setAccept,
-}) => {
+export const TermPolicy = ({ handleUpload }) => {
+  const [open, setOpen] = React.useState(false);
+  const [accept, setAccept] = React.useState(false);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -49,8 +45,8 @@ export const TermPolicy = ({
               <Checkbox
                 style={{ padding: 0 }}
                 label="Label"
-                defaultChecked={onAccept}
-                onClick={() => setAccept(!onAccept)}
+                defaultChecked={accept}
+                onClick={() => setAccept(!accept)}
               />
               <Typography style={{ marginLeft: 5 }}>
                 I accept the term and policy
@@ -66,7 +62,7 @@ export const TermPolicy = ({
               role={undefined}
               variant="contained"
               tabIndex={-1}
-              disabled={!onAccept}
+              disabled={!accept}
             >
               Agree
               <VisuallyHiddenInput
