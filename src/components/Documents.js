@@ -128,7 +128,9 @@ export const Document = ({
   //     .catch((err) => console.log(err));
   // };
   React.useEffect(() => {
-    loadSfdt();
+    if (!isDocumentChange) {
+      loadSfdt();
+    }
   });
   React.useEffect(() => {
     if (isSaved === true) {
