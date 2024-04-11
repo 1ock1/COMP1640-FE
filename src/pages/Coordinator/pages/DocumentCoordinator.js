@@ -267,6 +267,7 @@ export const DocumentCoordinator = () => {
                 role="COORDINATOR"
                 setMakeEditted={setMakeEditted}
                 lastDateAction={lastDateComment}
+                reportId={reportId}
               />
             )}
             <Button
