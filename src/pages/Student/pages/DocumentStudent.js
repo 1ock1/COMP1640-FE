@@ -25,6 +25,12 @@ import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { handleUpdateStatus } from "../../../actions/ReportActions";
+import {
+  AlertAcceptDeleteImage,
+  AlertDialog,
+  AlertTopRight,
+} from "../../../components/AlertDialog";
+import { message } from "../../../helpers/messageConstant";
 export const DocumentStudent = () => {
   const navigate = useNavigate();
   const { fileId, reportId, id } = useParams();
@@ -37,6 +43,10 @@ export const DocumentStudent = () => {
   const [isAllowedUpdateReport, setAllowedUpateReport] = React.useState(true);
   const [finalDate, setFinalDate] = React.useState("");
   const [comments, setComments] = React.useState(undefined);
+  const [alertDiaglog, setOpenAlert] = React.useState(false);
+  const [alertDeleteImage, setAlertDeleteImage] = React.useState(false);
+  const [openNotify, setOpenNotify] = React.useState(false);
+  const [messageNoify, setMessageNotify] = React.useState("");
   const handleImageSelected = (event) => {
     setSelectedImg(event.target.alt);
   };
@@ -61,21 +71,32 @@ export const DocumentStudent = () => {
       .delete(apiEndpointStaging + path.file.delete + selectedImg)
       .then((response) => {
         setSelectedImg("");
+        setOpenNotify(true);
+        setMessageNotify(message.deleteImage);
+        setAlertDeleteImage(false);
       })
       .catch((err) => console.log(err));
   };
   const handleFileChange = async (event) => {
     const images = event.target.files;
-    const array = Array.from(images);
-    const files = new FormData();
-    array.forEach((fil, index) => {
-      files.append("files", fil);
-    });
-    files.append("reportId", reportId);
-    await axios
-      .post(apiEndpointStaging + path.file.uploadImages, files)
-      .then((response) => setIsUploadedImages(true))
-      .catch((err) => console.log(err));
+    if (fileList?.length + images?.length > 10) {
+      setOpenAlert(true);
+    } else {
+      const array = Array.from(images);
+      const files = new FormData();
+      array.forEach((fil, index) => {
+        files.append("files", fil);
+      });
+      files.append("reportId", reportId);
+      await axios
+        .post(apiEndpointStaging + path.file.uploadImages, files)
+        .then((response) => {
+          setIsUploadedImages(true);
+          setOpenNotify(true);
+          setMessageNotify(message.uploadImagesSuccss);
+        })
+        .catch((err) => console.log(err));
+    }
   };
   const handleLoadImages = async () => {
     const data = {
@@ -126,8 +147,16 @@ export const DocumentStudent = () => {
       setAllowedUpateReport(currentDate < dateFinal);
     }
   }, [topicInfor]);
+  React.useEffect(() => {
+    if (openNotify) {
+      setTimeout(() => {
+        setOpenNotify(false);
+      }, 3000);
+    }
+  }, [openNotify]);
   return (
     <Container maxWidth="xl">
+      <AlertTopRight open={openNotify} message={messageNoify} />
       <Paper
         elevation={2}
         style={{
@@ -136,11 +165,10 @@ export const DocumentStudent = () => {
         }}
       >
         <Typography padding="10px 0px" variant="h4" fontWeight={600}>
-          Published Report: Title
+          Topic: {topicInfor.name}
         </Typography>
         <Typography pb={1} variant="h5" fontSize={20}>
-          Topic: Nghien cuu ve de tai xay dung chu nghia xa hoi va xay dung cac
-          nhu cau thiet yeu cua cuoc song ca nhanh
+          Topic: {topicInfor.description}
         </Typography>
         <Box display="flex" pb={2}>
           <Typography variant="h5" fontSize={20}>
@@ -193,6 +221,7 @@ export const DocumentStudent = () => {
               role="STUDENT"
               setMakeUpdated={setIsUpdateReport}
               lastDateAction={finalDate}
+              reportId={reportId}
             />
           )}
         </Grid>
@@ -228,31 +257,38 @@ export const DocumentStudent = () => {
           <Box display="block">
             {isAllowedUpdateReport === true ? (
               <>
-                <Button
-                  component="label"
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                  fullWidth
-                  style={{
-                    marginBottom: 15,
-                  }}
-                  disabled={fileList?.length === 10 ? true : false}
-                >
-                  Upload Image
-                  <VisuallyHiddenInput
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileChange}
-                  />
-                </Button>
+                {fileList?.length >= 10 ? (
+                  <Alert severity="warning" style={{ marginBottom: "10px" }}>
+                    You have uploaded maximum images for this report.
+                  </Alert>
+                ) : (
+                  <Button
+                    component="label"
+                    variant="contained"
+                    tabIndex={-1}
+                    startIcon={<CloudUploadIcon />}
+                    fullWidth
+                    style={{
+                      marginBottom: 15,
+                    }}
+                    disabled={fileList?.length === 10 ? true : false}
+                  >
+                    Upload Image
+                    <VisuallyHiddenInput
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileChange}
+                    />
+                  </Button>
+                )}
+
                 <Button
                   variant="contained"
                   color="error"
                   fullWidth
                   disabled={selectedImg === "" ? true : false}
-                  onClick={handleRemoveImage}
+                  onClick={() => setAlertDeleteImage(true)}
                 >
                   Remove Image
                 </Button>
@@ -278,6 +314,20 @@ export const DocumentStudent = () => {
           )}
         </Grid>
       </Grid>
+      <AlertDialog
+        header="Maximum Uploaded Images"
+        text="You have uploaded maximum allowed images for one report"
+        isAlert={alertDiaglog}
+        setIsAlert={setOpenAlert}
+      />
+      <AlertAcceptDeleteImage
+        isAlert={alertDeleteImage}
+        setIsAlert={setAlertDeleteImage}
+        deleteAction={handleRemoveImage}
+        header="Remove Image"
+        text="Are you sure you want to delete this image?"
+        url={selectedImg}
+      />
     </Container>
   );
 };

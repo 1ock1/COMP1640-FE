@@ -1,6 +1,7 @@
 import "../helpers/document.css";
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import React from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Grid } from "@mui/material";
 import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 import axios from "axios";
 import {
@@ -10,6 +11,9 @@ import {
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { VisuallyHiddenInput } from "./VisuallyHiddenInput";
 import { HelpTextDatInfor } from "./HelpTextDate";
+import LinearProgress from "@mui/material/LinearProgress";
+import { AlertAcceptSaveChange, AlertTopRight } from "./AlertDialog";
+import { message } from "../helpers/messageConstant";
 DocumentEditorContainerComponent.Inject(Toolbar);
 
 export const Document = ({
@@ -19,13 +23,18 @@ export const Document = ({
   setMakeEditted,
   setMakeUpdated,
   lastDateAction,
+  reportId,
 }) => {
   const [isDocumentChange, setDocumentChange] = React.useState(false);
   const [isUpdatedNewFile, setUpdatedNewFile] = React.useState(false);
   const [isSaved, setIsSaved] = React.useState(false);
+  const [isDownloaded, setIsDowloaded] = React.useState(false);
+  const [openAlert, setOpentAlert] = React.useState(false);
+  const [openSaveChangeAlert, setOpenSaveChangeAlert] = React.useState(false);
+  const [messageAlert, setMessageAlert] = React.useState("");
   let container;
   async function save() {
-    const file = id + ".docx";
+    const file = id;
     container.documentEditor.saveAsBlob("Docx").then((blob) => {
       const exportedDocument = blob;
       const formData = new FormData();
@@ -44,14 +53,19 @@ export const Document = ({
       req.send(formData);
     });
     if (role === "COORDINATOR") {
+      setOpentAlert(true);
+      setMessageAlert(message.saveFileSuccess);
       setMakeEditted(true);
+      setOpenSaveChangeAlert(false);
     }
     if (role === "STUDENT") {
+      setOpentAlert(true);
+      setMessageAlert(message.saveFileSuccess);
       setMakeUpdated(true);
+      setOpenSaveChangeAlert(false);
     }
   }
   const loadSfdt = () => {
-    const file = id + ".docx";
     axios
       .get(apiEndpointStaging + path.file.load + file)
       .then((response) => {
@@ -76,10 +90,36 @@ export const Document = ({
     );
     if (response.data === "Uploaded File Successfully") {
       setUpdatedNewFile(true);
+      setOpentAlert(true);
+      setMessageAlert(message.uploadNewFileSuccess);
     }
     if (role === "STUDENT") {
       setMakeUpdated(true);
+      setOpentAlert(true);
+      setMessageAlert(message.uploadNewFileSuccess);
     }
+  };
+  const downloadZipFile = () => {
+    setIsDowloaded(true);
+    fetch(apiEndpointStaging + path.file.downloadZip + reportId, {
+      method: "GET",
+      headers: {
+        "content-type": "application/json",
+      },
+    })
+      .then((res) => res.blob())
+      .then((blob) => {
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "Report " + reportId;
+        link.click();
+        setOpentAlert(true);
+        setMessageAlert(message.downloadSuccess);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   };
   // const handleRemoveFile = () => {
   //   axios
@@ -102,8 +142,23 @@ export const Document = ({
       setUpdatedNewFile(false);
     }
   }, [isUpdatedNewFile]);
+  React.useEffect(() => {
+    if (isDownloaded) {
+      setTimeout(() => {
+        setIsDowloaded(false);
+      }, 5000);
+    }
+  }, [isDownloaded]);
+  React.useEffect(() => {
+    if (openAlert) {
+      setTimeout(() => {
+        setOpentAlert(false);
+      }, 2000);
+    }
+  }, [openAlert]);
   return (
     <>
+      <AlertTopRight open={openAlert} message={messageAlert} />
       {id !== undefined && (
         <DocumentEditorContainerComponent
           id="container"
@@ -126,48 +181,49 @@ export const Document = ({
           currentUser={role === "STUDENT" ? "Student" : "Coordinator"}
         />
       )}
+      <Grid container spacing={0} justifyContent="space-between">
+        <Grid item>
+          <Box mt={2} mb={2}>
+            {allowedAction === true &&
+            (role === "STUDENT" || role === "COORDINATOR") ? (
+              <Button
+                variant="contained"
+                style={{
+                  marginRight: 20,
+                }}
+                onClick={() => setOpenSaveChangeAlert(true)}
+                disabled={!isDocumentChange}
+              >
+                Save
+              </Button>
+            ) : (
+              ""
+            )}
+            {allowedAction === true && role === "STUDENT" ? (
+              <>
+                <Button
+                  component="label"
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Update Current File
+                  <VisuallyHiddenInput
+                    type="file"
+                    accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                    onChange={handleUpdateFile}
+                  />
+                </Button>
+              </>
+            ) : (
+              ""
+            )}
+            <HelpTextDatInfor
+              text={"You can edit this report before "}
+              date={lastDateAction}
+            />
 
-      <Box mt={2} mb={2}>
-        {allowedAction === true &&
-        (role === "STUDENT" || role === "COORDINATOR") ? (
-          <Button
-            variant="contained"
-            style={{
-              marginRight: 20,
-            }}
-            onClick={save}
-            disabled={!isDocumentChange}
-          >
-            Save
-          </Button>
-        ) : (
-          ""
-        )}
-        {allowedAction === true && role === "STUDENT" ? (
-          <>
-            <Button
-              component="label"
-              variant="contained"
-              tabIndex={-1}
-              startIcon={<CloudUploadIcon />}
-            >
-              Update Current File
-              <VisuallyHiddenInput
-                type="file"
-                accept=".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                onChange={handleUpdateFile}
-              />
-            </Button>
-          </>
-        ) : (
-          ""
-        )}
-        <HelpTextDatInfor
-          text={"You can edit this report before "}
-          date={lastDateAction}
-        />
-
-        {/* <Button
+            {/* <Button
           variant="contained"
           style={{
             marginRight: 20,
@@ -177,7 +233,30 @@ export const Document = ({
         >
           Remove
         </Button> */}
-      </Box>
+          </Box>
+        </Grid>
+        <Grid item>
+          <Box mt={2} mb={2}>
+            <Button
+              onClick={downloadZipFile}
+              variant="contained"
+              color="success"
+              disabled={isDownloaded}
+              download
+            >
+              <FileDownloadIcon /> Download Zip
+            </Button>
+            {isDownloaded && <LinearProgress />}
+          </Box>
+        </Grid>
+      </Grid>
+      <AlertAcceptSaveChange
+        isAlert={openSaveChangeAlert}
+        setIsAlert={setOpenSaveChangeAlert}
+        saveChangeAction={save}
+        text="Your change will be saved. Are you sure ?"
+        header="Save Change"
+      />
     </>
   );
 };

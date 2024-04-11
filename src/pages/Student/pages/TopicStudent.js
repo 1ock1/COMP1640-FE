@@ -71,6 +71,7 @@ export const TopicStudent = () => {
           sendEmail(data);
         }
         setDocumentId(response.data.guid);
+        setReportId(response.data.reportID);
       });
   };
   React.useEffect(() => {

@@ -19,6 +19,7 @@ export const path = {
     save: "api/File/SaveDocument",
     delete: "api/File/",
     uploadImages: "api/File/UploadImages",
+    downloadZip: "api/File/DownloadZip/",
   },
   fileReport: {
     loadImages: "api/FileReport/GetDocumentImages",
