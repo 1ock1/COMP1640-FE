@@ -67,7 +67,7 @@ export const Document = ({
   }
   const loadSfdt = () => {
     axios
-      .get(apiEndpointStaging + path.file.load + file)
+      .get(apiEndpointStaging + path.file.load + id)
       .then((response) => {
         container.documentEditor.open(response.data);
       })
