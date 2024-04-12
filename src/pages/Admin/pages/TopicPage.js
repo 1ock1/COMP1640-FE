@@ -629,12 +629,12 @@ const TopicManagementPage = () => {
                       />
                     )}
                   />
-                  <Button>
+                  {/* <Button>
                     <DeleteIcon
                       style={{ color: "red" }}
                       onClick={() => handleDeleteTopic(selectedRow)}
                     />
-                  </Button>
+                  </Button> */}
                 </Box>
               </DialogContent>
 
