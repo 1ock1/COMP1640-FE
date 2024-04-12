@@ -62,6 +62,9 @@ const TopicManagementPage = () => {
   const [selectedFaculty, setSelectedFaculty] = useState("");
   const [selectedAcademic, setSelectedAcademic] = useState("");
 
+  const [facultyChoice, setFacultyChoice] = useState("");
+  const [facultyChoices, setFacultyChoices] = useState([]);
+
   useEffect(() => {
     fetchTopics();
   }, []);
@@ -71,6 +74,7 @@ const TopicManagementPage = () => {
       const response = await axios.get(
         "https://localhost:7044/api/Topic/GetAllTopic"
       );
+      console.log(response.data);
       setTopics(response.data);
     } catch (error) {
       console.error("Error fetching topics:", error);
@@ -131,8 +135,8 @@ const TopicManagementPage = () => {
             description: newDescription,
             entriesDate: entriesDatez,
             finalDate: finalDatez,
-            faculty: faculty.id,
-            academic: academic.id,
+            faculty: response.data.facultyId,
+            academic: response.data.academicId,
           },
         ]);
         setNewTopic("");
@@ -248,8 +252,35 @@ const TopicManagementPage = () => {
       <ThemeProvider theme={theme}>
         <div style={{ padding: theme.spacing(2) }}>
           <Grid container spacing={3}>
-            <Grid item xs={12} align="right">
+            <Grid item xs={6} align="left">
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={faculties.map((option) => option.name)}
+                sx={{ width: 251 }}
+                // defaultValue={defaultFalcuty}
+                onChange={(event, value) => {
+                  let facultyId = faculties.filter(
+                    (faculty) => faculty.name === value
+                  );
+
+                  setFacultyChoice(facultyId);
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    label="Falcuty"
+                    margin="normal"
+                    name="academic"
+                    value={facultyChoice}
+                    type="text"
+                    {...params}
+                  />
+                )}
+              />{" "}
+            </Grid>
+            <Grid item xs={6} align="right">
               <Button
+                sx={{ marginTop: "2rem" }}
                 variant="contained"
                 color="primary"
                 onClick={() => {
@@ -307,8 +338,8 @@ const TopicManagementPage = () => {
                         <TableCell align="right">
                           {row.finalDate.toString().split("T")[0]}
                         </TableCell>{" "}
-                        <TableCell align="right">{row.falcutyId}</TableCell>{" "}
-                        <TableCell align="right">{row.academicId}</TableCell>{" "}
+                        <TableCell align="right">{row.falcutyId}</TableCell>
+                        <TableCell align="right">{row.academicId}</TableCell>
                         <TableCell align="right">
                           {
                             <EditIcon
@@ -394,7 +425,8 @@ const TopicManagementPage = () => {
                     options={academics.map(
                       (option) => option.startDate.toString().split("T")[0]
                     )}
-                    sx={{ width: 251 }}
+                    // sx={{ width: 251 }}
+                    fullWidth
                     onChange={(event, value) => {
                       handleFildChange(value);
                     }}
@@ -410,6 +442,22 @@ const TopicManagementPage = () => {
                     )}
                   />
                   {/* <Box width={52} /> */}
+                </Box>
+
+                <Box display={"flex"} justifyContent={"space-between"}>
+                  {/* <TextField
+                    id="academicEndDate"
+                    margin="normal"
+                    name="academicEndDate"
+                    label="Academic End Date"
+                    type={academicStartDate === "" ? "text" : "date"}
+                    fullWidth
+                    value={academicEndDate}
+                    disablePortal
+                    sx={{ width: 251 }}
+                    inputProps={{ readOnly: true }}
+                  /> */}
+
                   <TextField
                     sx={{ width: 251 }}
                     id="entriesDate"
@@ -425,21 +473,6 @@ const TopicManagementPage = () => {
                       handleEtriDatesChange(entriDate);
                     }}
                     disabled={isFieldsDisabled}
-                  />
-                </Box>
-
-                <Box display={"flex"} justifyContent={"space-between"}>
-                  <TextField
-                    id="academicEndDate"
-                    margin="normal"
-                    name="academicEndDate"
-                    label="Academic End Date"
-                    type={academicStartDate === "" ? "text" : "date"}
-                    fullWidth
-                    value={academicEndDate}
-                    disablePortal
-                    sx={{ width: 251 }}
-                    inputProps={{ readOnly: true }}
                   />
 
                   <TextField
@@ -485,6 +518,30 @@ const TopicManagementPage = () => {
                       />
                     )}
                   />
+
+                  {/* <Autocomplete
+                    disablePortal
+                    id="combo-box-demo"
+                    options={faculties.map((option) => option.status)}
+                    sx={{ width: 251 }}
+                    onChange={(event, value) => {
+                      let facultyId = faculties.filter(
+                        (faculty) => faculty.name === value
+                      );
+
+                      setFaculty(facultyId[0]);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        label="Status"
+                        margin="normal"
+                        name="facultyStatus"
+                        value={faculty}
+                        type="text"
+                        {...params}
+                      />
+                    )}
+                  /> */}
                 </Box>
               </DialogContent>
 

@@ -3,12 +3,14 @@ import React from "react";
 import { Options } from "../../../helpers/contanst";
 import { Dashboard } from "../pages/Dashboard";
 import { Process } from "../pages/Process";
+import { ListContributions } from "../pages/ListContributions";
 export const AppBarManager = () => {
   return (
     <>
       <Routes>
         <Route path="/manager" element={<Dashboard />} />
         <Route path="/manager/process" element={<Process />} />
+        <Route path="/manager/listContributions" element={<ListContributions />} />
       </Routes>
     </>
   );
