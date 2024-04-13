@@ -1,12 +1,12 @@
 import { Routes, Route, Link } from "react-router-dom";
 import React from "react";
 import { Options } from "../../../helpers/contanst";
-import { Home } from "../pages/Home";
+import { GuestHomePage } from "../pages/Home";
 export const AppBarGuest = () => {
   return (
     <>
       <Routes>
-        <Route path="/guest" element={<Home />} />
+        <Route path="/guest" element={<GuestHomePage />} />
       </Routes>
     </>
   );
