@@ -53,6 +53,11 @@ export const path = {
     getReportBaseStatus: "api/Report/GetReportBaseStatus",
     getReportInformation: "api/Report/GetReportInformation?reportId=",
     updateReportStatus: "api/Report/UpdateReportStatus",
+    totalContribution: "api/Report/TotalContribution",
+    percentageSubmission: "api/Report/PercentageSubmission",
+    commentStatusOfTopic: "api/Report/CommentStatusOfTopic/",
+    topicsStatuses: "api/Report/TopicStatus",
+    totalReportOnTopicBaseStatus: "api/Report/TotalReportOnTopicBaseStatus/",
   },
   notify: {
     createNoti: "api/Notifcation/CreateNoti",

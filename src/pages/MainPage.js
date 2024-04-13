@@ -159,6 +159,8 @@ const MainPage = () => {
                   <AppLinkCoordinator />
                 ) : userTab === "GUEST" ? (
                   <AppLinkGuest />
+                ) : userTab === "MANAGER" ? (
+                  <AppLinkManager />
                 ) : (
                   ""
                 )}

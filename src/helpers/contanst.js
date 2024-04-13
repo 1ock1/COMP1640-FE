@@ -33,6 +33,10 @@ export const Options = {
       value: "Home",
       link: "/guest",
     },
+    {
+      value: "Dashboard",
+      link: "/guest/dashboard",
+    },
   ],
   student: [
     {
@@ -55,6 +59,10 @@ export const Options = {
       value: "Home",
       link: "/manager",
     },
+    {
+      value: "Process",
+      link: "/manager/process",
+    },
   ],
 };
 
@@ -68,3 +76,4 @@ export const formattedDate = `${year}-${
 }-${date}`;
 
 export const reportStatus = ["Pending", "Editted", "Published"];
+export const steps = ["Submission", "Update Contribution", "End Of Topic"];

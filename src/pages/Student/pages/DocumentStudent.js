@@ -31,6 +31,7 @@ import {
   AlertTopRight,
 } from "../../../components/AlertDialog";
 import { message } from "../../../helpers/messageConstant";
+import { checkAuth } from "../../../actions/UserActions";
 export const DocumentStudent = () => {
   const navigate = useNavigate();
   const { fileId, reportId, id } = useParams();
@@ -114,6 +115,24 @@ export const DocumentStudent = () => {
       setFileList(response.data);
     }
   };
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     handleLoadImages();
     fetchComment();

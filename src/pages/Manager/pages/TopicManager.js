@@ -1,25 +1,34 @@
+import axios from "axios";
 import React from "react";
+import { FormateDate } from "../../../helpers/utils";
+import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
+import { backgroundColor } from "../../../helpers/constantColor";
+import ArticleIcon from "@mui/icons-material/Article";
 import {
   Container,
   Paper,
-  Typography,
   Box,
+  Typography,
   Divider,
+  Step,
+  Stepper,
+  StepLabel,
   Alert,
+  FormControl,
+  NativeSelect,
 } from "@mui/material";
-import { backgroundColor } from "../../../helpers/constantColor";
-import ArticleIcon from "@mui/icons-material/Article";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
-import { useNavigate } from "react-router-dom";
-import { FormateDate } from "../../../helpers/utils";
-export const TopicGuest = () => {
+import { reportStatus, steps } from "../../../helpers/contanst";
+export const TopicManager = () => {
   const navigate = useNavigate();
   const { topicId } = useParams();
   const [topicInfor, setTopicInfor] = React.useState({});
   const [topicDate, setTopicDate] = React.useState({});
+  const [selectStatus, setSelectedStatus] = React.useState(reportStatus[0]);
   const [reports, setReports] = React.useState(undefined);
+  const [activeStep, setActiveStep] = React.useState(-1);
   React.useEffect(() => {
     axios
       .get(apiEndpointLocal + path.students.getTopicId + topicId)
@@ -43,7 +52,7 @@ export const TopicGuest = () => {
     if (topicInfor !== null) {
       const data = {
         topicId: topicId,
-        status: "Published",
+        status: selectStatus,
       };
       axios
         .post(apiEndpointLocal + path.report.getReportBaseStatus, data)
@@ -51,6 +60,21 @@ export const TopicGuest = () => {
           console.log(response.data);
           setReports(response.data);
         });
+    }
+  }, [selectStatus, topicInfor]);
+  React.useEffect(() => {
+    if (topicInfor !== null) {
+      console.log(topicInfor);
+      const currentDate = new Date();
+      const finalDate = new Date(topicInfor.finalDate);
+      const entryDate = new Date(topicInfor.entriesDate);
+      if (currentDate < finalDate) {
+        setActiveStep(0);
+      } else if (currentDate > entryDate && currentDate < finalDate) {
+        setActiveStep(1);
+      } else if (currentDate > finalDate) {
+        setActiveStep(2);
+      }
     }
   }, [topicInfor]);
   return (
@@ -90,9 +114,33 @@ export const TopicGuest = () => {
           </Typography>
         </Box>
       </Paper>
+      <Box sx={{ width: "100%" }}>
+        <Stepper activeStep={activeStep} alternativeLabel>
+          {steps.map((label) => (
+            <Step key={label}>
+              <StepLabel>{label}</StepLabel>
+            </Step>
+          ))}
+        </Stepper>
+      </Box>
+
       <Box padding="20px 0px">
         <Typography variant="h5" color={backgroundColor} fontWeight={600}>
-          Published Contribution
+          <FormControl style={{ width: 250, margin: "25px 0px" }}>
+            <Typography variant="h8">Report Status</Typography>
+            <NativeSelect
+              defaultChecked={selectStatus}
+              onChange={(event) => setSelectedStatus(event.target.value)}
+            >
+              {reportStatus?.map((obj, index) => {
+                return (
+                  <option key={index} value={obj}>
+                    {obj}
+                  </option>
+                );
+              })}
+            </NativeSelect>
+          </FormControl>
         </Typography>
         <Divider />
         <Box>

@@ -9,6 +9,7 @@ import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Grid from '@mui/material/Grid';
+import {Container} from '@mui/material';
 import { axisClasses } from '@mui/x-charts';
 
 const FacultyData = {
@@ -72,7 +73,8 @@ export default function CoordinatorDashboard() {
 
   return (
     <div>
-      <Box>
+    <Container maxWidth="xl">
+    <Box>
         <FormControl sx={{ m: 1, minWidth: 120 }}>
         <InputLabel id="SelectYear">Academic Year</InputLabel>
           <Select 
@@ -197,6 +199,8 @@ export default function CoordinatorDashboard() {
             />
         </Box>
       </Stack>
+    </Container>
+
     </div>
   );
 }

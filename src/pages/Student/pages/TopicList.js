@@ -25,8 +25,12 @@ import axios from "axios";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { TopicTabPanelList } from "../components/TopicTabPanelList";
 import { FormateDate } from "../../../helpers/utils";
-//
+import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../../../actions/UserActions";
+import Cookies from "js-cookie";
+
 export const TopicList = () => {
+  const navigate = useNavigate();
   const [value, setValue] = React.useState("1");
   const [falcuties, setFalcuties] = React.useState(undefined);
   const [academics, setAcademics] = React.useState(undefined);
@@ -36,6 +40,24 @@ export const TopicList = () => {
     setValue(newValue);
   };
 
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios.get(apiEndpointStaging + path.falcuty.getall).then((rep) => {
       setSelectedFalcuty(rep.data[0].id);

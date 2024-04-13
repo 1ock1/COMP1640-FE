@@ -70,7 +70,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Container fullWidth>
+      <Container fullWidth maxWidth="xl">
         <Box sx={{ margin: "1rem 1rem" }} align="right">
           <FormControl sx={{ width: "10rem" }}>
             <InputLabel id="demo-simple-select-label">Academic year</InputLabel>
@@ -133,19 +133,19 @@ const Dashboard = () => {
           justifyContent={"space-between"}
         >
           {/* <Paper elevation={3}> */}
-            <BarChart
-              height={400}
-              series={series
-                .slice(0, seriesNb)
-                .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
-              skipAnimation={skipAnimation}
-              xAxis={[
-                {
-                  data: ["IT", "Business", "Art", "Music", "Media"],
-                  scaleType: "band",
-                },
-              ]}
-            />
+          <BarChart
+            height={400}
+            series={series
+              .slice(0, seriesNb)
+              .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
+            skipAnimation={skipAnimation}
+            xAxis={[
+              {
+                data: ["IT", "Business", "Art", "Music", "Media"],
+                scaleType: "band",
+              },
+            ]}
+          />
           {/* </Paper> */}
           <>
             <Grid container spacing={0} width={250}>

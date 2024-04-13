@@ -29,7 +29,7 @@ import {
   getTopicsStatusList,
   getTotalContributionPerFacultyAndAcademic,
 } from "../../../actions/DashboardAction";
-export const Dashboard = () => {
+export const DashboardGuest = () => {
   const dispatch = useDispatch();
   const totalReport = useSelector(totalContribution);
   const isLoadingTotalReport = useSelector(statusTotalContribution);
