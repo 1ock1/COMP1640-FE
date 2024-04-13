@@ -1,4 +1,7 @@
+import axios from "axios";
 import React from "react";
+import { FormateDate } from "../../../helpers/utils";
+import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 import {
   Container,
   Box,
@@ -14,21 +17,48 @@ import {
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  FormControl,
+  NativeSelect,
+  CircularProgress,
+  Alert,
 } from "@mui/material";
 import { Link } from "react-router-dom";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import { Options } from "../../../helpers/contanst";
+import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 //
 export const GuestHomePage = () => {
   const [value, setValue] = React.useState("1");
-
+  const [falcuties, setFalcuties] = React.useState(undefined);
+  const [academics, setAcademics] = React.useState(undefined);
+  const [selectedFalcuty, setSelectedFalcuty] = React.useState(-1);
+  const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
+  const [topics, setTopics] = React.useState(undefined);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-
+  React.useEffect(() => {
+    axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
+      setSelectedFalcuty(rep.data[0].id);
+      setFalcuties(rep.data);
+    });
+    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+      setSelectedAcademic(rep.data[0].id);
+      setAcademics(rep.data);
+    });
+  }, []);
+  React.useEffect(() => {
+    const data = {
+      academicId: selectedAcademic,
+      falcutyId: selectedFalcuty,
+    };
+    axios
+      .post(apiEndpointLocal + path.students.topics, data)
+      .then((response) => setTopics(response.data))
+      .catch((err) => console.log(err));
+  }, [selectedAcademic, selectedFalcuty]);
   return (
     <>
       <div
@@ -80,6 +110,29 @@ export const GuestHomePage = () => {
         </Box>
       </div>
       <Container maxWidth="xl" style={{ marginTop: 20 }}>
+        <FormControl style={{ width: 250 }}>
+          <Typography variant="h8">Academic Year</Typography>
+          <NativeSelect
+            defaultChecked={1}
+            inputProps={{
+              name: "age",
+              id: "uncontrolled-native",
+            }}
+            onChange={(event) => setSelectedAcademic(event.target.value)}
+          >
+            {academics?.map((obj, index) => {
+              const startDate = new Date(obj.startDate);
+              const startDateFormatted = FormateDate(startDate);
+              const endDate = new Date(obj.endDate);
+              const endDateFormatted = FormateDate(endDate);
+              return (
+                <option key={index} value={obj.id}>
+                  {startDateFormatted + " - " + endDateFormatted}
+                </option>
+              );
+            })}
+          </NativeSelect>
+        </FormControl>
         <Grid container spacing={0}>
           <Grid xs={9}>
             <Box sx={{ width: "100%", typography: "body1" }}>
@@ -93,7 +146,40 @@ export const GuestHomePage = () => {
                     <Tab label="New Published Report" value="2" />
                   </TabList>
                 </Box>
-                <TabPanel value="3">New Published Report</TabPanel>
+                <TabPanel value="1">
+                  {" "}
+                  <Box>
+                    {topics === undefined && <CircularProgress />}
+                    {topics?.length === 0 ? (
+                      <Alert severity="info">No Data.</Alert>
+                    ) : (
+                      topics?.map((topic) => (
+                        <Link
+                          style={{ textDecoration: "none" }}
+                          to={"/guest/topic/" + topic.id}
+                        >
+                          <Box mt={2}>
+                            <Paper
+                              elevation={2}
+                              style={{ padding: "20px 20px" }}
+                            >
+                              <Box display="flex">
+                                <TipsAndUpdatesIcon sx={{ fontSize: 80 }} />
+                                <Box>
+                                  <Typography fontWeight={600}>
+                                    {topic.name}
+                                  </Typography>
+                                  <Typography>{topic.description}</Typography>
+                                  <Typography>{topic.finalDate}</Typography>
+                                </Box>
+                              </Box>
+                            </Paper>
+                          </Box>
+                        </Link>
+                      ))
+                    )}
+                  </Box>
+                </TabPanel>
               </TabContext>
             </Box>
           </Grid>
@@ -112,24 +198,19 @@ export const GuestHomePage = () => {
 
                 <Box maxWidth role="presentation">
                   <List>
-                    {Options.guest?.map((obj, index) => (
+                    {falcuties?.map((obj, index) => (
                       <ListItem
-                        key={index}
+                        key={obj.id}
                         disablePadding
                         style={{ display: "block" }}
+                        onClick={() => setSelectedFalcuty(obj.id)}
                       >
-                        <Link
-                          to={obj.link}
-                          className="nav_header-link"
-                          style={{ textDecoration: "none", color: "black" }}
-                        >
-                          <ListItemButton>
-                            <ListItemIcon>
-                              <InboxIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={obj.value} />
-                          </ListItemButton>
-                        </Link>
+                        <ListItemButton>
+                          <ListItemIcon>
+                            <InboxIcon />
+                          </ListItemIcon>
+                          <ListItemText primary={obj.name} />
+                        </ListItemButton>
                       </ListItem>
                     ))}
                   </List>

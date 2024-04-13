@@ -169,13 +169,15 @@ export const Document = ({
           }}
           height={"800px"}
           serviceUrl="https://localhost:7044/api/File"
-          enableToolbar={true}
+          enableToolbar={role === "MANAGER" ? false : true}
           // toolbarItems={items}
-          // readOnly={true}
+          readOnly={role === "MANAGER" || role === "GUEST" ? true : false}
           showPropertiesPane={false}
           enableComment
           // enableLockAndEdit={true}
-          // restrictEditing={true}
+          restrictEditing={
+            role === "MANAGER" || role === "GUEST" ? true : false
+          }
           enableAutoFocus={false}
           enableTrackChanges={true}
           contentChange={() => setDocumentChange(true)}

@@ -23,6 +23,7 @@ import { jwtDecode } from "jwt-decode";
 import { TermPolicy } from "../../../components/TermPolicy";
 import { FormateDate } from "../../../helpers/utils";
 import { sendEmail } from "../../../actions/EmailAction";
+import { checkAuth } from "../../../actions/UserActions";
 export const TopicStudent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -37,7 +38,7 @@ export const TopicStudent = () => {
     entriesDate: "",
     finalDate: "",
   });
-  const handleUpload = async (event) => {
+  const handleUpload = (event) => {
     const cookie = Cookies.get("us");
     if (cookie === undefined) {
       navigate("/signin");
@@ -50,7 +51,7 @@ export const TopicStudent = () => {
     formData.append("type", "document");
     formData.append("studentId", decoded["usid"]);
     formData.append("topicId", id);
-    await axios
+    axios
       .post(apiEndpointLocal + path.file.upload, formData, {
         headers: {
           Accept: "application/json",
@@ -74,6 +75,24 @@ export const TopicStudent = () => {
         setReportId(response.data.reportID);
       });
   };
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     const cookie = Cookies.get("us");
     if (cookie === undefined) {
