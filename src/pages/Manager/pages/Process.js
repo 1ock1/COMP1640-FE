@@ -1,7 +1,7 @@
 import * as React from "react";
 import axios from "axios";
 import { FormateDate } from "../../../helpers/utils";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
@@ -18,11 +18,11 @@ export const Process = () => {
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
   React.useEffect(() => {
-    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);
       setSelectedAcademic(rep.data[0]?.id);
     });
-    axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.falcuty.getall).then((rep) => {
       setFalcuties(rep.data);
       setSelectedFaculties(rep.data[0]?.id);
     });

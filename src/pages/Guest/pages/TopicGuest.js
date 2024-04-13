@@ -11,7 +11,7 @@ import { backgroundColor } from "../../../helpers/constantColor";
 import ArticleIcon from "@mui/icons-material/Article";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { FormateDate } from "../../../helpers/utils";
 export const TopicGuest = () => {
@@ -22,7 +22,7 @@ export const TopicGuest = () => {
   const [reports, setReports] = React.useState(undefined);
   React.useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.students.getTopicId + topicId)
+      .get(apiEndpointStaging + path.students.getTopicId + topicId)
       .then((response) => {
         const data = response.data;
         setTopicInfor(data);
@@ -46,7 +46,7 @@ export const TopicGuest = () => {
         status: "Published",
       };
       axios
-        .post(apiEndpointLocal + path.report.getReportBaseStatus, data)
+        .post(apiEndpointStaging + path.report.getReportBaseStatus, data)
         .then((response) => {
           console.log(response.data);
           setReports(response.data);

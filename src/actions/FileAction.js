@@ -1,7 +1,7 @@
-import { apiEndpointLocal, path } from "../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../helpers/apiEndpoints";
 
 export const downloadZipFile = (reportId) => {
-  fetch(apiEndpointLocal + path.file.downloadZip + reportId, {
+  fetch(apiEndpointStaging + path.file.downloadZip + reportId, {
     method: "GET",
     headers: {
       "content-type": "application/json",

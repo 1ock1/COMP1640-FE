@@ -16,7 +16,7 @@ import {
 } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useParams } from "react-router-dom";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { ListComment } from "../../../components/ListComment";
 export const DocumentManager = () => {
@@ -36,13 +36,13 @@ export const DocumentManager = () => {
       responseForUserId: reportInfor.studentId,
     };
     axios
-      .post(apiEndpointLocal + path.comment.getReportComment, data)
+      .post(apiEndpointStaging + path.comment.getReportComment, data)
       .then((rep) => setCommentList(rep.data));
   };
 
   React.useEffect(() => {
     axios
-      .post(apiEndpointLocal + path.fileReport.getAllFileReport + reportId)
+      .post(apiEndpointStaging + path.fileReport.getAllFileReport + reportId)
       .then((rep) => {
         const imagesArray = rep.data.filter((obj) => obj.type === "image");
         const document = rep.data.find((obj) => obj.type === "document");
@@ -50,7 +50,7 @@ export const DocumentManager = () => {
         setReportDocument(document);
       });
     axios
-      .post(apiEndpointLocal + path.report.getReportInformation + reportId)
+      .post(apiEndpointStaging + path.report.getReportInformation + reportId)
       .then((rep) => {
         setReportInfor(rep.data);
       });

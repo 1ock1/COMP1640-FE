@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { FormateDate } from "../../../helpers/utils";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
@@ -31,7 +31,7 @@ export const TopicManager = () => {
   const [activeStep, setActiveStep] = React.useState(-1);
   React.useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.students.getTopicId + topicId)
+      .get(apiEndpointStaging + path.students.getTopicId + topicId)
       .then((response) => {
         const data = response.data;
         setTopicInfor(data);
@@ -55,7 +55,7 @@ export const TopicManager = () => {
         status: selectStatus,
       };
       axios
-        .post(apiEndpointLocal + path.report.getReportBaseStatus, data)
+        .post(apiEndpointStaging + path.report.getReportBaseStatus, data)
         .then((response) => {
           console.log(response.data);
           setReports(response.data);

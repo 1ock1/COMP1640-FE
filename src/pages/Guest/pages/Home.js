@@ -1,7 +1,7 @@
 import axios from "axios";
 import React from "react";
 import { FormateDate } from "../../../helpers/utils";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import {
   Container,
   Box,
@@ -40,11 +40,11 @@ export const GuestHomePage = () => {
     setValue(newValue);
   };
   React.useEffect(() => {
-    axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.falcuty.getall).then((rep) => {
       setSelectedFalcuty(rep.data[0].id);
       setFalcuties(rep.data);
     });
-    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setSelectedAcademic(rep.data[0].id);
       setAcademics(rep.data);
     });
@@ -55,7 +55,7 @@ export const GuestHomePage = () => {
       falcutyId: selectedFalcuty,
     };
     axios
-      .post(apiEndpointLocal + path.students.topics, data)
+      .post(apiEndpointStaging + path.students.topics, data)
       .then((response) => setTopics(response.data))
       .catch((err) => console.log(err));
   }, [selectedAcademic, selectedFalcuty]);

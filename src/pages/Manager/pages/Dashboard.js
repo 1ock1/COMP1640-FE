@@ -1,6 +1,6 @@
 import axios from "axios";
 import React from "react";
-import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import {
   Box,
   Container,
@@ -50,11 +50,11 @@ export const Dashboard = () => {
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
   React.useEffect(() => {
-    axios.get(apiEndpointLocal + path.academic.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);
       setSelectedAcademic(rep.data[0]?.id);
     });
-    axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
+    axios.get(apiEndpointStaging + path.falcuty.getall).then((rep) => {
       setFalcuties(rep.data);
       setSelectedFaculties(rep.data[0]?.id);
     });
