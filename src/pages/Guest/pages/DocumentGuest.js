@@ -20,7 +20,7 @@ import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { ListComment } from "../../../components/ListComment";
 import { useMediaQuery } from "@mui/material";
-export const DocumentManager = () => {
+export const DocumentGuest = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
   const matches720 = useMediaQuery("(max-width:720px)");
@@ -77,7 +77,12 @@ export const DocumentManager = () => {
           {/* <Typography padding="10px 0px" variant="h4" fontWeight={600}>
             Published Report: Title
           </Typography> */}
-          <Typography pb={1} variant="h5" fontSize={matches720 ? 20 : 30}>
+          <Typography
+            pb={1}
+            variant="h5"
+            fontSize={matches720 ? 20 : 30}
+            fontWeight={600}
+          >
             Topic: Research Computing
           </Typography>
           <Box display="flex" pb={2}>
@@ -87,8 +92,7 @@ export const DocumentManager = () => {
           </Box>
           <Box mb={2}>
             <Typography variant="h7">
-              Description: Nghien cuu ve de tai xay dung chu nghia xa hoi va xay
-              dung cac nhu cau thiet yeu cua cuoc song ca nhanh
+              Description: Research Computing
             </Typography>
           </Box>
           <Divider></Divider>
@@ -124,7 +128,7 @@ export const DocumentManager = () => {
               <Document
                 id={reportDocument.id}
                 allowedAction={false}
-                role="MANAGER"
+                role="GUEST"
                 reportId={reportId}
               />
             )}

@@ -24,7 +24,9 @@ export const TopicListManager = ({ falcutyId, academicId }) => {
     <>
       <Box>
         {isGetTopicList === false || topicsList.length === 0 ? (
-          <Alert severity="info">No Data.</Alert>
+          <Alert severity="info" style={{ width: "100%" }}>
+            No Data.
+          </Alert>
         ) : (
           topicsList?.map((topic) => (
             <Link

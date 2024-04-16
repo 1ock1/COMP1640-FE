@@ -58,6 +58,8 @@ export const path = {
     commentStatusOfTopic: "api/Report/CommentStatusOfTopic/",
     topicsStatuses: "api/Report/TopicStatus",
     totalReportOnTopicBaseStatus: "api/Report/TotalReportOnTopicBaseStatus/",
+    percentagePublishedReport: "api/Report/PercentagePublishedReport",
+    totalContributor: "api/Report/TotalContributor",
   },
   notify: {
     createNoti: "api/Notifcation/CreateNoti",

@@ -4,12 +4,17 @@ import { Options } from "../../../helpers/contanst";
 import { GuestHomePage } from "../pages/Home";
 import { TopicGuest } from "../pages/TopicGuest";
 import { DashboardGuest } from "../pages/Dashboard";
+import { DocumentGuest } from "../pages/DocumentGuest";
 export const AppBarGuest = () => {
   return (
     <>
       <Routes>
         <Route path="/guest" element={<GuestHomePage />} />
         <Route path="/guest/topic/:topicId" element={<TopicGuest />} />
+        <Route
+          path="/guest/topic/:topicId/:reportId"
+          element={<DocumentGuest />}
+        />
         <Route path="/guest/dashboard" element={<DashboardGuest />} />
       </Routes>
     </>

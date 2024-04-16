@@ -14,8 +14,12 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { reportStatus } from "../../../helpers/contanst";
 import { ListReport } from "../../../components/ListReport";
+import { useMediaQuery } from "@mui/material";
 export const TopicCoordinatorList = () => {
   const navigate = useNavigate();
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
   const [academics, setAcademics] = React.useState(undefined);
   const [topics, setTopics] = React.useState(undefined);
   const [reports, setReports] = React.useState(undefined);
@@ -64,7 +68,9 @@ export const TopicCoordinatorList = () => {
     <>
       <Container maxWidth="xl" style={{ marginTop: 20 }}>
         <Box>
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Academic Year</Typography>
             <NativeSelect
               defaultChecked={selectedAcademic}
@@ -85,7 +91,9 @@ export const TopicCoordinatorList = () => {
               })}
             </NativeSelect>
           </FormControl>
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Topic</Typography>
             <NativeSelect
               defaultChecked={selectedTopic}
@@ -100,7 +108,9 @@ export const TopicCoordinatorList = () => {
               })}
             </NativeSelect>
           </FormControl>
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Report Status</Typography>
             <NativeSelect
               defaultChecked={selectStatus}
