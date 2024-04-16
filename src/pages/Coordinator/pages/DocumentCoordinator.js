@@ -27,9 +27,13 @@ import { handleUpdateStatus } from "../../../actions/ReportActions";
 import PublicIcon from "@mui/icons-material/Public";
 import { HelpTextDateWarning } from "../../../components/HelpTextDate";
 import { PublishedReportForm } from "../components/PublishedReportForm";
+import { useMediaQuery } from "@mui/material";
 export const DocumentCoordinator = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
   const [reportInfor, setReportInfor] = React.useState({});
   const [comment, setComment] = React.useState("");
   const [commentList, setCommentList] = React.useState(undefined);
@@ -211,55 +215,70 @@ export const DocumentCoordinator = () => {
             padding: "0 25px",
           }}
         >
-          <Typography padding="10px 0px" variant="h4" fontWeight={600}>
-            Published Report: Title
-          </Typography>
-          <Typography pb={1} variant="h5" fontSize={20}>
-            Topic: Nghien cuu ve de tai xay dung chu nghia xa hoi va xay dung
-            cac nhu cau thiet yeu cua cuoc song ca nhanh
+          <Typography
+            pb={1}
+            variant="h5"
+            fontSize={matches720 ? 20 : 30}
+            fontWeight={600}
+          >
+            Topic: Research Redux
           </Typography>
           <Box display="flex" pb={2}>
-            <Typography variant="h5" fontSize={20}>
-              Academic Year: 2015 - 2016
-            </Typography>
-            <Typography paddingLeft={11.5} variant="h5" fontSize={20}>
+            <Typography variant="h5" fontSize={matches720 ? 15 : 20}>
               Falcuty: Information Technology
             </Typography>
           </Box>
           <Box mb={2}>
             <Typography variant="h7">
-              Description: Day la noi quy tu cua tat ca nhung nguoi co dam me ve
-              triet hoc nop bai vao day. Khong thi 1 la 5 qua trung hai la 1 qua
-              ten lua. Chung may nghe ro gi chua
+              Description: Research about Redux state management
             </Typography>
           </Box>
           <Divider></Divider>
-          <Typography mt={1} fontSize={20}>
+          <Typography mt={1} fontSize={matches720 ? 12 : 20}>
             Author:{" "}
           </Typography>
-          <Box display="flex" alignItems="center" mt={1}>
+          <Box
+            display="flex"
+            alignItems="center"
+            mt={1}
+            fontSize={matches720 ? 12 : 20}
+          >
             <Avatar
               alt="Student Name"
               src="https://th.bing.com/th/id/OIP.hoETRgtHlkpHNkbg4pI1jgAAAA?rs=1&pid=ImgDetMain"
+              sizes={matches720 ? 12 : 20}
             />
-            <Typography pl={1} color="#404a86" fontWeight={600}>
+            <Typography
+              pl={1}
+              color="#404a86"
+              fontWeight={600}
+              fontSize={matches720 ? 12 : 20}
+            >
               Nguyen Van B
             </Typography>
           </Box>
           <Box alignItems="center" mt={2}>
-            <Typography color="#ef6c00" fontWeight={600}>
+            <Typography
+              color="#ef6c00"
+              fontWeight={600}
+              fontSize={matches720 ? 12 : 20}
+            >
               Published Date: 02/02/2002
             </Typography>
           </Box>
           <Box display="flex" alignItems="center" mt={1} pb={1}>
             <RemoveRedEyeIcon />
-            <Typography color="#303f9f" fontWeight={600}>
+            <Typography
+              color="#303f9f"
+              fontWeight={600}
+              fontSize={matches720 ? 12 : 20}
+            >
               10000
             </Typography>
           </Box>
         </Paper>
         <Grid container spacing={0}>
-          <Grid item xs={9}>
+          <Grid item xs={matches880 ? 12 : 9}>
             {reportDocument === null ? (
               ""
             ) : (
@@ -295,36 +314,49 @@ export const DocumentCoordinator = () => {
               date={afterDatePublish}
             />
           </Grid>
-          <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
-            <Divider orientation="vertical" />
-          </Grid>
-          <Grid item xs={2.5}>
+          {matches880 ? (
+            ""
+          ) : (
+            <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
+              <Divider orientation="vertical" />
+            </Grid>
+          )}
+          <Grid item xs={matches880 ? 12 : 2.5}>
             <Box>
               <Typography fontSize={18} fontWeight={600}>
                 Report Images: (Max 10 images)
               </Typography>
             </Box>
             <Box>
-              <ImageList sx={{ width: "100%", height: 700 }} cols={1}>
-                {images?.map((item) => (
-                  <ImageListItem key={item.id}>
-                    <img
-                      srcSet={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                      src={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format`}
-                      alt={item.id}
-                      loading="lazy"
-                      style={{
-                        objectFit: "contain",
-                      }}
-                    />
-                  </ImageListItem>
-                ))}
+              <ImageList
+                sx={{ width: "100%", height: matches880 ? 500 : 700 }}
+                cols={1}
+              >
+                {images?.length === 0 ? (
+                  <Typography align="center" margin={"auto"} maxWidth="100%">
+                    <Alert severity="info">No images</Alert>
+                  </Typography>
+                ) : (
+                  images?.map((item) => (
+                    <ImageListItem key={item.id}>
+                      <img
+                        srcSet={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                        src={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format`}
+                        alt={item.id}
+                        loading="lazy"
+                        style={{
+                          objectFit: "contain",
+                        }}
+                      />
+                    </ImageListItem>
+                  ))
+                )}
               </ImageList>
             </Box>
           </Grid>
         </Grid>
         <Grid container spacing={0} mt={3} mb={5}>
-          <Grid item xs={9}>
+          <Grid item xs={matches880 ? 12 : 9}>
             <Box>
               <AddComment setComment={setComment} />
             </Box>
@@ -337,7 +369,7 @@ export const DocumentCoordinator = () => {
                 You dont have any comment in this report.
               </Alert>
             ) : (
-              <ListComment comments={commentList} />
+              <ListComment comments={commentList} matches880={matches880} />
             )}
           </Grid>
         </Grid>

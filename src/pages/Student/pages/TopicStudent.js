@@ -24,9 +24,12 @@ import { TermPolicy } from "../../../components/TermPolicy";
 import { FormateDate } from "../../../helpers/utils";
 import { sendEmail } from "../../../actions/EmailAction";
 import { checkAuth } from "../../../actions/UserActions";
+import { useMediaQuery } from "@mui/material";
 export const TopicStudent = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
   const [isAllowedTopic, setAllowedTopic] = React.useState(false);
   const [reportId, setReportId] = React.useState(-1);
   const [documentId, setDocumentId] = React.useState("");
@@ -218,7 +221,7 @@ export const TopicStudent = () => {
             >
               <Button
                 variant="outlined"
-                size="large"
+                size={"large"}
                 style={{ backgroundColor: backgroundColor, color: "white" }}
               >
                 View Submission
@@ -239,11 +242,19 @@ export const TopicStudent = () => {
           padding: "0 25px",
         }}
       >
-        <Typography padding="20px 0px" variant="h4" fontWeight={600}>
+        <Typography
+          padding="20px 0px"
+          fontSize={matches720 ? 20 : 30}
+          fontWeight={600}
+        >
           Topic:{topicInfor.name}
         </Typography>
         <Box display="flex" pb={2}>
-          <Typography paddingLeft={0.5} variant="h6" fontWeight={600}>
+          <Typography
+            paddingLeft={0.5}
+            fontSize={matches720 ? 15 : 20}
+            fontWeight={600}
+          >
             Falcuty: Information Technology
           </Typography>
         </Box>
@@ -253,13 +264,17 @@ export const TopicStudent = () => {
             Description: {topicInfor.description}
           </Typography>
         </Box>
-        <Box display="flex" mt={2} pb={2}>
-          <Typography variant="h6" color="#1565c0" fontWeight={600}>
+        <Box display={matches576 ? "block" : "flex"} mt={2} pb={2}>
+          <Typography
+            fontSize={matches720 ? 15 : 20}
+            color="#1565c0"
+            fontWeight={600}
+          >
             Entries Date: {topicDate?.entriesDate}
           </Typography>
           <Typography
-            paddingLeft={15}
-            variant="h6"
+            paddingLeft={matches576 ? 0 : 15}
+            fontSize={matches720 ? 15 : 20}
             color="#c62828"
             fontWeight={600}
           >

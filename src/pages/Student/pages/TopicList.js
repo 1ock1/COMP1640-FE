@@ -28,9 +28,11 @@ import { FormateDate } from "../../../helpers/utils";
 import { useNavigate } from "react-router-dom";
 import { checkAuth } from "../../../actions/UserActions";
 import Cookies from "js-cookie";
-
+import { useMediaQuery } from "@mui/material";
 export const TopicList = () => {
   const navigate = useNavigate();
+  const matches992 = useMediaQuery("(max-width:992px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
   const [value, setValue] = React.useState("1");
   const [falcuties, setFalcuties] = React.useState(undefined);
   const [academics, setAcademics] = React.useState(undefined);
@@ -80,20 +82,25 @@ export const TopicList = () => {
         <Box textAlign="center">
           <Typography
             fontWeight={600}
-            fontSize={40}
+            fontSize={matches992 ? (matches576 ? 20 : 30) : 40}
             color="white"
             paddingTop={9}
           >
             Greenwich Idea Management System
           </Typography>
-          <Typography variant="h5" fontWeight={500} mt={3} color="white">
+          <Typography
+            fontSize={matches992 ? (matches576 ? 15 : 20) : 25}
+            fontWeight={500}
+            mt={3}
+            color="white"
+          >
             New Idea - New Exploration
           </Typography>
           <TextField
             id="search"
             type="search"
             sx={{
-              width: 850,
+              width: matches992 ? (matches576 ? 300 : 500) : 850,
               border: "none",
               marginTop: 5,
             }}
@@ -119,7 +126,7 @@ export const TopicList = () => {
         </Box>
       </div>
       <Container maxWidth="xl" style={{ marginTop: 20 }}>
-        <FormControl style={{ width: 250 }}>
+        <FormControl style={{ width: matches576 ? 150 : 250, marginRight: 10 }}>
           <Typography variant="h8">Academic Year</Typography>
           <NativeSelect
             defaultChecked={1}
@@ -142,8 +149,31 @@ export const TopicList = () => {
             })}
           </NativeSelect>
         </FormControl>
+        {matches992 ? (
+          <FormControl style={{ width: matches576 ? 150 : 250 }}>
+            <Typography variant="h8">Faculty</Typography>
+            <NativeSelect
+              defaultChecked={1}
+              inputProps={{
+                name: "age",
+                id: "uncontrolled-native",
+              }}
+              onChange={(event) => setSelectedFalcuty(event.target.value)}
+            >
+              {falcuties?.map((obj, index) => {
+                return (
+                  <option key={index} value={obj.id}>
+                    {obj.name}
+                  </option>
+                );
+              })}
+            </NativeSelect>
+          </FormControl>
+        ) : (
+          ""
+        )}
         <Grid container spacing={0}>
-          <Grid xs={9}>
+          <Grid xs={matches992 ? 12 : 9}>
             <Box sx={{ width: "100%", typography: "body1" }}>
               <TabContext value={value}>
                 <Box
@@ -171,41 +201,45 @@ export const TopicList = () => {
               </TabContext>
             </Box>
           </Grid>
-          <Grid xs={3}>
-            <Paper
-              elevation={2}
-              style={{
-                margin: "10px 0px",
-                padding: "0 25px",
-              }}
-            >
-              <Box>
-                <Typography textAlign="center" variant="h6">
-                  Falcuty
-                </Typography>
+          {matches992 ? (
+            ""
+          ) : (
+            <Grid xs={3}>
+              <Paper
+                elevation={2}
+                style={{
+                  margin: "10px 0px",
+                  padding: "0 25px",
+                }}
+              >
+                <Box>
+                  <Typography textAlign="center" variant="h6">
+                    Faculty
+                  </Typography>
 
-                <Box maxWidth role="presentation">
-                  <List>
-                    {falcuties?.map((obj, index) => (
-                      <ListItem
-                        key={obj.id}
-                        disablePadding
-                        style={{ display: "block" }}
-                        onClick={() => setSelectedFalcuty(obj.id)}
-                      >
-                        <ListItemButton>
-                          <ListItemIcon>
-                            <InboxIcon />
-                          </ListItemIcon>
-                          <ListItemText primary={obj.name} />
-                        </ListItemButton>
-                      </ListItem>
-                    ))}
-                  </List>
+                  <Box maxWidth role="presentation">
+                    <List>
+                      {falcuties?.map((obj, index) => (
+                        <ListItem
+                          key={obj.id}
+                          disablePadding
+                          style={{ display: "block" }}
+                          onClick={() => setSelectedFalcuty(obj.id)}
+                        >
+                          <ListItemButton>
+                            <ListItemIcon>
+                              <InboxIcon />
+                            </ListItemIcon>
+                            <ListItemText primary={obj.name} />
+                          </ListItemButton>
+                        </ListItem>
+                      ))}
+                    </List>
+                  </Box>
                 </Box>
-              </Box>
-            </Paper>
-          </Grid>
+              </Paper>
+            </Grid>
+          )}
         </Grid>
       </Container>
     </>

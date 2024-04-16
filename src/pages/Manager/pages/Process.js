@@ -12,8 +12,12 @@ import { FormControl } from "@mui/material";
 import Pagination from "@mui/material/Pagination";
 import Stack from "@mui/material/Stack";
 import { TopicListManager } from "../components/TopicListManager";
+import { useMediaQuery } from "@mui/material";
 export const Process = () => {
   const [academics, setAcademics] = React.useState(undefined);
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
   const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
@@ -32,7 +36,9 @@ export const Process = () => {
     <>
       <Container maxWidth="xl">
         <Box sx={{ margin: "3rem 0rem", width: "100%" }} align="left">
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Academic Year</Typography>
             <NativeSelect
               defaultChecked={selectedAcademic}
@@ -53,7 +59,9 @@ export const Process = () => {
               })}
             </NativeSelect>
           </FormControl>
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Faculties</Typography>
             <NativeSelect
               defaultChecked={selectedFaculties}
@@ -79,9 +87,9 @@ export const Process = () => {
           sx={{ margin: "1rem 0rem 3rem 0rem", width: "90%" }}
           align="center"
         >
-          <Stack spacing={2} align="center">
+          {/* <Stack spacing={2} align="center">
             <Pagination count={5} variant="outlined" color="primary" />
-          </Stack>
+          </Stack> */}
         </Box>
       </Container>
     </>

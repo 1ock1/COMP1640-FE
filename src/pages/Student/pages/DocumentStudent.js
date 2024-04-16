@@ -32,8 +32,12 @@ import {
 } from "../../../components/AlertDialog";
 import { message } from "../../../helpers/messageConstant";
 import { checkAuth } from "../../../actions/UserActions";
+import { useMediaQuery } from "@mui/material";
 export const DocumentStudent = () => {
   const navigate = useNavigate();
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
   const { fileId, reportId, id } = useParams();
   const [fileList, setFileList] = React.useState([]);
   const [isUploadedImages, setIsUploadedImages] = React.useState(false);
@@ -183,25 +187,21 @@ export const DocumentStudent = () => {
           padding: "0 25px",
         }}
       >
-        <Typography padding="10px 0px" variant="h4" fontWeight={600}>
+        <Typography
+          padding="10px 0px"
+          fontSize={matches720 ? 20 : 30}
+          fontWeight={600}
+        >
           Topic: {topicInfor.name}
         </Typography>
-        <Typography pb={1} variant="h5" fontSize={20}>
-          Topic: {topicInfor.description}
-        </Typography>
         <Box display="flex" pb={2}>
-          <Typography variant="h5" fontSize={20}>
-            Academic Year: 2015 - 2016
-          </Typography>
-          <Typography paddingLeft={11.5} variant="h5" fontSize={20}>
+          <Typography fontSize={matches720 ? 15 : 20}>
             Falcuty: Information Technology
           </Typography>
         </Box>
         <Box mb={2}>
           <Typography variant="h7">
-            Description: Day la noi quy tu cua tat ca nhung nguoi co dam me ve
-            triet hoc nop bai vao day. Khong thi 1 la 5 qua trung hai la 1 qua
-            ten lua. Chung may nghe ro gi chua
+            Description: {topicInfor.description}
           </Typography>
         </Box>
         <Divider></Divider>
@@ -230,7 +230,7 @@ export const DocumentStudent = () => {
         </Box>
       </Paper>
       <Grid container spacing={0}>
-        <Grid item xs={9}>
+        <Grid item xs={matches880 ? 12 : 9}>
           {fileList === undefined ? (
             ""
           ) : (
@@ -244,33 +244,45 @@ export const DocumentStudent = () => {
             />
           )}
         </Grid>
-        <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
-          <Divider orientation="vertical" />
-        </Grid>
-        <Grid item xs={2.5}>
+        {matches880 ? (
+          ""
+        ) : (
+          <Grid item xs={0.5} style={{ paddingLeft: 0 }}>
+            <Divider orientation="vertical" />
+          </Grid>
+        )}
+
+        <Grid item xs={matches880 ? 12 : 2.5}>
           <Box>
             <Typography fontSize={18} fontWeight={600}>
               Report Images: (Max 10 images)
             </Typography>
           </Box>
           <Box>
-            <ImageList sx={{ width: "100%", height: 700 }} cols={1}>
-              {!isLoadedImages
-                ? ""
-                : fileList?.map((item) => (
-                    <ImageListItem key={item.id}>
-                      <img
-                        srcSet={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                        src={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format`}
-                        alt={item.id}
-                        loading="lazy"
-                        onClick={handleImageSelected}
-                        style={{
-                          objectFit: "contain",
-                        }}
-                      />
-                    </ImageListItem>
-                  ))}
+            <ImageList
+              sx={{ width: "100%", height: matches880 ? 500 : 700 }}
+              cols={1}
+            >
+              {!isLoadedImages && fileList?.length === 0 ? (
+                <Typography align="center" margin={"auto"} maxWidth="100%">
+                  <Alert severity="info">No images</Alert>
+                </Typography>
+              ) : (
+                fileList?.map((item) => (
+                  <ImageListItem key={item.id}>
+                    <img
+                      srcSet={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                      src={`https://comp1640storage.blob.core.windows.net/hehe/${item?.id}?w=164&h=164&fit=crop&auto=format`}
+                      alt={item.id}
+                      loading="lazy"
+                      onClick={handleImageSelected}
+                      style={{
+                        objectFit: "contain",
+                      }}
+                    />
+                  </ImageListItem>
+                ))
+              )}
             </ImageList>
           </Box>
           <Box display="block">
@@ -319,7 +331,7 @@ export const DocumentStudent = () => {
         </Grid>
       </Grid>
       <Grid container spacing={0} mt={3} mb={5}>
-        <Grid item xs={9}>
+        <Grid item xs={matches880 ? 12 : 9}>
           <Box mb={2} mt={5}>
             <Typography variant="h5">Comment</Typography>
             <Divider />
@@ -329,7 +341,7 @@ export const DocumentStudent = () => {
               Your coordinator doesnt give any feedback in this report.
             </Alert>
           ) : (
-            <ListComment comments={comments} />
+            <ListComment comments={comments} matches880={matches880} />
           )}
         </Grid>
       </Grid>

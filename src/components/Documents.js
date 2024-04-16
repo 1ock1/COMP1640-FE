@@ -24,6 +24,8 @@ export const Document = ({
   setMakeUpdated,
   lastDateAction,
   reportId,
+  matches576,
+  matches720,
 }) => {
   const [isDocumentChange, setDocumentChange] = React.useState(false);
   const [isUpdatedNewFile, setUpdatedNewFile] = React.useState(false);
@@ -70,6 +72,7 @@ export const Document = ({
       .get(apiEndpointStaging + path.file.load + id)
       .then((response) => {
         container.documentEditor.open(response.data);
+        container.documentEditor.fitPage("FitPageWidth");
       })
       .catch((error) => {});
   };
@@ -169,7 +172,7 @@ export const Document = ({
           }}
           height={"800px"}
           serviceUrl="https://localhost:7044/api/File"
-          enableToolbar={role === "MANAGER" ? false : true}
+          enableToolbar={role === "MANAGER"|| role === "GUEST" ? false : true}
           // toolbarItems={items}
           readOnly={role === "MANAGER" || role === "GUEST" ? true : false}
           showPropertiesPane={false}

@@ -1,21 +1,26 @@
 import { Box, Grid, Paper, Typography } from "@mui/material";
 import Avatar from "@mui/material/Avatar";
 import { FormateDate } from "../helpers/utils";
-export const ListComment = ({ comments }) => {
+export const ListComment = ({ comments, matches880 }) => {
   return (
     <>
       {comments?.map((obj, idx) => {
         const date = FormateDate(obj.date);
         return (
           <Grid container spacing={0} mt={3}>
-            <Grid item xs={1} mt={2}>
-              <Avatar
-                alt="Remy Sharp"
-                src="https://th.bing.com/th/id/R.c7e874ef278d1dc3f41f8d143d917a86?rik=A1FEe9B0aU28Rw&pid=ImgRaw&r=0"
-                sx={{ width: 56, height: 56 }}
-              />
-            </Grid>
-            <Grid item xs={11}>
+            {matches880 ? (
+              ""
+            ) : (
+              <Grid item xs={1} mt={2}>
+                <Avatar
+                  alt="Remy Sharp"
+                  src="https://th.bing.com/th/id/R.c7e874ef278d1dc3f41f8d143d917a86?rik=A1FEe9B0aU28Rw&pid=ImgRaw&r=0"
+                  sx={{ width: 56, height: 56 }}
+                />
+              </Grid>
+            )}
+
+            <Grid item xs={matches880 ? 12 : 11}>
               <Paper elevation={1}>
                 <Box padding={1} pl={2}>
                   <Box

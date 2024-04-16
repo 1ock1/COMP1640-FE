@@ -60,7 +60,8 @@ const MainPage = () => {
   const [options, setOptions] = React.useState([]);
   const [auth, setAuth] = React.useState({});
   const [isSigned, setIsSigned] = React.useState(false);
-  // const matches = useMediaQuery("(min-width:600px)");
+  const matches992 = useMediaQuery("(max-width:992px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -131,6 +132,7 @@ const MainPage = () => {
       setNotifiSelectedStatus(false);
     }
   }, [isNotifiSelectDeleted]);
+  console.log(matches992);
   return (
     <>
       <BrowserRouter>
@@ -151,15 +153,15 @@ const MainPage = () => {
                 <MenuIcon />
               </IconButton>
               <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                {userTab === "STUDENT" ? (
+                {!matches992 && userTab === "STUDENT" ? (
                   <AppLinkStudent />
-                ) : userTab === "ADMIN" ? (
+                ) : !matches992 && userTab === "ADMIN" ? (
                   <AppLinkAdmin />
-                ) : userTab === "COORDINATOR" ? (
+                ) : !matches992 && userTab === "COORDINATOR" ? (
                   <AppLinkCoordinator />
-                ) : userTab === "GUEST" ? (
+                ) : !matches992 && userTab === "GUEST" ? (
                   <AppLinkGuest />
-                ) : userTab === "MANAGER" ? (
+                ) : !matches992 && userTab === "MANAGER" ? (
                   <AppLinkManager />
                 ) : (
                   ""

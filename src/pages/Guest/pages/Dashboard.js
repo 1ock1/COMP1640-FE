@@ -23,13 +23,25 @@ import {
   statusGetSubmissionPercentage,
   topicsStatusList,
   statusGetTopicStatusList,
+  totalContributor,
+  statusGetTotalContributor,
+  publishedReportPercentage,
+  statusGetPublishedReportPercentage,
+  commentStatus,
 } from "../../../slices/dashboardSlices";
 import {
+  getCommentStatusOfTopic,
+  getPublishedReportPercentage,
   getSubmissionPercentage,
   getTopicsStatusList,
   getTotalContributionPerFacultyAndAcademic,
+  getTotalContributor,
 } from "../../../actions/DashboardAction";
+import { useMediaQuery } from "@mui/material";
 export const DashboardGuest = () => {
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
   const dispatch = useDispatch();
   const totalReport = useSelector(totalContribution);
   const isLoadingTotalReport = useSelector(statusTotalContribution);
@@ -37,6 +49,13 @@ export const DashboardGuest = () => {
   const isGetSubmissionPercentage = useSelector(statusGetSubmissionPercentage);
   const topicsList = useSelector(topicsStatusList);
   const isGetTopicList = useSelector(statusGetTopicStatusList);
+  const numberContributor = useSelector(totalContributor);
+  const isGetContributor = useSelector(statusGetTotalContributor);
+  const percentagePublishedReport = useSelector(publishedReportPercentage);
+  const isGetPublishedReportPercentage = useSelector(
+    statusGetPublishedReportPercentage
+  );
+  const commentStatusObject = useSelector(commentStatus);
 
   const [barChart, setBarChartData] = React.useState({
     topicId: [],
@@ -49,6 +68,7 @@ export const DashboardGuest = () => {
   const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
+  const [selectedTopic, setSelectedTopic] = React.useState(-1);
   React.useEffect(() => {
     axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);
@@ -68,9 +88,10 @@ export const DashboardGuest = () => {
       dispatch(getTotalContributionPerFacultyAndAcademic(data));
       dispatch(getSubmissionPercentage(data));
       dispatch(getTopicsStatusList(data));
+      dispatch(getTotalContributor(data));
+      dispatch(getPublishedReportPercentage(data));
     }
   }, [selectedAcademic, selectedFaculties]);
-  console.log(Array.from(barChart?.pending));
   React.useEffect(() => {
     if (isGetTopicList === true) {
       const listId = [];
@@ -94,15 +115,22 @@ export const DashboardGuest = () => {
         editted: listEditted,
         published: listPublished,
       };
+      setSelectedTopic(listId[0]);
       setBarChartData(barChartResult);
     }
   }, [isGetTopicList]);
-  console.log(barChart);
+  React.useEffect(() => {
+    if (selectedTopic !== -1) {
+      dispatch(getCommentStatusOfTopic(selectedTopic));
+    }
+  }, [selectedTopic]);
   return (
     <>
       <Container maxWidth="xl">
         <Box sx={{ margin: "1rem 0rem" }}>
-          <FormControl style={{ width: 250, marginRight: 15 }}>
+          <FormControl
+            style={{ width: matches880 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Faculties</Typography>
             <NativeSelect
               defaultChecked={selectedFaculties}
@@ -117,7 +145,9 @@ export const DashboardGuest = () => {
               })}
             </NativeSelect>
           </FormControl>
-          <FormControl style={{ width: 250 }}>
+          <FormControl
+            style={{ width: matches880 ? "100%" : 250, marginBottom: 10 }}
+          >
             <Typography variant="h8">Academic Year</Typography>
             <NativeSelect
               defaultChecked={selectedAcademic}
@@ -147,15 +177,15 @@ export const DashboardGuest = () => {
           justifyContent={"space-between"}
         >
           <Grid container spacing={0}>
-            <Grid item xs={9}>
+            <Grid item xs={matches880 ? 12 : 9}>
               <Box
                 sx={{ margin: "2rem 0rem" }}
-                display={"flex"}
+                display={matches720 ? "block" : "flex"}
                 justifyContent="space-between"
               >
                 <Card
                   style={{
-                    width: "20%",
+                    width: matches720 ? "100%" : "20%",
                   }}
                 >
                   <CardContent>
@@ -169,7 +199,7 @@ export const DashboardGuest = () => {
 
                     <Typography sx={{ fontSize: 16 }} color="text.primary">
                       {isLoadingTotalReport ? (
-                        totalReport
+                        totalReport + " submissions"
                       ) : (
                         <Skeleton animation="wave" />
                       )}
@@ -178,7 +208,30 @@ export const DashboardGuest = () => {
                 </Card>
                 <Card
                   style={{
-                    width: "20%",
+                    width: matches720 ? "100%" : "20%",
+                  }}
+                >
+                  <CardContent>
+                    <Typography
+                      sx={{ fontSize: 18 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Total Contributor
+                    </Typography>
+
+                    <Typography sx={{ fontSize: 16 }} color="text.primary">
+                      {isGetContributor ? (
+                        numberContributor + " students"
+                      ) : (
+                        <Skeleton animation="wave" />
+                      )}
+                    </Typography>
+                  </CardContent>
+                </Card>
+                <Card
+                  style={{
+                    width: matches720 ? "100%" : "20%",
                   }}
                 >
                   <CardContent>
@@ -201,26 +254,7 @@ export const DashboardGuest = () => {
                 </Card>
                 <Card
                   style={{
-                    width: "20%",
-                  }}
-                >
-                  <CardContent>
-                    <Typography
-                      sx={{ fontSize: 18 }}
-                      color="text.primary"
-                      gutterBottom
-                    >
-                      Total published
-                    </Typography>
-
-                    <Typography sx={{ fontSize: 16 }} color="text.primary">
-                      5
-                    </Typography>
-                  </CardContent>
-                </Card>
-                <Card
-                  style={{
-                    width: "20%",
+                    width: matches720 ? "100%" : "20%",
                   }}
                 >
                   <CardContent>
@@ -233,13 +267,17 @@ export const DashboardGuest = () => {
                     </Typography>
 
                     <Typography sx={{ fontSize: 16 }} color="text.primary">
-                      205
+                      {isGetPublishedReportPercentage ? (
+                        percentagePublishedReport + "%"
+                      ) : (
+                        <Skeleton animation="wave" />
+                      )}
                     </Typography>
                   </CardContent>
                 </Card>
               </Box>
             </Grid>
-            <Grid item xs={9}>
+            <Grid item xs={matches880 ? 12 : 9}>
               {barChart?.topicId.length !== 0 ? (
                 <BarChart
                   xAxis={[
@@ -256,21 +294,57 @@ export const DashboardGuest = () => {
                       label: "Published",
                     },
                   ]}
-                  height={500}
+                  height={400}
                 />
               ) : (
                 <Alert severity="info">No Data.</Alert>
               )}
             </Grid>
-            <Grid item xs={3}>
-              <Typography sx={{ mt: 2, mb: 1 }} variant="h6" component="div">
-                Summary of contributions
-              </Typography>
-              <Box mt={2}>
-                <Typography>Pending Reports: </Typography>
-                <Typography>Edited Reports: </Typography>
-                <Typography>Exception Reports: </Typography>
-              </Box>
+            <Grid item xs={matches880 ? 12 : 3}>
+              {barChart?.topicId.length !== 0 ? (
+                <Box mt={2}>
+                  <Typography
+                    sx={{ mt: 2, mb: 1 }}
+                    variant="h6"
+                    component="div"
+                  >
+                    Topic Statistic
+                  </Typography>
+                  <FormControl
+                    style={{ width: 250, marginRight: 15, marginBottom: 15 }}
+                  >
+                    <NativeSelect
+                      defaultChecked={selectedFaculties}
+                      onChange={(event) => {
+                        setSelectedTopic(event.target.value);
+                      }}
+                    >
+                      {barChart?.topicId?.map((value, index) => {
+                        return (
+                          <option key={index} value={value}>
+                            {barChart?.topicName[index]}
+                          </option>
+                        );
+                      })}
+                    </NativeSelect>
+                  </FormControl>
+                  <Typography fontWeight={600}>Exception Reports: </Typography>
+                  <Typography display="flex" justifyContent="space-between">
+                    Contribution Without Comment:
+                    <strong style={{ color: "red" }}>
+                      {commentStatusObject["notCommentReport"]} Contribution
+                    </strong>
+                  </Typography>
+                  <Typography display="flex" justifyContent="space-between">
+                    Contribution With Comment:
+                    <strong style={{ color: "green" }}>
+                      {commentStatusObject["commentedReport"]} Contribution
+                    </strong>
+                  </Typography>
+                </Box>
+              ) : (
+                <Alert severity="info">No Data.</Alert>
+              )}
             </Grid>
           </Grid>
         </Box>

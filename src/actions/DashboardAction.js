@@ -33,3 +33,33 @@ export const getTopicsStatusList = createAsyncThunk(
     return repsone.data;
   }
 );
+
+export const getTotalContributor = createAsyncThunk(
+  "dashboard/getTotalContributor",
+  async (data) => {
+    const repsone = await axios.post(api + path.report.totalContributor, data);
+    return repsone.data;
+  }
+);
+
+export const getPublishedReportPercentage = createAsyncThunk(
+  "dashboard/getPublishedReportPercentage",
+  async (data) => {
+    const repsone = await axios.post(
+      api + path.report.percentagePublishedReport,
+      data
+    );
+    return repsone.data;
+  }
+);
+
+export const getCommentStatusOfTopic = createAsyncThunk(
+  "dashboard/getCommentStatusOfTopic",
+  async (data) => {
+    const repsone = await axios.get(
+      api + path.report.commentStatusOfTopic + data
+    );
+    console.log(repsone.data);
+    return repsone.data;
+  }
+);

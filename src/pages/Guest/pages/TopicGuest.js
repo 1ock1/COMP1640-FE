@@ -14,8 +14,11 @@ import axios from "axios";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { FormateDate } from "../../../helpers/utils";
+import { useMediaQuery } from "@mui/material";
 export const TopicGuest = () => {
   const navigate = useNavigate();
+  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches576 = useMediaQuery("(max-width:576px)");
   const { topicId } = useParams();
   const [topicInfor, setTopicInfor] = React.useState({});
   const [topicDate, setTopicDate] = React.useState({});
@@ -62,11 +65,19 @@ export const TopicGuest = () => {
           padding: "0 25px",
         }}
       >
-        <Typography padding="20px 0px" variant="h4" fontWeight={600}>
+        <Typography
+          padding="20px 0px"
+          fontSize={matches720 ? 20 : 30}
+          fontWeight={600}
+        >
           Topic:{topicInfor.name}
         </Typography>
         <Box display="flex" pb={2}>
-          <Typography paddingLeft={0.5} variant="h6" fontWeight={600}>
+          <Typography
+            paddingLeft={0.5}
+            fontSize={matches720 ? 15 : 20}
+            fontWeight={600}
+          >
             Falcuty: Information Technology
           </Typography>
         </Box>
@@ -76,13 +87,17 @@ export const TopicGuest = () => {
             Description: {topicInfor.description}
           </Typography>
         </Box>
-        <Box display="flex" mt={2} pb={2}>
-          <Typography variant="h6" color="#1565c0" fontWeight={600}>
-            Entries Date:{topicDate?.entriesDate}
+        <Box display={matches576 ? "block" : "flex"} mt={2} pb={2}>
+          <Typography
+            fontSize={matches720 ? 15 : 20}
+            color="#1565c0"
+            fontWeight={600}
+          >
+            Entries Date: {topicDate?.entriesDate}
           </Typography>
           <Typography
-            paddingLeft={15}
-            variant="h6"
+            paddingLeft={matches576 ? 0 : 15}
+            fontSize={matches720 ? 15 : 20}
             color="#c62828"
             fontWeight={600}
           >
@@ -102,7 +117,7 @@ export const TopicGuest = () => {
             reports?.map((report) => (
               <Link
                 style={{ textDecoration: "none" }}
-                to={"/manager/process/" + topicId + "/" + report.reportId}
+                to={"/guest/topic/" + topicId + "/" + report.reportId}
               >
                 <Box mt={2}>
                   <Paper elevation={2} style={{ padding: "20px 20px" }}>
