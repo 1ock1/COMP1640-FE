@@ -15,9 +15,10 @@ import { TopicListManager } from "../components/TopicListManager";
 import { useMediaQuery } from "@mui/material";
 export const Process = () => {
   const [academics, setAcademics] = React.useState(undefined);
-  const matches720 = useMediaQuery("(max-width:720px)");
+  const matches992 = useMediaQuery("(max-width:992px)");
+  // const matches720 = useMediaQuery("(max-width:768px)");
   const matches576 = useMediaQuery("(max-width:576px)");
-  const matches880 = useMediaQuery("(max-width:880px)");
+  // const matches880 = useMediaQuery("(max-width:880px)");
   const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
@@ -37,7 +38,7 @@ export const Process = () => {
       <Container maxWidth="xl">
         <Box sx={{ margin: "3rem 0rem", width: "100%" }} align="left">
           <FormControl
-            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+            style={{ width: matches992 ? "100%" : 100 , marginBottom: 10 }}
           >
             <Typography variant="h8">Academic Year</Typography>
             <NativeSelect
@@ -60,7 +61,7 @@ export const Process = () => {
             </NativeSelect>
           </FormControl>
           <FormControl
-            style={{ width: matches720 ? "100%" : 250, marginBottom: 10 }}
+            style={{ width: matches992 ? "100%" : 250, marginBottom: 10 }}
           >
             <Typography variant="h8">Faculties</Typography>
             <NativeSelect

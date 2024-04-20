@@ -39,7 +39,7 @@ import {
 } from "../../../actions/DashboardAction";
 import { useMediaQuery } from "@mui/material";
 export const Dashboard = () => {
-  const matches720 = useMediaQuery("(max-width:720px)");
+  // const matches720 = useMediaQuery("(max-width:720px)");
   const matches576 = useMediaQuery("(max-width:576px)");
   const matches880 = useMediaQuery("(max-width:880px)");
   const dispatch = useDispatch();
@@ -127,9 +127,9 @@ export const Dashboard = () => {
   return (
     <>
       <Container maxWidth="xl">
-        <Box sx={{ margin: "1rem 0rem" }}>
+        <Box sx={{ margin: "1rem 0rem", width: matches576 ? ("100%"):(matches880 ? "70%" : "100%") }}>
           <FormControl
-            style={{ width: matches880 ? "100%" : 250, marginBottom: 10 }}
+            style={{ width: matches880 ? "45%" : 250, marginBottom: 10 }}
           >
             <Typography variant="h8">Faculties</Typography>
             <NativeSelect
@@ -146,7 +146,11 @@ export const Dashboard = () => {
             </NativeSelect>
           </FormControl>
           <FormControl
-            style={{ width: matches880 ? "100%" : 250, marginBottom: 10 }}
+            style={{
+              width: matches880 ? "40%" : 250,
+              marginBottom: 10,
+              marginLeft: "2rem",
+            }}
           >
             <Typography variant="h8">Academic Year</Typography>
             <NativeSelect
@@ -177,27 +181,34 @@ export const Dashboard = () => {
           justifyContent={"space-between"}
         >
           <Grid container spacing={0}>
-            <Grid item xs={matches880 ? 12 : 9}>
+            <Grid item xs={matches576 ? 12 : matches880 ? 12 : 9}>
               <Box
-                sx={{ margin: "2rem 0rem" }}
-                display={matches720 ? "block" : "flex"}
+                sx={{ margin: "2rem rem" }}
+                display="flex"
+                flexWrap="wrap"
                 justifyContent="space-between"
               >
                 <Card
                   style={{
-                    width: matches720 ? "100%" : "20%",
+                    width: matches576 ? "48%" : matches880 ? "22%" : "24%",
+                    marginBottom: 10,
                   }}
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 18 }}
+                      sx={{
+                        fontSize: matches576 ? 16 : matches880 ? 16 : 18,
+                      }}
                       color="text.primary"
                       gutterBottom
                     >
                       Total contributions
                     </Typography>
 
-                    <Typography sx={{ fontSize: 16 }} color="text.primary">
+                    <Typography
+                      sx={{ fontSize: matches576 ? 14 : matches880 ? 14 : 16 }}
+                      color="text.primary"
+                    >
                       {isLoadingTotalReport ? (
                         totalReport + " submissions"
                       ) : (
@@ -208,19 +219,20 @@ export const Dashboard = () => {
                 </Card>
                 <Card
                   style={{
-                    width: matches720 ? "100%" : "20%",
+                    width: matches576 ? "48%" : matches880 ? "22%" : "24%",
+                    marginBottom: 10,
                   }}
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 18 }}
+                      sx={{ fontSize: matches576 ? 16 : matches880 ? 16 : 18, }}
                       color="text.primary"
                       gutterBottom
                     >
                       Total Contributor
                     </Typography>
 
-                    <Typography sx={{ fontSize: 16 }} color="text.primary">
+                    <Typography sx={{ fontSize: matches576 ? 14 : matches880 ? 14 : 16 }} color="text.primary">
                       {isGetContributor ? (
                         numberContributor + " students"
                       ) : (
@@ -231,19 +243,21 @@ export const Dashboard = () => {
                 </Card>
                 <Card
                   style={{
-                    width: matches720 ? "100%" : "20%",
+                    width: matches576 ? "48%" : matches880 ? "22%" : "24%",
+                    marginBottom: 10,
                   }}
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 18 }}
+                      sx={{ fontSize: matches576 ? 16 : matches880 ? 16 : 18, }}
                       color="text.primary"
                       gutterBottom
                     >
                       Submission rate
                     </Typography>
 
-                    <Typography sx={{ fontSize: 16 }} color="text.primary">
+                    <Typography 
+                   sx={{ fontSize: matches576 ? 14 : matches880 ? 14 : 16 }} color="text.primary">
                       {isGetSubmissionPercentage ? (
                         percentageSubmission + "%"
                       ) : (
@@ -254,19 +268,21 @@ export const Dashboard = () => {
                 </Card>
                 <Card
                   style={{
-                    width: matches720 ? "100%" : "20%",
+                    width: matches576 ? "48%" : matches880 ? "22%" : "24%",
+                    marginBottom: 10,
                   }}
                 >
                   <CardContent>
                     <Typography
-                      sx={{ fontSize: 18 }}
+                      sx={{fontSize: matches576 ? 16 : matches880 ? 16 : 18, }}
                       color="text.primary"
                       gutterBottom
                     >
                       Published rate
                     </Typography>
 
-                    <Typography sx={{ fontSize: 16 }} color="text.primary">
+                    <Typography 
+                    sx={{ fontSize: matches576 ? 14 : matches880 ? 14 : 16 }} color="text.primary">
                       {isGetPublishedReportPercentage ? (
                         percentagePublishedReport + "%"
                       ) : (
@@ -294,7 +310,7 @@ export const Dashboard = () => {
                       label: "Published",
                     },
                   ]}
-                  height={400}
+                  height={matches576 ? 250 : 400}
                 />
               ) : (
                 <Alert severity="info">No Data.</Alert>
@@ -335,7 +351,11 @@ export const Dashboard = () => {
                       {commentStatusObject["notCommentReport"]} Contribution
                     </strong>
                   </Typography>
-                  <Typography display="flex" justifyContent="space-between">
+                  <Typography
+                    display="flex"
+                    justifyContent="space-between"
+                    sx={{ marginBottom: "2.5rem" }}
+                  >
                     Contribution With Comment:
                     <strong style={{ color: "green" }}>
                       {commentStatusObject["commentedReport"]} Contribution
