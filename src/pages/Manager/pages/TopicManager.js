@@ -1,5 +1,7 @@
 import axios from "axios";
 import React from "react";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
 import { FormateDate } from "../../../helpers/utils";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useParams } from "react-router-dom";
@@ -29,6 +31,24 @@ export const TopicManager = () => {
   const [selectStatus, setSelectedStatus] = React.useState(reportStatus[0]);
   const [reports, setReports] = React.useState(undefined);
   const [activeStep, setActiveStep] = React.useState(-1);
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios
       .get(apiEndpointStaging + path.students.getTopicId + topicId)

@@ -14,6 +14,7 @@ import {
   Alert,
   Button,
 } from "@mui/material";
+import { checkAuth } from "../../../actions/UserActions";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useParams } from "react-router-dom";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
@@ -133,6 +134,24 @@ export const DocumentCoordinator = () => {
     return data;
   };
   React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
+  React.useEffect(() => {
     axios
       .post(apiEndpointStaging + path.report.getReportInformation + reportId)
       .then((rep) => {
@@ -205,6 +224,7 @@ export const DocumentCoordinator = () => {
         });
     }
   }, [topicId]);
+  console.log(isPublishReportExisted);
   return (
     <>
       <Container maxWidth="xl">
@@ -284,23 +304,32 @@ export const DocumentCoordinator = () => {
             ) : (
               <Document
                 id={reportDocument.id}
-                allowedAction={checkIsAllowedEditted}
+                allowedAction={
+                  checkIsAllowedEditted
+                    ? isPublishReportExisted
+                      ? false
+                      : true
+                    : false
+                }
                 role="COORDINATOR"
                 setMakeEditted={setMakeEditted}
                 lastDateAction={lastDateComment}
                 reportId={reportId}
               />
             )}
-            <Button
-              variant="contained"
-              color="secondary"
-              disabled={checkIsAllowedPublished}
-              onClick={handleOpenPublishForm}
-            >
-              {" "}
-              <PublicIcon style={{ marginRight: 10 }} />
-              Publis this report
-            </Button>
+            {!isPublishReportExisted && (
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={checkIsAllowedPublished}
+                onClick={handleOpenPublishForm}
+              >
+                {" "}
+                <PublicIcon style={{ marginRight: 10 }} />
+                Publis this report
+              </Button>
+            )}
+
             <PublishedReportForm
               open={openPublishForm}
               onClose={handleClosePublishForm}
@@ -309,10 +338,12 @@ export const DocumentCoordinator = () => {
               disabled={isPublishReportExisted}
               submitAction={handleCreatePublishedReport}
             />
-            <HelpTextDateWarning
-              text={"You can only publish this report after"}
-              date={afterDatePublish}
-            />
+            {!isPublishReportExisted && (
+              <HelpTextDateWarning
+                text={"You can only publish this report after"}
+                date={afterDatePublish}
+              />
+            )}
           </Grid>
           {matches880 ? (
             ""

@@ -15,6 +15,8 @@ import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { FormateDate } from "../../../helpers/utils";
 import { useMediaQuery } from "@mui/material";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
 export const TopicGuest = () => {
   const navigate = useNavigate();
   const matches720 = useMediaQuery("(max-width:720px)");
@@ -23,6 +25,24 @@ export const TopicGuest = () => {
   const [topicInfor, setTopicInfor] = React.useState({});
   const [topicDate, setTopicDate] = React.useState({});
   const [reports, setReports] = React.useState(undefined);
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios
       .get(apiEndpointStaging + path.students.getTopicId + topicId)

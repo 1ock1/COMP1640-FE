@@ -1,5 +1,7 @@
 import React from "react";
-
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
+import { useNavigate } from "react-router-dom";
 import {
   Box,
   Container,
@@ -26,6 +28,7 @@ import { BarChart } from "@mui/x-charts/BarChart";
 import { styled } from "@mui/material/styles";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   function generate(element) {
     return [0, 1, 2].map((value) =>
       React.cloneElement(element, {
@@ -67,7 +70,24 @@ const Dashboard = () => {
     setAcademicYears("2024");
     console.log(event);
   };
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   return (
     <>
       <Container fullWidth maxWidth="xl">

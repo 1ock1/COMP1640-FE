@@ -20,6 +20,8 @@ import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { ListComment } from "../../../components/ListComment";
 import { useMediaQuery } from "@mui/material";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
 export const DocumentManager = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
@@ -43,7 +45,24 @@ export const DocumentManager = () => {
       .post(apiEndpointStaging + path.comment.getReportComment, data)
       .then((rep) => setCommentList(rep.data));
   };
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios
       .post(apiEndpointStaging + path.fileReport.getAllFileReport + reportId)

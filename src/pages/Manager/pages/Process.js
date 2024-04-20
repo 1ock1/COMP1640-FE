@@ -4,7 +4,9 @@ import { FormateDate } from "../../../helpers/utils";
 import { apiEndpointStaging, path } from "../../../helpers/apiEndpoints";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-
+import { checkAuth } from "../../../actions/UserActions";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 import { Container } from "@mui/material";
 import NativeSelect from "@mui/material/NativeSelect";
 
@@ -14,6 +16,7 @@ import Stack from "@mui/material/Stack";
 import { TopicListManager } from "../components/TopicListManager";
 import { useMediaQuery } from "@mui/material";
 export const Process = () => {
+  const navigate = useNavigate();
   const [academics, setAcademics] = React.useState(undefined);
   const matches720 = useMediaQuery("(max-width:720px)");
   const matches576 = useMediaQuery("(max-width:576px)");
@@ -21,6 +24,24 @@ export const Process = () => {
   const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const [faculties, setFalcuties] = React.useState(undefined);
   const [selectedFaculties, setSelectedFaculties] = React.useState(-1);
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);

@@ -15,6 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { reportStatus } from "../../../helpers/contanst";
 import { ListReport } from "../../../components/ListReport";
 import { useMediaQuery } from "@mui/material";
+import { checkAuth } from "../../../actions/UserActions";
 export const TopicCoordinatorList = () => {
   const navigate = useNavigate();
   const matches720 = useMediaQuery("(max-width:720px)");
@@ -26,6 +27,24 @@ export const TopicCoordinatorList = () => {
   const [selectedAcademic, setSelectedAcademic] = React.useState(-1);
   const [selectedTopic, setSelectedTopic] = React.useState(-1);
   const [selectStatus, setSelectedStatus] = React.useState("Pending");
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios.get(apiEndpointStaging + path.academic.getall).then((rep) => {
       setAcademics(rep.data);
