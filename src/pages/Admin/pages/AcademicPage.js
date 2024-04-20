@@ -2,7 +2,9 @@ import * as React from "react";
 
 import { useEffect, useState } from "react";
 import axios from "axios";
-
+import { checkAuth } from "../../../actions/UserActions";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 import {
   TableContainer,
   Table,
@@ -25,18 +27,31 @@ import EditIcon from "@mui/icons-material/Edit";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 
 const AcademicPage = () => {
+  const navigate = useNavigate();
   const [academicYears, setAcademicYears] = useState([]);
   const [addMode, setAddMode] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
-
-  // entry and end
   const [entriDate, setEntriDate] = useState("");
   const [endDate, setEndDate] = useState("");
-
-  //get id for update
-
   const [selectedRow, setSelectedRow] = useState("");
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   useEffect(() => {
     axios
       .get(apiEndpointLocal + path.academic.getall)

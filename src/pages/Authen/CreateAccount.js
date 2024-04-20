@@ -1,4 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../actions/UserActions";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -20,6 +23,7 @@ import {
 } from "../../helpers/validator";
 
 export default function CreateAccount() {
+  const navigate = useNavigate();
   const dispatch = useDispatch();
   const today = new Date();
   const date = today.getDate();
@@ -52,6 +56,25 @@ export default function CreateAccount() {
       dispatch(signup(infr));
     }
   };
+
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   return (
     <Container maxWidth="sm">
       <Box

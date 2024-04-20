@@ -26,10 +26,13 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
-
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
+import { checkAuth } from "../../../actions/UserActions";
 const theme = createTheme();
 
 const TopicManagementPage = () => {
+  const navigate = useNavigate();
   //Open Dialog
   const [openDialog, setOpenDialog] = useState(false);
   const [addMode, setAddMode] = useState(true);
@@ -236,7 +239,24 @@ const TopicManagementPage = () => {
       setFinalDatez(formattedDate);
     }
   };
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   return (
     <Container maxWidth="xl">
       <ThemeProvider theme={theme}>

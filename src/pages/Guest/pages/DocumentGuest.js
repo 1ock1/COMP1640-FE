@@ -20,6 +20,8 @@ import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import { ListComment } from "../../../components/ListComment";
 import { useMediaQuery } from "@mui/material";
+import { checkAuth } from "../../../actions/UserActions";
+import Cookies from "js-cookie";
 export const DocumentGuest = () => {
   const { reportId } = useParams();
   const navigate = useNavigate();
@@ -43,7 +45,24 @@ export const DocumentGuest = () => {
       .post(apiEndpointLocal + path.comment.getReportComment, data)
       .then((rep) => setCommentList(rep.data));
   };
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios
       .post(apiEndpointLocal + path.fileReport.getAllFileReport + reportId)

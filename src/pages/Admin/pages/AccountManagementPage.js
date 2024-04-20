@@ -15,7 +15,9 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
-
+import { checkAuth } from "../../../actions/UserActions";
+import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 const style = {
   position: "absolute",
   top: "50%",
@@ -97,6 +99,7 @@ const rows = [
 ];
 
 export default function AccountManagementPage() {
+  const navigate = useNavigate();
   const [status, setStatus] = React.useState("");
 
   const handleChange = (event) => {
@@ -115,22 +118,32 @@ export default function AccountManagementPage() {
     setOpen(false);
   };
   document.addEventListener("DOMContentLoaded", function () {
-    // Function to handle cancel button click event
     function cancelButtonHandle() {}
-
-    // Create a new cancel button element
     const cancelButton = document.createElement("button");
     cancelButton.textContent = "Cancel";
     cancelButton.id = "cancelButton";
-
-    // Append the cancel button to a container element in the DOM
     const Box = document.getElementById("Box");
     Box.appendChild(cancelButton);
-
-    // Attach event listener to the cancel button
     cancelButton.addEventListener("click", cancelButtonHandle);
   });
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   return (
     <Container maxWidth="xl">
       <TableContainer component={Paper}>

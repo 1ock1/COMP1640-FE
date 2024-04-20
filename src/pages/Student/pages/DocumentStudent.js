@@ -52,6 +52,9 @@ export const DocumentStudent = () => {
   const [alertDeleteImage, setAlertDeleteImage] = React.useState(false);
   const [openNotify, setOpenNotify] = React.useState(false);
   const [messageNoify, setMessageNotify] = React.useState("");
+  const [isPublishReportExisted, setIsPublishedReportExisted] =
+    React.useState(false);
+
   const handleImageSelected = (event) => {
     setSelectedImg(event.target.alt);
   };
@@ -135,6 +138,13 @@ export const DocumentStudent = () => {
       .catch(() => {
         navigate("/signin");
         Cookies.remove("us");
+      });
+    axios
+      .post(
+        apiEndpointLocal + path.publishedReport.isPublishReportExist + reportId
+      )
+      .then((rep) => {
+        setIsPublishedReportExisted(rep.data);
       });
   });
   React.useEffect(() => {
@@ -236,7 +246,13 @@ export const DocumentStudent = () => {
           ) : (
             <Document
               id={fileId}
-              allowedAction={isAllowedUpdateReport}
+              allowedAction={
+                isAllowedUpdateReport
+                  ? isPublishReportExisted
+                    ? false
+                    : true
+                  : false
+              }
               role="STUDENT"
               setMakeUpdated={setIsUpdateReport}
               lastDateAction={finalDate}

@@ -29,8 +29,12 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import TipsAndUpdatesIcon from "@mui/icons-material/TipsAndUpdates";
 import { useMediaQuery } from "@mui/material";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
+import { useNavigate } from "react-router-dom";
 //
 export const GuestHomePage = () => {
+  const navigate = useNavigate();
   const matches992 = useMediaQuery("(max-width:992px)");
   const matches576 = useMediaQuery("(max-width:576px)");
   const [value, setValue] = React.useState("1");
@@ -42,6 +46,24 @@ export const GuestHomePage = () => {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   React.useEffect(() => {
     axios.get(apiEndpointLocal + path.falcuty.getall).then((rep) => {
       setSelectedFalcuty(rep.data[0].id);

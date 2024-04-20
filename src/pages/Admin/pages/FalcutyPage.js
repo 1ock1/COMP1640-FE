@@ -1,4 +1,7 @@
 import React, { useEffect, useState } from "react";
+import Cookies from "js-cookie";
+import { checkAuth } from "../../../actions/UserActions";
+import { useNavigate } from "react-router-dom";
 import EditIcon from "@mui/icons-material/Edit";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -31,6 +34,7 @@ import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
 const theme = createTheme();
 
 const FacultyManagementPage = () => {
+  const navigate = useNavigate();
   const [openDialog, setOpenDialog] = useState(false);
   const [newFacultyName, setNewFacultyName] = useState("");
   const [newStatus, setNewStatus] = useState(true);
@@ -43,7 +47,24 @@ const FacultyManagementPage = () => {
   const [updateName, setUpdateName] = useState("");
   const [updateStatus, setUpdateStatus] = useState(true);
   const [selectedRow, setSelectedRow] = useState("");
-
+  React.useEffect(() => {
+    const cookie = Cookies.get("us");
+    const input = {
+      token: cookie,
+    };
+    checkAuth(input, cookie)
+      .then((response) => {
+        const data = response.data;
+        if (data.role === "UNAUTHORIZED") {
+          navigate("/signin");
+          Cookies.remove("us");
+        }
+      })
+      .catch(() => {
+        navigate("/signin");
+        Cookies.remove("us");
+      });
+  });
   useEffect(() => {
     axios
       .get(apiEndpointLocal + path.falcuty.getall)
