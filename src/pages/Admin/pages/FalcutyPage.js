@@ -27,10 +27,15 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import axios from "axios";
 import { set } from "react-hook-form";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
+import { useMediaQuery } from "@mui/material";
 
 const theme = createTheme();
 
 const FacultyManagementPage = () => {
+
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
+
   const [openDialog, setOpenDialog] = useState(false);
   const [newFacultyName, setNewFacultyName] = useState("");
   const [newStatus, setNewStatus] = useState(true);
@@ -43,6 +48,8 @@ const FacultyManagementPage = () => {
   const [updateName, setUpdateName] = useState("");
   const [updateStatus, setUpdateStatus] = useState(true);
   const [selectedRow, setSelectedRow] = useState("");
+
+  
 
   useEffect(() => {
     axios

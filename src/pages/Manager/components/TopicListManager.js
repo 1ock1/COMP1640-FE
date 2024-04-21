@@ -8,7 +8,13 @@ import {
   topicsStatusList,
   statusGetTopicStatusList,
 } from "../../../slices/dashboardSlices";
+
+import { useMediaQuery } from "@mui/material";
+
 export const TopicListManager = ({ falcutyId, academicId }) => {
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
+
   const dispatch = useDispatch();
   const topicsList = useSelector(topicsStatusList);
   const isGetTopicList = useSelector(statusGetTopicStatusList);
@@ -35,13 +41,18 @@ export const TopicListManager = ({ falcutyId, academicId }) => {
             >
               <Box mt={2}>
                 <Paper elevation={2} style={{ padding: "20px 20px" }}>
-                  <Box display="flex">
-                    <TipsAndUpdatesIcon sx={{ fontSize: 80 }} />
+                  <Box display="flex" >
+                    <TipsAndUpdatesIcon
+                      sx={{ fontSize: matches576 ? 50 : 80 , marginRight: matches576 ? 3 : 4}}
+                    />
                     <Box>
                       <Typography fontWeight={600}>{topic.name}</Typography>
-                      <Typography>Pending: {topic.pending}</Typography>
-                      <Typography>Editted: {topic.editted}</Typography>
+                      <div style={{display:"flex", flexWrap:"wrap", width:"10rem"}}>
+                      <Typography >Pending: {topic.pending}</Typography>
+                      <Typography marginLeft={".8rem"}>Editted: {topic.editted}</Typography>
                       <Typography>Published: {topic.published}</Typography>
+                      </div>
+                      
                     </Box>
                   </Box>
                 </Paper>
