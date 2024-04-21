@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import {
@@ -22,10 +22,10 @@ import {
   Select,
   MenuItem,
   Box,
+  Typography,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import axios from "axios";
-import { set } from "react-hook-form";
+import WarningIcon from "@mui/icons-material/Warning";
 
 const theme = createTheme();
 
@@ -36,104 +36,96 @@ const FacultyManagementPage = () => {
 
   const [faculties, setFaculties] = useState([]);
 
-  const [editingFaculty, setEditingFaculty] = useState(true);
-
-  // update
+  // Use a separate state for temporary faculty data
+  const [tempFaculty, setTempFaculty] = useState(null);
+  const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [facultyToDelete, setFacultyToDelete] = useState(null);
+  const [editingFaculty, setEditingFaculty] = useState(false);
   const [updateName, setUpdateName] = useState("");
-  const [updateStatus, setUpdateStatus] = useState(true);
   const [selectedRow, setSelectedRow] = useState("");
+  const [updateStatus, setUpdateStatus] = useState(true); // Initial value can be adjusted as needed
 
-  useEffect(() => {
-    axios
-      .get("https://localhost:7044/api/Faculty")
-      .then((response) => {
-        setFaculties(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
-  }, []);
 
   const handleAddFaculty = () => {
-    axios
-      .post("https://localhost:7044/api/Faculty", {
-        name: newFacultyName,
-        status: newStatus,
-      })
-      .then((response) => {
-        setFaculties([...faculties, response.data]);
-        setNewFacultyName("");
-        setNewStatus(true);
-        setOpenDialog(false);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
+    const newFaculty = {
+      id: Math.random().toString(36).substring(2, 15),
+      name: newFacultyName,
+      status: newStatus,
+      isTemporary: true, // tao mac temporary (Du lieu tam thoi)
+    };
+
+    setFaculties([...faculties, newFaculty]);
+    setNewFacultyName("");
+    setNewStatus(true);
+    setOpenDialog(false);
   };
 
-  const handleDeleteFaculty = (id) => {};
+  const handleDeleteFaculty = (id) => {
+    setFacultyToDelete(id);
+    setShowConfirmDelete(true);
+  };
+
+  const handleConfirmDelete = () => {
+    if (!facultyToDelete) return;
+    const updatedFaculties = faculties.filter((faculty) => faculty.id !== facultyToDelete);
+    setFaculties(updatedFaculties);
+
+    setShowConfirmDelete(false);
+    setFacultyToDelete(null);
+  };
+
+  const handleCancelDelete = () => {
+    setShowConfirmDelete(false);
+    setFacultyToDelete(null);
+  };
 
   const handleEditFaculty = (faculty) => {
-    setUpdateName(faculty.name);
+    setTempFaculty(faculty);
 
-    setSelectedRow(faculty);
-    console.log(faculty);
+    setNewFacultyName(faculty.name);
+    setNewStatus(faculty.status);
+
     setOpenDialog(true);
   };
 
-  const handleUpdateFaculty = (index) => {
-    console.log(index);
-    console.log(updateName);
-    console.log(updateStatus);
-    console.log(selectedRow);
-    axios
-      .put(`https://localhost:7044/api/Faculty/${index.id}`, {
-        name: updateName,
-        status: updateStatus,
-      })
-      .then((response) => {
-      setFaculties(
-        faculties.map((faculty) =>
-          faculty.id === index.id ? { ...faculty, name: updateName, status: updateStatus } : faculty
-        )
-      );
-      
-        setUpdateName("");
-        setUpdateStatus(true);
-        setSelectedRow("");
-        setOpenDialog(false);
-      })
-      .catch((error) => {
-        console.error("There was an error!", error);
-      });
+  const handleUpdateFaculty = () => {
+    if (!tempFaculty) return;
+
+    const facultyIndex = faculties.findIndex((f) => f.id === tempFaculty.id);
+
+    if (facultyIndex !== -1) {
+      const updatedFaculties = [...faculties];
+      updatedFaculties[facultyIndex] = {
+        ...updatedFaculties[facultyIndex],
+        name: newFacultyName,
+        status: newStatus,
+      };
+
+      setFaculties(updatedFaculties);
+
+      setTempFaculty(null);
+      setNewFacultyName("");
+      setNewStatus(true);
+      setOpenDialog(false);
+    }
   };
 
   const handleChange = () => {
-    if (newStatus) {
-      setNewStatus(false);
-    } else {
-      setNewStatus(true);
-    }
-
-    if (updateStatus) {
-      setUpdateStatus(false);
-    } else {
-      setUpdateStatus(true);
-    }
+    setNewStatus(!newStatus);
   };
 
   return (
-    <Container maxWidth="xl">
+    <Container maxWidth="false">
       <ThemeProvider theme={theme}>
         <div style={{ padding: theme.spacing(2) }}>
           <Grid container spacing={3}>
             <Grid item xs={12}>
               <Button
-                style={{ marginBottom: theme.spacing(2), float: "right" }}
+                style={{ marginBottom: theme.spacing(2) }}
                 variant="contained"
                 color="primary"
                 onClick={() => {
-                  setEditingFaculty(false);
+                  setTempFaculty(null);
                   setOpenDialog(true);
                 }}
               >
@@ -149,39 +141,33 @@ const FacultyManagementPage = () => {
                       border: "1px solid #ccc",
                       borderRadius: "4px",
                       marginBottom: "8px",
+                      width: { xs: "100%", md: "50%" }, // phu hop voi screen tu <576px cho den 768px
                     }}
                   >
                     <Avatar
                       alt={faculty.name}
                       src={faculty.image}
-                      sx={{
-                        width: theme.spacing(7),
-                        height: theme.spacing(7),
-                        marginRight: theme.spacing(2),
-                      }}
+                      sx={{ width: theme.spacing(7), height: theme.spacing(7), marginRight: theme.spacing(2) }}
                     />
                     <ListItemText
                       primary={faculty.name}
                       secondary={faculty.status ? "Active" : "Disable"}
                     />
                     <ListItemSecondaryAction>
+                      {faculty.isTemporary && (
+                        <Typography variant="caption" color="warning" display="block">
+                          Temporary
+                          <WarningIcon fontSize="small" style={{ marginLeft: "4px" }} />
+                        </Typography>
+                      )}
                       <IconButton
                         edge="end"
                         aria-label="edit"
-                        onClick={() => {
-                          handleEditFaculty(faculty);
-                          setEditingFaculty(true);
-                          setUpdateStatus(faculty.status);
-                          setEditingFaculty(faculty);
-                        }}
+                        onClick={() => handleEditFaculty(faculty)}
                       >
                         <EditIcon />
                       </IconButton>
-                      <IconButton
-                        edge="end"
-                        aria-label="delete"
-                        onClick={() => handleDeleteFaculty(faculty.id)}
-                      >
+                      <IconButton edge="end" aria-label="delete" onClick={() => handleDeleteFaculty(faculty.id)}>
                         <DeleteIcon />
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -196,14 +182,14 @@ const FacultyManagementPage = () => {
             onClose={() => setOpenDialog(false)}
             aria-labelledby="form-dialog-title"
             maxWidth="sm"
-            fullWidth={true}
+            fullWidth
           >
             <DialogTitle id="form-dialog-title">
               {editingFaculty ? "Update Faculty" : "Add New Faculty"}
             </DialogTitle>
             <DialogContent>
               <DialogContentText>
-                Enter the details of the {editingFaculty ? "updated " : "new "}{" "}
+                Enter the details of the {editingFaculty ? "updated " : "new "}
                 faculty:
               </DialogContentText>
               <Box justifyContent={"space-between"}>
@@ -215,7 +201,9 @@ const FacultyManagementPage = () => {
                   type="text"
                   fullWidth
                   value={editingFaculty ? updateName : newFacultyName}
-                  onChange={(e) => editingFaculty ? setUpdateName(e.target.value) : setNewFacultyName(e.target.value)}
+                  onChange={(e) =>
+                    editingFaculty ? setUpdateName(e.target.value) : setNewFacultyName(e.target.value)
+                  }
                 />
                 <Box sx={{ height: "1rem" }}></Box>
 
@@ -230,8 +218,8 @@ const FacultyManagementPage = () => {
                           ? "Active"
                           : "Disable"
                         : newStatus
-                        ? "Active"
-                        : "Disable"
+                          ? "Active"
+                          : "Disable"
                     }
                     label="Status"
                     onChange={() => handleChange()}
@@ -247,10 +235,7 @@ const FacultyManagementPage = () => {
                 Cancel
               </Button>
               {editingFaculty ? (
-                <Button
-                  color="primary"
-                  onClick={() => handleUpdateFaculty(selectedRow)}
-                >
+                <Button onClick={() => handleUpdateFaculty(selectedRow)} color="primary">
                   Update
                 </Button>
               ) : (
@@ -260,6 +245,21 @@ const FacultyManagementPage = () => {
               )}
             </DialogActions>
           </Dialog>
+
+          {showConfirmDelete && (
+            <Dialog open={showConfirmDelete} onClose={handleCancelDelete}>
+              <DialogTitle>Confirm Delete</DialogTitle>
+              <DialogContent>
+                <DialogContentText>Are you sure you want to delete this faculty?</DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleCancelDelete}>Cancel</Button>
+                <Button onClick={handleConfirmDelete} color="error">
+                  Delete
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
         </div>
       </ThemeProvider>
     </Container>
