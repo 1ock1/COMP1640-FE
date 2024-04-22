@@ -6,4 +6,7 @@ export const message = {
   addCommentSuccess: "Add new comment successfully",
   createReportSuccessfully: "Create Report Successfully",
   deleteImage: "Remove image successfully",
+  createAccountSuccess: "Create an account successfully",
+  createAccountFailure:
+    "An unexpected error occurred during creating an account",
 };
