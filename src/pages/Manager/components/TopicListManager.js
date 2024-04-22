@@ -17,7 +17,6 @@ export const TopicListManager = ({ falcutyId, academicId }) => {
       academicId: academicId,
       facultyId: falcutyId,
     };
-    console.log(data);
     dispatch(getTopicsStatusList(data));
   }, [falcutyId, academicId]);
   return (

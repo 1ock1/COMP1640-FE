@@ -68,7 +68,6 @@ const Dashboard = () => {
 
   const handleChange = (event) => {
     setAcademicYears("2024");
-    console.log(event);
   };
   React.useEffect(() => {
     const cookie = Cookies.get("us");

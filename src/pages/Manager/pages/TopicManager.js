@@ -77,14 +77,12 @@ export const TopicManager = () => {
       axios
         .post(apiEndpointStaging + path.report.getReportBaseStatus, data)
         .then((response) => {
-          console.log(response.data);
           setReports(response.data);
         });
     }
   }, [selectStatus, topicInfor]);
   React.useEffect(() => {
     if (topicInfor !== null) {
-      console.log(topicInfor);
       const currentDate = new Date();
       const finalDate = new Date(topicInfor.finalDate);
       const entryDate = new Date(topicInfor.entriesDate);

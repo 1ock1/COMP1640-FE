@@ -224,7 +224,6 @@ export const DocumentCoordinator = () => {
         });
     }
   }, [topicId]);
-  console.log(isPublishReportExisted);
   return (
     <>
       <Container maxWidth="xl">
