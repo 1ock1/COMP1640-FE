@@ -19,7 +19,9 @@ import {
   createAccountSchema,
   validatePasswordConfirm,
 } from "../../helpers/validator";
+import { message } from "../../helpers/messageConstant";
 import { statusAccount, userRoles } from "../../helpers/contanst";
+import { AlertDialog, AlertTopRight } from "../../components/AlertDialog";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
@@ -31,10 +33,14 @@ export default function CreateAccount() {
   const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
   const [isMatchPassword, setIsMatchPassword] = React.useState(true);
   const [faculties, setFaculties] = React.useState(undefined);
+  const [alertDiaglog, setOpenAlert] = React.useState(false);
+  const [openNotify, setOpenNotify] = React.useState(false);
+  const [messageNotify, setMessageNotify] = React.useState("");
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm({
     resolver: zodResolver(createAccountSchema),
   });
@@ -54,7 +60,23 @@ export default function CreateAccount() {
         status: data.status,
         facultyId: data.faculty,
       };
-      dispatch(signup(infr));
+      axios
+        .post(apiEndpointLocal + path.user.checkIsEmailExisted + data.email)
+        .then((response) => {
+          if (response.data === true) {
+            setOpenAlert(true);
+          } else {
+            dispatch(signup(infr));
+            setOpenNotify(true);
+            setMessageNotify(message.createAccountSuccess);
+            reset();
+          }
+        })
+        .catch((err) => {
+          setOpenAlert(false);
+          setOpenNotify(true);
+          setMessageNotify(message.createAccountFailure);
+        });
     }
   };
   React.useEffect(() => {
@@ -85,8 +107,16 @@ export default function CreateAccount() {
         Cookies.remove("us");
       });
   });
+  React.useEffect(() => {
+    if (openNotify) {
+      setTimeout(() => {
+        setOpenNotify(false);
+      }, 3000);
+    }
+  }, [openNotify]);
   return (
     <Container maxWidth="sm">
+      <AlertTopRight open={openNotify} message={messageNotify} />
       <Box
         sx={{
           boxShadow: 3,
@@ -193,7 +223,6 @@ export default function CreateAccount() {
             name="faculty"
             select
             label="Select Faculty"
-            defaultValue="EUR"
             SelectProps={{
               native: true,
             }}
@@ -269,6 +298,12 @@ export default function CreateAccount() {
           </Button>
         </Box>
       </Box>
+      <AlertDialog
+        isAlert={alertDiaglog}
+        setIsAlert={setOpenAlert}
+        header="Email is existed"
+        text={"Email is existed, please create another email"}
+      />
     </Container>
   );
 }

@@ -11,6 +11,7 @@ export const path = {
     isMultipleRole: "api/User/checkMultipleRole",
     loginAsSelectedRole: "api/User/loginSelectedRole",
     getCoordinatorInfor: "api/User/GetCoordinatorInformation",
+    checkIsEmailExisted: "api/User/checkEmail?email=",
   },
   file: {
     load: "api/File/",
