@@ -61,7 +61,7 @@ export default function CreateAccount() {
         facultyId: data.faculty,
       };
       axios
-        .post(apiEndpointLocal + path.user.checkIsEmailExisted + data.email)
+        .post(apiEndpointStaging + path.user.checkIsEmailExisted + data.email)
         .then((response) => {
           if (response.data === true) {
             setOpenAlert(true);
