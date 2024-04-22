@@ -23,8 +23,11 @@ import {
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import { apiEndpointLocal, path } from "../../../helpers/apiEndpoints";
-
+import { useMediaQuery } from "@mui/material";
 const AcademicPage = () => {
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
+
   const [academicYears, setAcademicYears] = useState([]);
   const [addMode, setAddMode] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
@@ -201,7 +204,7 @@ const AcademicPage = () => {
               </DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
                 <TextField
-                  sx={{ width: 251 }}
+                  sx={{ width: matches576 ? "47%" : 251 }}
                   id="startDate"
                   margin="normal"
                   name="startDate"
@@ -217,7 +220,7 @@ const AcademicPage = () => {
                 />
 
                 <TextField
-                  sx={{ width: 251 }}
+                  sx={{ width:  matches576 ? "47%" : 251 }}
                   id="endDate"
                   margin="normal"
                   name="endDate"
@@ -235,7 +238,7 @@ const AcademicPage = () => {
             </DialogContent>
             <DialogActions>
               <Button onClick={() => setOpenDialog(false)}>Cancel</Button>
-              <Button onClick={() => handleFill()}>Subscribe</Button>
+              <Button onClick={() => handleFill()}>Save</Button>
             </DialogActions>
           </Dialog>
         ) : (
@@ -253,7 +256,7 @@ const AcademicPage = () => {
               </DialogContentText>
               <Box display={"flex"} justifyContent={"space-between"}>
                 <TextField
-                  sx={{ width: 251 }}
+                  sx={{ width:  matches576 ? "47%" : 251  }}
                   id="startDate"
                   margin="normal"
                   name="startDate"
@@ -269,7 +272,7 @@ const AcademicPage = () => {
                 />
 
                 <TextField
-                  sx={{ width: 251 }}
+                  sx={{ width:  matches576 ? "47%" : 251  }}
                   id="endDate"
                   margin="normal"
                   name="endDate"
