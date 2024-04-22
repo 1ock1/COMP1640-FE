@@ -59,7 +59,6 @@ export const getCommentStatusOfTopic = createAsyncThunk(
     const repsone = await axios.get(
       api + path.report.commentStatusOfTopic + data
     );
-    console.log(repsone.data);
     return repsone.data;
   }
 );

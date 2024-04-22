@@ -33,8 +33,9 @@ export const createAccountSchema = z.object({
     .min(1, "Confirm Password is required")
     .min(8, "Confirm Password mus be more than 8 characters")
     .max(40, "Confirm Password must be less than 40 characters"),
-  role: z.enum(["STUDENT", "ADMIN", "MANAGER", "COORDINATOR, GUEST"]),
+  role: z.enum(["STUDENT", "ADMIN", "MANAGER", "COORDINATOR, GUEST", "GUEST"]),
   status: z.enum(["ACTIVE", "DEACTIVE"]),
+  faculty: z.string().min(1, "Faculty is required"),
 });
 
 export const publishedReportSchema = z.object({

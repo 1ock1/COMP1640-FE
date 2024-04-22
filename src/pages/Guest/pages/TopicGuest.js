@@ -71,7 +71,6 @@ export const TopicGuest = () => {
       axios
         .post(apiEndpointLocal + path.report.getReportBaseStatus, data)
         .then((response) => {
-          console.log(response.data);
           setReports(response.data);
         });
     }

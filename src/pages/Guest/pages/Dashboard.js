@@ -122,7 +122,6 @@ export const DashboardGuest = () => {
       const listEditted = [];
       const listPublished = [];
       topicsList.map((obj) => {
-        console.log(obj);
         listId.push(obj.id);
         listName.push(obj.name);
         listPending.push(obj.pending);

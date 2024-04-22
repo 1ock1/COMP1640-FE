@@ -77,3 +77,13 @@ export const formattedDate = `${year}-${
 
 export const reportStatus = ["Pending", "Editted", "Published"];
 export const steps = ["Submission", "Update Contribution", "End Of Topic"];
+
+export const userRoles = [
+  "STUDENT",
+  "ADMIN",
+  "MANAGER",
+  "COORDINATOR, GUEST",
+  "GUEST",
+];
+
+export const statusAccount = ["ACTIVE", "DEACTIVE"];

@@ -1,13 +1,11 @@
 import React from "react";
+import axios from "axios";
+import { apiEndpointLocal, path } from "../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { checkAuth } from "../../actions/UserActions";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-import Link from "@mui/material/Link";
-import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
@@ -21,6 +19,7 @@ import {
   createAccountSchema,
   validatePasswordConfirm,
 } from "../../helpers/validator";
+import { statusAccount, userRoles } from "../../helpers/contanst";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
@@ -31,6 +30,7 @@ export default function CreateAccount() {
   const year = today.getFullYear();
   const formattedDate = `${year}-${month < 10 ? `0${month}` : month}-${date}`;
   const [isMatchPassword, setIsMatchPassword] = React.useState(true);
+  const [faculties, setFaculties] = React.useState(undefined);
   const {
     register,
     formState: { errors },
@@ -52,11 +52,21 @@ export default function CreateAccount() {
         password: SHA256(data.password).toString(),
         role: data.role,
         status: data.status,
+        facultyId: data.faculty,
       };
       dispatch(signup(infr));
     }
   };
-
+  React.useEffect(() => {
+    axios
+      .get(apiEndpointLocal + path.falcuty.getall)
+      .then((response) => {
+        setFaculties(response.data);
+      })
+      .catch((error) => {
+        console.error("There was an error!", error);
+      });
+  }, []);
   React.useEffect(() => {
     const cookie = Cookies.get("us");
     const input = {
@@ -180,30 +190,66 @@ export default function CreateAccount() {
           />
           <TextField
             margin="normal"
-            required
+            name="faculty"
+            select
+            label="Select Faculty"
+            defaultValue="EUR"
+            SelectProps={{
+              native: true,
+            }}
             fullWidth
+            {...register("faculty")}
+            required
             id="email"
-            label="User Role"
-            name="role"
-            autoComplete="email"
-            autoFocus
-            error={!!errors["role"]}
-            helperText={errors["role"] ? errors["role"].message : ""}
-            {...register("role")}
-          />
+          >
+            {faculties?.map((object, index) => (
+              <option key={index} value={object.id}>
+                {object.name}
+              </option>
+            ))}
+          </TextField>
           <TextField
             margin="normal"
             required
             fullWidth
             id="email"
+            label="User Role"
+            name="role"
+            SelectProps={{
+              native: true,
+            }}
+            select
+            error={!!errors["role"]}
+            helperText={errors["role"] ? errors["role"].message : ""}
+            {...register("role")}
+          >
+            {userRoles?.map((object, index) => (
+              <option key={index} value={object}>
+                {object}
+              </option>
+            ))}
+          </TextField>
+          <TextField
+            margin="normal"
+            required
+            fullWidth
+            select
+            id="email"
             label="Status"
             name="status"
-            autoComplete="email"
-            autoFocus
+            SelectProps={{
+              native: true,
+            }}
             error={!!errors["status"]}
             helperText={errors["status"] ? errors["status"].message : ""}
             {...register("status")}
-          />
+          >
+            {statusAccount?.map((object, index) => (
+              <option key={index} value={object}>
+                {object}
+              </option>
+            ))}
+          </TextField>
           <TextField
             margin="normal"
             name="birthdate"
@@ -213,30 +259,14 @@ export default function CreateAccount() {
             defaultValue={formattedDate}
             fullWidth
           />
-          <FormControlLabel
-            control={<Checkbox value="remember" color="primary" />}
-            label="Remember me"
-          />
           <Button
             type="submit"
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2, backgroundColor: backgroundColor }}
           >
-            Sign In
+            Create An Account
           </Button>
-          <Grid container>
-            <Grid item xs>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Grid>
-            <Grid item>
-              <Link href="#" variant="body2">
-                {"Don't have an account? Sign Up"}
-              </Link>
-            </Grid>
-          </Grid>
         </Box>
       </Box>
     </Container>

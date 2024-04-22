@@ -132,7 +132,6 @@ const MainPage = () => {
       setNotifiSelectedStatus(false);
     }
   }, [isNotifiSelectDeleted]);
-  console.log(matches992);
   return (
     <>
       <BrowserRouter>

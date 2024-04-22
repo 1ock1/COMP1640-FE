@@ -116,6 +116,7 @@ export const DocumentStudent = () => {
       data
     );
     if (response.data === "") {
+      setFileList([]);
       setIsLoadedImages(false);
     } else {
       setIsLoadedImages(true);
@@ -302,7 +303,8 @@ export const DocumentStudent = () => {
             </ImageList>
           </Box>
           <Box display="block">
-            {isAllowedUpdateReport === true ? (
+            {isAllowedUpdateReport === true &&
+            isPublishReportExisted === false ? (
               <>
                 {fileList?.length >= 10 ? (
                   <Alert severity="warning" style={{ marginBottom: "10px" }}>
