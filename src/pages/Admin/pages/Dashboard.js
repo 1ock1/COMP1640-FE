@@ -24,8 +24,13 @@ import FolderIcon from "@mui/icons-material/Folder";
 
 import { BarChart } from "@mui/x-charts/BarChart";
 import { styled } from "@mui/material/styles";
+import { useMediaQuery } from "@mui/material";
 
 const Dashboard = () => {
+  const matches576 = useMediaQuery("(max-width:576px)");
+  const matches880 = useMediaQuery("(max-width:880px)");
+
+
   function generate(element) {
     return [0, 1, 2].map((value) =>
       React.cloneElement(element, {
@@ -70,7 +75,7 @@ const Dashboard = () => {
 
   return (
     <>
-      <Container fullWidth maxWidth="xl">
+      <Container  maxWidth="xl">
         <Box sx={{ margin: "1rem 1rem" }} align="right">
           <FormControl sx={{ width: "10rem" }}>
             <InputLabel id="demo-simple-select-label">Academic year</InputLabel>
@@ -89,8 +94,8 @@ const Dashboard = () => {
           </FormControl>
         </Box>
 
-        <Box sx={{ margin: "0 1rem" }} display={"flex"}>
-          <Card sx={{ maxWidth: 200, minWidth: 200 }}>
+        <Box sx={{ margin: "0 1rem" }} display={"flex"} justifyContent={matches576?"space-between":""}>
+          <Card sx={{ maxWidth: 200, minWidth: 150 }}>
             <CardContent>
               <Typography
                 sx={{ fontSize: 18 }}
@@ -106,7 +111,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card
-            sx={{ maxWidth: 200, minWidth: 200 }}
+            sx={{ maxWidth: 200, minWidth: 150 }}
             style={{ marginLeft: "2rem" }}
           >
             <CardContent>
@@ -127,14 +132,14 @@ const Dashboard = () => {
 
         <Box
           sx={{ margin: "1rem" }}
-          display={"flex"}
+          display={matches576?"block":"flex"}
           fullWidth
           minHeight={250}
           justifyContent={"space-between"}
         >
           {/* <Paper elevation={3}> */}
           <BarChart
-            height={400}
+            height={matches576?250:400}
             series={series
               .slice(0, seriesNb)
               .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
@@ -148,7 +153,8 @@ const Dashboard = () => {
           />
           {/* </Paper> */}
           <>
-            <Grid container spacing={0} width={250}>
+          <Paper elevation={3}>
+            <Grid container spacing={0} width={250} margin={"1rem"}>
               <Grid item xs={12} md={12}>
                 <Typography sx={{ mt: 4, mb: 2 }} variant="h6" component="div">
                   Topics
@@ -172,6 +178,7 @@ const Dashboard = () => {
                 </Demo>
               </Grid>
             </Grid>
+            </Paper>
           </>
         </Box>
       </Container>
