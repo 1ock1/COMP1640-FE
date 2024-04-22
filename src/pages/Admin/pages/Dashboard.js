@@ -94,8 +94,8 @@ const Dashboard = () => {
           </FormControl>
         </Box>
 
-        <Box sx={{ margin: "0 1rem" }} display={"flex"} justifyContent={matches576?"space-between":""}>
-          <Card sx={{ maxWidth: 200, minWidth: 150 }}>
+        <Box sx={{ margin: "0 1rem" }} display={"flex"} justifyContent={matches576?"space-around":""}>
+          <Card sx={{ width: matches576?200:200 }}>
             <CardContent>
               <Typography
                 sx={{ fontSize: 18 }}
@@ -111,7 +111,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
           <Card
-            sx={{ maxWidth: 200, minWidth: 150 }}
+            sx={{ width: matches576?200:200 }}
             style={{ marginLeft: "2rem" }}
           >
             <CardContent>
@@ -139,7 +139,7 @@ const Dashboard = () => {
         >
           {/* <Paper elevation={3}> */}
           <BarChart
-            height={matches576?250:400}
+            height={matches576?300:400}
             series={series
               .slice(0, seriesNb)
               .map((s) => ({ ...s, data: s.data.slice(0, itemNb) }))}
