@@ -1,6 +1,6 @@
 import React from "react";
 import axios from "axios";
-import { apiEndpointLocal, path } from "../../helpers/apiEndpoints";
+import { apiEndpointStaging, path } from "../../helpers/apiEndpoints";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
 import { checkAuth } from "../../actions/UserActions";
@@ -59,7 +59,7 @@ export default function CreateAccount() {
   };
   React.useEffect(() => {
     axios
-      .get(apiEndpointLocal + path.falcuty.getall)
+      .get(apiEndpointStaging + path.falcuty.getall)
       .then((response) => {
         setFaculties(response.data);
       })
