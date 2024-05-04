@@ -22,7 +22,7 @@ import {
 import { message } from "../../helpers/messageConstant";
 import { statusAccount, userRoles } from "../../helpers/contanst";
 import { AlertDialog, AlertTopRight } from "../../components/AlertDialog";
-
+import { VietNamDate } from "../../helpers/utils";
 export default function CreateAccount() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -50,22 +50,22 @@ export default function CreateAccount() {
       setIsMatchPassword(false);
     } else {
       setIsMatchPassword(true);
-      const infr = {
-        name: data.name,
-        phonenumber: data.phoneNumber,
-        birthdate: formattedDate,
-        email: data.email,
-        password: SHA256(data.password).toString(),
-        role: data.role,
-        status: data.status,
-        facultyId: data.faculty,
-      };
       axios
         .post(apiEndpointStaging + path.user.checkIsEmailExisted + data.email)
         .then((response) => {
           if (response.data === true) {
             setOpenAlert(true);
           } else {
+            const infr = {
+              name: data.name,
+              phonenumber: data.phoneNumber,
+              birthdate: VietNamDate(),
+              email: data.email,
+              password: SHA256(data.password).toString(),
+              role: data.role,
+              status: data.status,
+              facultyId: data.faculty,
+            };
             dispatch(signup(infr));
             setOpenNotify(true);
             setMessageNotify(message.createAccountSuccess);
